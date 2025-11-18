@@ -17,3 +17,15 @@ Tener en cuenta:
 
 En el sistema actual (Dobra) se manejan roles como administrador y personas encargadas de actualizar la base de datos
 Se debe actualizar el stock de forma manual cada vez que se compra un producto 
+
+
+---------------
+Comandos
+.\env\Scripts\activate  -> Activar entorno virtual
+cd papeleria_santiago -> Navegar a la raíz proyecto backend
+python manage.py runserver  -> Ejecutar el servidor (solo funciona si el entorno virtual está activado)
+
+
+URLs:
+http://127.0.0.1:8000/  -> Ver Django en el navegador localhost
+http://127.0.0.1:8000/admin  -> Ejecutar la interfaz para administrar la base de datos || usuario: carlos || contraseña: carlos ||

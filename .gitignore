@@ -1,8 +1,8 @@
 # Ignora el archivo de base de datos SQLite
-db.sqlite3
+Backend/papeleria_santiago/db.sqlite3
 
 # Ignora las carpetas de caché de Python
-__pycache__/
+Backend/**/__pycache__/
 
 # Ignora el entorno virtual
-env/
+Backend/env/
