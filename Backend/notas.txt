@@ -1,0 +1,19 @@
+Notas para construir el backend extraído de las reuniones con papelería santiago. 
+
+Los usuarios deben poder ingresar al sistema como usuarios naturales o mayoristas. 
+Dependiendo de su cuenta se mostrarán precios al por mayor o individuales. En la tabla precios @models.py
+
+Los usuarios tienen la opción de comprar productos por bulto si se alcanza una cantidad mínima requerida. 
+
+
+
+
+
+
+
+
+
+Tener en cuenta:
+
+En el sistema actual (Dobra) se manejan roles como administrador y personas encargadas de actualizar la base de datos
+Se debe actualizar el stock de forma manual cada vez que se compra un producto 
