@@ -1,0 +1,8 @@
+# Ignora el archivo de base de datos SQLite
+db.sqlite3
+
+# Ignora las carpetas de caché de Python
+__pycache__/
+
+# Ignora el entorno virtual
+env/
