@@ -7,12 +7,17 @@ Los usuarios tienen la opción de comprar productos por bulto si se alcanza una 
 
 
 
+COMANDOS PARA SEGURIDAD
+*-*-
+$env:DJANGO_SECRET_KEY = ''
+----
+Generar clave de seguridad:
+from django.core.management.utils import get_random_secret_key
+print(get_random_secret_key())
+exit()
 
-
-
-
-
-
+python manage.py shell -> Ejecutar la shell de python
+    
 Tener en cuenta:
 
 En el sistema actual (Dobra) se manejan roles como administrador y personas encargadas de actualizar la base de datos
@@ -29,3 +34,4 @@ python manage.py runserver  -> Ejecutar el servidor (solo funciona si el entorno
 URLs:
 http://127.0.0.1:8000/  -> Ver Django en el navegador localhost
 http://127.0.0.1:8000/admin  -> Ejecutar la interfaz para administrar la base de datos || usuario: carlos || contraseña: carlos ||
+

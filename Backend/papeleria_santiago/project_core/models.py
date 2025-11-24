@@ -144,10 +144,11 @@ class DetallePedido(models.Model):
     
     cantidad = models.IntegerField()
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
+    # Método para calcular el subtotal y el total del detalle del pedido
     def save(self, *args, **kwargs):
         self.subtotal = self.cantidad * self.precio_unitario
         self.total = self.subtotal - self.descuento
