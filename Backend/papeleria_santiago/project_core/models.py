@@ -143,15 +143,37 @@ class DetallePedido(models.Model):
     )
     
     cantidad = models.IntegerField()
-    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     # Método para calcular el subtotal y el total del detalle del pedido
     def save(self, *args, **kwargs):
-        self.subtotal = self.cantidad * self.precio_unitario
-        self.total = self.subtotal - self.descuento
+
+         # Asegurarse de que el producto y el pedido existan antes de calcular el precio
+        if self.producto and self.pedido:
+            try:
+                # Obtener el objeto Precio asociado al producto
+                precio_obj = self.producto.precios # Usamos related_name="precios" del modelo Precio
+
+                # Determinar el precio unitario basado en el tipo de cliente
+                if self.pedido.cliente.tipo_cliente == 'Empresa':
+                    self.precio_unitario = precio_obj.pvm # Precio al por mayor
+                else:
+                    self.precio_unitario = precio_obj.pvp # Precio de venta al público
+            except Precio.DoesNotExist:
+                # PRODUCTO SIN PRECIO ASOCIADO. Por lo tanto, no se puede calcular el precio unitario.
+                raise ValueError("Producto sin precio asociado")
+
+        # Calcular subtotal y total una vez obtenido el precio unitario. 
+        if self.precio_unitario is not None:
+            self.subtotal = self.cantidad * self.precio_unitario
+            self.total = self.subtotal - self.descuento
+        else:
+            # PRODUCTO SIN PRECIO ASOCIADO. Por lo tanto, no se puede calcular el subtotal y total.
+            self.subtotal = None
+            self.total = None
         super().save(*args, **kwargs)
 
 
