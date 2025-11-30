@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Comprobante de Pago - Papelería Santiago</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            font-size: 12px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #eee;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            background: #fff;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #222;
+            margin: 0 0 10px 0;
+        }
+        h1 { font-size: 24px; text-align: center; }
+        h2 { font-size: 20px; text-align: center; margin-bottom: 20px; }
+        .header-info, .client-info, .totals-table, .footer-legend {
+            margin-bottom: 20px;
+        }
+        .header-info p, .client-info p {
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .totals-table tr td {
+            border: none;
+            padding: 5px 8px;
+        }
+        .totals-table tr:last-child td {
+            font-weight: bold;
+            border-top: 1px solid #ddd;
+        }
+        .footer-legend {
+            text-align: center;
+            font-size: 10px;
+            margin-top: 30px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Papelería Santiago</h1>
+        <h2>COMPROBANTE</h2>
+
+        <div class="header-info">
+            <p><strong>Número de Factura:</strong> {{ comprobante.numero_factura }}</p>
+        </div>
+
+        <div class="client-info">
+            <p><strong>Datos del Cliente:</strong></p>
+            <p><strong>Nombre:</strong> {{ comprobante.pedido.cliente.nombre }}</p>
+            <p><strong>Cédula:</strong> {{ comprobante.cedula_cliente }}</p>
+            <p><strong>Email:</strong> {{ comprobante.email_cliente }}</p>
+            <p><strong>Dirección:</strong> {{ comprobante.direccion_cliente }}</p>
+        </div>
+
+        <h3>Detalles del Pedido:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th class="text-right">Precio Unitario</th>
+                    <th class="text-right">Total Producto</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in comprobante.pedido.detalles.all %}
+                <tr>
+                    <td>{{ detalle.producto.nombre }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td class="text-right">${{ detalle.precio_unitario|floatformat:2 }}</td>
+                    <td class="text-right">${{ detalle.total|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <table class="totals-table">
+            <tr>
+                <td class="text-right" colspan="2">Subtotal:</td>
+                <td class="text-right">${{ comprobante.subtotal|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td class="text-right" colspan="2">Descuento:</td>
+                <td class="text-right">${{ comprobante.descuento|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td class="text-right" colspan="2">IVA:</td>
+                <td class="text-right">${{ comprobante.iva|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td class="text-right" colspan="2"><strong>Monto Total:</strong></td>
+                <td class="text-right"><strong>${{ comprobante.total|floatformat:2 }}</strong></td>
+            </tr>
+        </table>
+
+        <div class="footer-legend">
+            <p>Fecha de Emisión: {{ comprobante.fecha_emision|date:"d/m/Y" }}</p>
+        </div>
+    </div>
+</body>
+</html>

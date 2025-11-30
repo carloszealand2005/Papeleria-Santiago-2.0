@@ -26,6 +26,7 @@ SECRET_KEY =  os.environ.get('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Implementar en Papelería Santiago en producción, añadir URL aquí: 
 ALLOWED_HOSTS = []
 
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'project_core',
 ]
 

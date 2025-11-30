@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models import Sum
+from django.contrib.auth.models import User # Necesario para vincular con Cliente
+from decimal import Decimal # Necesario para cálculos precisos
 
 
 
@@ -74,6 +76,7 @@ class Inventario(models.Model):
 # Tabla cliente:
 
 class Cliente(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='cliente_profile') # <-- Nueva línea para vincular con User
     nombre = models.CharField(max_length=100)
     cedula = models.CharField(max_length=20, blank=True, null=True)
     telefono = models.CharField(max_length=30, blank=True, null=True)
@@ -118,10 +121,45 @@ class Pedido(models.Model):
     estado_pedido = models.CharField(max_length=20, choices=ESTADO_PEDIDO_CHOICES)
 
     @property
+    def subtotal_general_comprobante(self):
+        # Suma los subtotales de todos los DetallePedido asociados a este Pedido
+        subtotal_agregado = self.detalles.aggregate(subtotal_sum=Sum('subtotal'))['subtotal_sum']
+        return subtotal_agregado if subtotal_agregado is not None else Decimal('0.00')
+
+    @property
+    def descuento_general_comprobante(self):
+        # Suma los descuentos de todos los DetallePedido asociados a este Pedido
+        descuento_agregado = self.detalles.aggregate(descuento_sum=Sum('descuento'))['descuento_sum']
+        return descuento_agregado if descuento_agregado is not None else Decimal('0.00')
+
+    @property
+    def iva_general_comprobante(self):
+        # Calcula el IVA sumando el IVA de cada detalle. 
+        # NOTA: Si el IVA se calcula por item en DetallePedido, es más complejo que una simple suma de IVA de cada producto.
+        # Aquí, estamos asumiendo que el campo 'iva' en DetallePedido representaría el IVA de ese ítem.
+        # Si IVA es un porcentaje en DetallePedido, la lógica de cálculo aquí sería diferente (aplicar porcentaje al subtotal de cada detalle y sumar).
+        # Por ahora, haremos una suma directa si existiera un campo iva en DetallePedido.
+        # Dado que Precio tiene iva, podríamos calcularlo aquí o si cada DetallePedido ya lo tiene.
+        # Para simplificar y seguir el patrón de tus campos, vamos a asumir que cada DetallePedido podría tener un 'iva' explícito si lo hubieras definido.
+        # Si el IVA es un porcentaje del precio unitario en DetallePedido (o de Precio), la lógica debería ser:
+        # SUM(detalle.cantidad * detalle.precio_unitario * (detalle.producto.precios.iva / 100))
+  
+        # WARNING:
+        # POR AHORA, EL IVA SE CALCULA CON LA SUMA DE TODOS LOS IVA DE DETALLE_PEDIDO
+        iva_agregado = self.detalles.aggregate(iva_sum=Sum('iva'))['iva_sum']
+        return iva_agregado if iva_agregado is not None else Decimal('0.00')
+
+    @property
+    def total_general_comprobante(self):
+        # Suma los totales de todos los DetallePedido asociados a este Pedido
+        total_agregado = self.detalles.aggregate(total_sum=Sum('total'))['total_sum']
+        return total_agregado if total_agregado is not None else Decimal('0.00')
+
+    @property
     def monto_total(self):
         # Suma el campo 'total' de todos los DetallePedido relacionados con este Pedido
         total_agregado = self.detalles.aggregate(total_sum=Sum('total'))['total_sum']
-        return total_agregado if total_agregado is not None else 0.00
+        return total_agregado if total_agregado is not None else Decimal('0.00')
 
 
     def __str__(self):
@@ -130,8 +168,6 @@ class Pedido(models.Model):
 # ----------
 # Tabla detalle pedido:
 class DetallePedido(models.Model):
-
-
     pedido = models.ForeignKey(
         Pedido,
         on_delete=models.CASCADE,    # borrar pedido → borrar sus detalles
@@ -145,6 +181,7 @@ class DetallePedido(models.Model):
     cantidad = models.IntegerField()
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    iva = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
@@ -166,7 +203,10 @@ class DetallePedido(models.Model):
                 # PRODUCTO SIN PRECIO ASOCIADO. Por lo tanto, no se puede calcular el precio unitario.
                 raise ValueError("Producto sin precio asociado")
 
-        # Calcular subtotal y total una vez obtenido el precio unitario. 
+
+
+        # Calcular subtotal y total una vez obtenido el precio unitario.
+     
         if self.precio_unitario is not None:
             self.subtotal = self.cantidad * self.precio_unitario
             self.total = self.subtotal - self.descuento
@@ -203,3 +243,42 @@ class Transportista(models.Model):
     estado_entrega = models.CharField(max_length=20, choices=ESTADO_ENTREGA_CHOICES)
     fecha_actualizacion = models.DateField(blank=True, null=True)
 
+
+# ------------
+# Tabla Comprobante:
+# NOTA: Un pedido solo tendrá un comprobante. Razón para usar @OneToOneField
+class Comprobante(models.Model):
+    pedido = models.OneToOneField(
+        Pedido,
+        on_delete=models.DO_NOTHING,   # borrar pedido → NO BORRAR COMPROBANTE
+        primary_key=False)
+
+
+    METODO_PAGO_CHOICES = [
+        ('Tarjeta de crédito', 'Tarjeta de crédito'),
+        ('Tarjeta de débito', 'Tarjeta de débito'),
+        ('Cheque', 'Cheque'),
+    ]
+
+    ESTADO_FISCAL_CHOICES = [
+        ('Emitido', 'Emitido'),
+        ('Cancelado', 'Cancelado'),
+        ('Pendiente', 'Pendiente'),
+        ('Reembolsado', 'Reembolsado'),
+    ]
+
+    numero_factura = models.CharField(max_length=50)
+    cedula_cliente = models.CharField(max_length=10, blank=True, null=True)
+    direccion_cliente = models.TextField(blank=True, null=True)
+    email_cliente = models.EmailField(blank=True, null=True)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    descuento = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    iva = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    metodo_pago = models.CharField(max_length=20, choices=METODO_PAGO_CHOICES, blank=True, null=True)
+    fecha_emision = models.DateField(auto_now_add=True)
+    url_factura = models.URLField(blank=True, null=True)
+    estado_fiscal = models.CharField(max_length=20, choices=ESTADO_FISCAL_CHOICES, blank=True, null=True)
+
+    def __str__(self):
+        return f"Comprobante {self.numero_factura} para Pedido {self.pedido.id}"

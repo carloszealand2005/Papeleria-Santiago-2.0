@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Cliente, Producto, Pedido, Precio,
+    Cliente, Comprobante, Producto, Pedido, Precio,
     Inventario, DetallePedido, Transportista
 )
 
@@ -27,3 +27,8 @@ class PedidoAdmin(admin.ModelAdmin):
         return f"${obj.monto_total:,.2f}" # Formateado como moneda
     monto_total_display.short_description = "Monto Total" # Nombre de la columna en el admin
 
+@admin.register(Comprobante)
+class ComprobanteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'pedido', 'numero_factura', 'fecha_emision', 'estado_fiscal')
+    search_fields = ('numero_factura', 'fecha_emision', 'estado_fiscal')
+    list_filter = ('fecha_emision', 'estado_fiscal')

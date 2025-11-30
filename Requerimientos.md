@@ -82,6 +82,10 @@ Posterior a que haya expirado el producto, se debe mostrar un mensaje:
 ⏳ La reserva de este producto ha expirado. 
 
 
-### 4: 
+### 4: Componentes para generar el diagrama de arquitectura del proyecto: 
+ * Sistema de pagos
+ * Sistema de autenticación de usuario (OAuth)
+ * API Rest con peticiones: GET, POST, PUT
+ * 
 
 
