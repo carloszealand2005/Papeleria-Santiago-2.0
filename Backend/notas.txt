@@ -42,3 +42,9 @@ ventas
 
 stock
 5000Lcarlos
+
+
+
+ERRORES COMUNES AL INSTALAR:
+Puede que reportlab de error después de ejecutar notas.txt.
+Dado el caso, ejecutar:     pip install xhtml2pdf Pillow

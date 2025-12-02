@@ -3,8 +3,10 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
-from .models import Comprobante, Pedido # Importamos el modelo Comprobante
-
+from .models import Comprobante, Pedido, Producto # Importamos Producto
+from rest_framework import viewsets, filters # Importar filters
+from django_filters.rest_framework import DjangoFilterBackend # Importar DjangoFilterBackend
+from .serializers import ProductoSerializer # Importar el serializador
 
 # Create your views here.
 
@@ -44,4 +46,33 @@ def generar_factura_pdf(request, pedido_id):
     if pisa_status.err:
         return HttpResponse('Tuvimos algunos errores al generar el PDF: <pre>' + html + '</pre>')
     return response
+
+#------------------
+# ViewSet para el modelo Producto (API REST)
+# Maneja las peticiones GET, POST, PUT, DELETE para productos
+#------------------
+class ProductoViewSet(viewsets.ModelViewSet):
+    queryset = Producto.objects.all()
+    serializer_class = ProductoSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter] # Añadir backends de filtro y búsqueda
+    filterset_fields = ['categoria', 'marca'] # Filtrar por categoría y marca
+    search_fields = ['nombre', 'descripcion', 'SKU', 'codigo_barras'] # Campos para búsqueda de texto
+    ordering_fields = ['SKU', 'nombre', 'pvp', 'pvm'] # Campos para ordenar resultados
+
+    # Para filtrar por rango de precio, podemos sobrescribir el método get_queryset
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        precio_min = self.request.query_params.get('precio_min')
+        precio_max = self.request.query_params.get('precio_max')
+
+        if precio_min:
+            # Asumimos que `precios` es el related_name del OneToOneField del Precio
+            # que apunta a Producto. Para filtrar por precio en el modelo Precio,
+            # necesitamos acceder a `precios__pvp` o `precios__pvm`.
+            # Vamos a usar `precios__pvp` para este ejemplo.
+            queryset = queryset.filter(precios__pvp__gte=precio_min)
+        if precio_max:
+            queryset = queryset.filter(precios__pvp__lte=precio_max)
+            
+        return queryset
 
