@@ -40,9 +40,24 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'django_filters',
     'project_core',
 ]
+
+# Configuración de CORS
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080", # Tu frontend de Vue.js
+    # "http://127.0.0.1:8080", # Opcional si tu frontend usa 127.0.0.1
+    # Añade aquí otros orígenes permitidos en producción, por ejemplo:
+    # "https://tudominio.com",
+]
+
+# Si en desarrollo quieres permitir CUALQUIER origen (NO USAR EN PRODUCCIÓN)
+# CORS_ALLOW_ALL_ORIGINS = True
+
+# Si necesitas permitir cookies/credenciales con CORS (es importante si usas sesiones de Django)
+CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
@@ -51,6 +66,7 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
