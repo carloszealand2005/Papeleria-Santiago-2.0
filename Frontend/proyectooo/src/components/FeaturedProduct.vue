@@ -4,28 +4,30 @@
       <img
         :src="product.image"
         :alt="product.name"
-        class="w-full h-40 object-cover object-top"
+        class="w-full h-48 object-cover object-top"
       >
-      <div class="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold">
+      <div class="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold">
         NUEVO
       </div>
     </div>
-    <div class="p-4">
-      <h3 class="font-semibold text-gray-900 mb-2 text-sm">{{ product.name }}</h3>
-      <div class="flex items-center justify-between mb-3">
-        <div class="flex flex-col">
-          <span class="text-lg font-bold" style="color: #1F2937;">${{ product.originalPrice }}</span>
-          <span class="text-xs text-blue-600">En stock</span>
+    <div class="p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ product.name }}</h3>
+      <p class="text-gray-600 text-sm mb-4">{{ product.description }}</p>
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl font-bold" style="color: #1F2937;">${{ product.price }}</span>
         </div>
+        <span class="text-sm text-blue-600 font-semibold">Disponible</span>
       </div>
       <button 
         @click="addToCart"
         @mouseover="hoverButton = true"
         @mouseout="hoverButton = false"
-        class="w-full text-white py-2 rounded-lg transition-colors !rounded-button whitespace-nowrap text-sm" 
+        class="w-full text-white py-3 rounded-lg transition-colors !rounded-button whitespace-nowrap" 
         :style="hoverButton ? 'background-color: #111827;' : 'background-color: #1F2937;'"
       >
-        Agregar
+        <i class="fas fa-shopping-cart mr-2"></i>
+        Agregar al Carrito
       </button>
     </div>
   </div>
@@ -33,7 +35,7 @@
 
 <script>
 export default {
-  name: 'ProductCard',
+  name: 'FeaturedProduct',
   props: {
     product: {
       type: Object,

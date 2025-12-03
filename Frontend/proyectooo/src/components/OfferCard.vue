@@ -6,24 +6,22 @@
         :alt="product.name"
         class="w-full h-40 object-cover object-top"
       >
-      <div class="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold">
-        NUEVO
+      <div class="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
+        {{ product.discount }}% OFF
       </div>
     </div>
     <div class="p-4">
       <h3 class="font-semibold text-gray-900 mb-2 text-sm">{{ product.name }}</h3>
       <div class="flex items-center justify-between mb-3">
         <div class="flex flex-col">
-          <span class="text-lg font-bold" style="color: #1F2937;">${{ product.originalPrice }}</span>
-          <span class="text-xs text-blue-600">En stock</span>
+          <span class="text-lg font-bold" style="color: #2563EB;">${{ product.salePrice }}</span>
+          <span class="text-sm text-gray-400 line-through">${{ product.originalPrice }}</span>
         </div>
       </div>
       <button 
         @click="addToCart"
-        @mouseover="hoverButton = true"
-        @mouseout="hoverButton = false"
-        class="w-full text-white py-2 rounded-lg transition-colors !rounded-button whitespace-nowrap text-sm" 
-        :style="hoverButton ? 'background-color: #111827;' : 'background-color: #1F2937;'"
+        class="w-full text-white py-2 rounded-lg hover:bg-blue-700 transition-colors !rounded-button whitespace-nowrap text-sm" 
+        style="background-color: #2563EB;"
       >
         Agregar
       </button>
@@ -33,16 +31,11 @@
 
 <script>
 export default {
-  name: 'ProductCard',
+  name: 'OfferCard',
   props: {
     product: {
       type: Object,
       required: true
-    }
-  },
-  data() {
-    return {
-      hoverButton: false
     }
   },
   methods: {
