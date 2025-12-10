@@ -54,6 +54,7 @@ import FeaturedProducts from './FeaturedProducts.vue';
 import AllProducts from './AllProducts.vue';
 import ProductsNewsletter from './ProductsNewsletter.vue';
 import ProductsFooter from './ProductsFooter.vue';
+import axios from 'axios'; // Importamos axios
 
 export default {
   name: 'ProductsPage',
@@ -110,80 +111,7 @@ export default {
           category: 'art'
         }
       ],
-      products: [
-        {
-          id: 1,
-          name: 'Cuaderno Rayado A4',
-          image: 'https://readdy.ai/api/search-image?query=lined%20notebook%20A4%20size%20on%20clean%20white%20background%20professional%20product%20photography%20minimalist%20style%20office%20supplies&width=300&height=200&seq=007&orientation=landscape',
-          originalPrice: 45.00,
-          salePrice: 31.50,
-          discount: 30,
-          category: 'school'
-        },
-        {
-          id: 2,
-          name: 'Set Plumas Colores',
-          image: 'https://readdy.ai/api/search-image?query=colorful%20pen%20set%20arranged%20on%20white%20background%20professional%20product%20photography%20clean%20minimalist%20style%20office%20supplies&width=300&height=200&seq=008&orientation=landscape',
-          originalPrice: 89.00,
-          salePrice: 62.30,
-          discount: 30,
-          category: 'school'
-        },
-        {
-          id: 3,
-          name: 'Calculadora Científica',
-          image: 'https://readdy.ai/api/search-image?query=scientific%20calculator%20on%20clean%20white%20background%20professional%20product%20photography%20minimalist%20style%20office%20supplies%20technology&width=300&height=200&seq=009&orientation=landscape',
-          originalPrice: 299.00,
-          salePrice: 179.40,
-          discount: 40,
-          category: 'tech'
-        },
-        {
-          id: 4,
-          name: 'Carpeta Archivadora',
-          image: 'https://readdy.ai/api/search-image?query=office%20binder%20folder%20on%20clean%20white%20background%20professional%20product%20photography%20minimalist%20style%20office%20supplies&width=300&height=200&seq=010&orientation=landscape',
-          originalPrice: 65.00,
-          salePrice: 45.50,
-          discount: 30,
-          category: 'office'
-        },
-        {
-          id: 5,
-          name: 'Lápices de Colores 24 pzs',
-          image: 'https://readdy.ai/api/search-image?query=colored%20pencils%20set%2024%20pieces%20arranged%20on%20white%20background%20professional%20product%20photography%20clean%20minimalist%20style%20art%20supplies&width=300&height=200&seq=011&orientation=landscape',
-          originalPrice: 159.00,
-          salePrice: 111.30,
-          discount: 30,
-          category: 'art'
-        },
-        {
-          id: 6,
-          name: 'Goma y Sacapuntas Set',
-          image: 'https://readdy.ai/api/search-image?query=eraser%20and%20pencil%20sharpener%20set%20on%20clean%20white%20background%20professional%20product%20photography%20minimalist%20style%20school%20supplies&width=300&height=200&seq=012&orientation=landscape',
-          originalPrice: 35.00,
-          salePrice: 24.50,
-          discount: 30,
-          category: 'school'
-        },
-        {
-          id: 7,
-          name: 'Regla Geométrica 30cm',
-          image: 'https://readdy.ai/api/search-image?query=geometric%20ruler%2030cm%20on%20clean%20white%20background%20professional%20product%20photography%20minimalist%20style%20office%20supplies&width=300&height=200&seq=013&orientation=landscape',
-          originalPrice: 25.00,
-          salePrice: 17.50,
-          discount: 30,
-          category: 'school'
-        },
-        {
-          id: 8,
-          name: 'Marcadores Permanentes',
-          image: 'https://readdy.ai/api/search-image?query=permanent%20markers%20set%20on%20clean%20white%20background%20professional%20product%20photography%20minimalist%20style%20office%20supplies&width=300&height=200&seq=014&orientation=landscape',
-          originalPrice: 79.00,
-          salePrice: 55.30,
-          discount: 30,
-          category: 'office'
-        }
-      ]
+      products: [] // Inicializamos un array vacío para los productos de la API
     }
   },
   computed: {
@@ -207,7 +135,30 @@ export default {
       return filtered;
     }
   },
+  created() {
+    this.fetchProducts();
+  },
   methods: {
+    fetchProducts() {
+      axios.get('http://127.0.0.1:8000/api/productos/')
+        .then(response => {
+          this.products = response.data.map(product => ({
+            // Mapeamos los campos del backend a la estructura que espera el frontend
+            id: product.SKU,
+            name: product.nombre,
+            brand: product.marca, // Añadimos la marca para el ProductCard
+            image: product.imagen_url,
+            originalPrice: parseFloat(product.pvp), // Usamos pvp como originalPrice
+            salePrice: parseFloat(product.pvp), // Por ahora, salePrice es igual a pvp
+            discount: 0, // Por ahora no hay descuento desde el backend, lo dejamos en 0
+            category: product.categoria ? product.categoria.toLowerCase() : 'otros' // Aseguramos que la categoría sea minúscula para el filtro, y un default si es null
+          }));
+        })
+        .catch(error => {
+          console.error('Error fetching products:', error);
+          // Puedes añadir lógica para mostrar un mensaje de error al usuario
+        });
+    },
     handleCategoryChange(categoryId) {
       this.selectedCategory = categoryId;
     },

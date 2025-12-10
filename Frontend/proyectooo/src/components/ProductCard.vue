@@ -11,11 +11,12 @@
       </div>
     </div>
     <div class="p-4">
-      <h3 class="font-semibold text-gray-900 mb-2 text-sm">{{ product.name }}</h3>
+      <h3 class="font-semibold text-gray-900 mb-0 text-sm">{{ product.name }}</h3>
+      <p class="text-xs text-gray-500 mb-2">{{ product.brand }}</p>
       <div class="flex items-center justify-between mb-3">
         <div class="flex flex-col">
           <span class="text-lg font-bold" style="color: #1F2937;">${{ product.originalPrice }}</span>
-          <span class="text-xs text-blue-600">En stock</span>
+          <span class="text-xs text-blue-600">EN STOCK</span>
         </div>
       </div>
       <button 

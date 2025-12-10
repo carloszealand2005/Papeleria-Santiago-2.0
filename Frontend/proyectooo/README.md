@@ -19,6 +19,7 @@ cd proyectooo
 ### 2. Instalar las dependencias
 ```bash
 npm install
+npm install axios
 ```
 
 ### 3. Ejecutar el servidor de desarrollo

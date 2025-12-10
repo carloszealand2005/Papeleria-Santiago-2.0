@@ -1,3 +1,64 @@
+
+
+Guía de Configuración Local del Proyecto Django (Corregido)
+Asumiremos que ya tienen Python instalado en su sistema.
+1. Clonar el Repositorio (Si aún no lo han hecho):
+git clone <URL_DEL_REPOSITORIO>
+Explicación: Esto clonará el repositorio, y su consola estará en la carpeta Backend (es decir, C:\Users\V I C T U S\OneDrive\Desktop\Papeleria Santiago\Backend).
+
+2. Crear un Entorno Virtual (en la raíz del backend):
+Este paso se hace primero, estando en la raíz Backend.
+python -m venv env
+Explicación: Esto creará una carpeta llamada env directamente dentro de la carpeta Backend (ej. C:\Users\V I C T U S\OneDrive\Desktop\Papeleria Santiago\Backend\env). El .gitignore ya está configurado para ignorar esta carpeta.
+
+3. Activar el Entorno Virtual:
+Ahora activan el entorno virtual desde la raíz Backend.
+Para Usuarios de PowerShell (Windows):
+    .\env\Scripts\Activate.ps1
+
+Para Usuarios de Bash/Zsh (Linux/macOS/Git Bash):
+    source env/bin/activate
+
+Explicación: Después de activar el entorno, verán (env) o un nombre similar al principio de su línea de comandos.
+4. Instalar las Dependencias del Proyecto:
+
+Estando aún en la raíz Backend, instalarán las dependencias.
+pip install -r requirements.txt
+pip install xhtml2pdf Pillow
+Explicación: Esto instalará todas las librerías de Python listadas en requirements.txt dentro de su entorno virtual.
+
+5. Navegar a la Carpeta papeleria_santiago:
+
+Ahora que las dependencias están instaladas y el entorno virtual activo, deben moverse a la carpeta donde está manage.py.
+cd papeleria_santiago
+
+6. Ejecutar las Migraciones de la Base de Datos:
+Estando en la carpeta papeleria_santiago (donde está manage.py):
+python manage.py migrate
+
+Explicación: Esto creará el archivo db.sqlite3 dentro de papeleria_santiago y todas las tablas necesarias.
+
+7. Crear un Superusuario (para Acceder al Panel de Administración):
+Estando en la carpeta papeleria_santiago:
+python manage.py createsuperuser
+Explicación: Se les pedirá que ingresen las credenciales del superusuario.
+
+8. Ejecutar el Servidor de Desarrollo:
+Estando en la carpeta papeleria_santiago:
+$env:DJANGO_SECRET_KEY = '1'
+python manage.py runserver
+Explicación: El servidor se iniciará.
+
+
+9. Acceder al Proyecto:
+Para ver el sitio: http://127.0.0.1:8000/
+Para acceder al panel de administración: http://127.0.0.1:8000/admin
+Con esta secuencia, la carpeta env se creará en la raíz de tu Backend (C:\Users\V I C T U S\OneDrive\Desktop\Papeleria Santiago\Backend\env), que es el resultado deseado. 
+
+
+
+NOTAS ANTIGUAS: 
+-------------
 Notas para construir el backend extraído de las reuniones con papelería santiago. 
 
 Los usuarios deben poder ingresar al sistema como usuarios naturales o mayoristas. 
@@ -46,5 +107,5 @@ stock
 
 
 ERRORES COMUNES AL INSTALAR:
-Puede que reportlab de error después de ejecutar notas.txt.
+Puede que reportlab de error después de ejecutar requirements.txt con la instalación
 Dado el caso, ejecutar:     pip install xhtml2pdf Pillow
