@@ -104,6 +104,8 @@ ventas
 stock
 5000Lcarlos
 
+FACTURA:
+http://127.0.0.1:8000/pedidos/<int:pedido_id>/comprobante/pdf/
 
 
 ERRORES COMUNES AL INSTALAR:

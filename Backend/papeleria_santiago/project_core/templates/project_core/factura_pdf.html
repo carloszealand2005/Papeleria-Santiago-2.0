@@ -14,117 +14,271 @@
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
-            border: 1px solid #eee;
-            padding: 30px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
             background: #fff;
+            padding: 0; /* Ajustado para el nuevo diseño */
         }
-        h1, h2, h3, h4, h5, h6 {
-            color: #222;
-            margin: 0 0 10px 0;
+        .section {
+            padding: 20px;
         }
-        h1 { font-size: 24px; text-align: center; }
-        h2 { font-size: 20px; text-align: center; margin-bottom: 20px; }
-        .header-info, .client-info, .totals-table, .footer-legend {
+        .header {
+            display: flex; /* Flexbox para alinear elementos en la cabecera */
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
         }
-        .header-info p, .client-info p {
+        .header-left {
+            width: 60%;
+        }
+        .header-left h1 {
+            font-size: 20px;
+            margin: 0 0 5px 0;
+            color: #222;
+            text-align: left;
+        }
+        .header-left p {
+            font-size: 10px;
+            margin: 0;
+            line-height: 1.4;
+            color: #555;
+        }
+        .header-right {
+            width: 35%;
+            text-align: right;
+        }
+        .header-right h2 {
+            font-size: 24px;
+            margin: 0;
+            color: #222;
+            text-align: right;
+            border-bottom: 2px solid #222; /* Línea debajo de COMPROBANTE */
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        .header-right p {
+            font-size: 10px;
+            margin: 5px 0 0 0;
+            color: #555;
+        }
+
+        .details-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        .details-left, .details-right {
+            width: 48%;
+        }
+        .details-left p, .details-right p {
             margin: 5px 0;
             line-height: 1.5;
+            font-size: 12px;
         }
+        .details-left strong, .details-right strong {
+            display: inline-block;
+            width: 100px; /* Ancho fijo para las etiquetas */
+        }
+        
+        h3 {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #222;
+            border-bottom: 1px solid #eee; /* Divider */
+            padding-bottom: 5px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
+            margin-bottom: 20px;
         }
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            border: 1px solid #eee; /* Bordes más sutiles */
+            padding: 10px 8px;
             text-align: left;
+            font-size: 12px;
         }
         th {
-            background-color: #f2f2f2;
-            font-weight: bold;
+            background-color: #2C3E50; /* Color oscuro para encabezados de tabla */
+            color: #fff;
+            font-weight: normal; /* No tan negrita */
+            border: 1px solid #2C3E50; /* Bordes del mismo color */
         }
         .text-right {
             text-align: right;
         }
+        .totals-table {
+            width: 50%; /* Ocupa la mitad derecha */
+            float: right; /* Alineado a la derecha */
+            margin-bottom: 20px;
+        }
         .totals-table tr td {
             border: none;
             padding: 5px 8px;
+            font-size: 12px;
         }
         .totals-table tr:last-child td {
             font-weight: bold;
-            border-top: 1px solid #ddd;
+            border-top: 2px solid #222; /* Línea más gruesa antes del total */
+            background-color: #2C3E50; /* Fondo oscuro para Total a Pagar */
+            color: #fff;
         }
-        .footer-legend {
+        .totals-table tr:last-child td:first-child {
+             border-left: 2px solid #222; /* Borde izquierdo para el "Total a Pagar" */
+        }
+        .totals-table tr:last-child td:last-child {
+            border-right: 2px solid #222; /* Borde derecho para el valor del total */
+        }
+
+        .info-section {
+            clear: both; /* Limpiar float de la tabla de totales */
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .info-block {
+            width: 48%;
+        }
+        .info-block h4 {
+            font-size: 13px;
+            margin: 0 0 10px 0;
+            color: #222;
+        }
+        .info-block p {
+            margin: 3px 0;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        .info-block strong {
+            display: inline-block;
+            width: 80px; /* Ancho fijo para las etiquetas de info */
+        }
+        .estado-pagado {
+            color: green;
+            font-weight: bold;
+        }
+
+        .footer {
             text-align: center;
             font-size: 10px;
-            margin-top: 30px;
+            margin-top: 40px;
             color: #777;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .footer p {
+            margin: 3px 0;
+        }
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Papelería Santiago</h1>
-        <h2>COMPROBANTE</h2>
-
-        <div class="header-info">
-            <p><strong>Número de Factura:</strong> {{ comprobante.numero_factura }}</p>
+        <div class="section header clearfix">
+            <div class="header-left">
+                <h1>PAPELERÍA SANTIAGO</h1>
+                <p>Soluciones completas para oficina y estudio</p>
+                <p>NIT: 900.123.456-7</p>
+                <p>Cra 15 #45-32, Bogotá, Colombia</p>
+                <p>Tel: (601) 234-5678</p>
+            </div>
+            <div class="header-right">
+                <h2>COMPROBANTE</h2>
+                <p>Recibo de Compra</p>
+            </div>
         </div>
 
-        <div class="client-info">
-            <p><strong>Datos del Cliente:</strong></p>
-            <p><strong>Nombre:</strong> {{ comprobante.pedido.cliente.nombre }}</p>
-            <p><strong>Cédula:</strong> {{ comprobante.cedula_cliente }}</p>
-            <p><strong>Email:</strong> {{ comprobante.email_cliente }}</p>
-            <p><strong>Dirección:</strong> {{ comprobante.direccion_cliente }}</p>
+        <div class="section details-section clearfix">
+            <div class="details-left">
+                <p><strong>Número de Factura:</strong> {{ comprobante.numero_factura }}</p>
+                <p><strong>Fecha de Emisión:</strong> {{ comprobante.fecha_emision|date:"d/m/Y" }}</p>
+            </div>
+            <div class="details-right">
+                <p><strong>Datos del Cliente:</strong></p>
+                <p><strong>Nombre:</strong> {{ comprobante.pedido.cliente.nombre }}</p>
+                <p><strong>Cédula:</strong> {{ comprobante.cedula_cliente }}</p>
+                <p><strong>Email:</strong> {{ comprobante.email_cliente }}</p>
+                <p><strong>Dirección:</strong> {{ comprobante.direccion_cliente }}</p>
+            </div>
         </div>
 
-        <h3>Detalles del Pedido:</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th class="text-right">Precio Unitario</th>
-                    <th class="text-right">Total Producto</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for detalle in comprobante.pedido.detalles.all %}
-                <tr>
-                    <td>{{ detalle.producto.nombre }}</td>
-                    <td>{{ detalle.cantidad }}</td>
-                    <td class="text-right">${{ detalle.precio_unitario|floatformat:2 }}</td>
-                    <td class="text-right">${{ detalle.total|floatformat:2 }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="section">
+            <h3>Detalles del Pedido:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th class="text-right">Precio Unitario</th>
+                        <th class="text-right">Total Producto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detalle in comprobante.pedido.detalles_pedido.all %}
+                    <tr>
+                        <td>{{ detalle.producto.nombre }}</td>
+                        <td>{{ detalle.cantidad }}</td>
+                        <td class="text-right">${{ detalle.precio_unitario|floatformat:2 }}</td>
+                        <td class="text-right">${{ detalle.total_detalle_pedido|floatformat:2 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No hay detalles de pedido para este comprobante.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
-        <table class="totals-table">
-            <tr>
-                <td class="text-right" colspan="2">Subtotal:</td>
-                <td class="text-right">${{ comprobante.subtotal|floatformat:2 }}</td>
-            </tr>
-            <tr>
-                <td class="text-right" colspan="2">Descuento:</td>
-                <td class="text-right">${{ comprobante.descuento|floatformat:2 }}</td>
-            </tr>
-            <tr>
-                <td class="text-right" colspan="2">IVA:</td>
-                <td class="text-right">${{ comprobante.iva|floatformat:2 }}</td>
-            </tr>
-            <tr>
-                <td class="text-right" colspan="2"><strong>Monto Total:</strong></td>
-                <td class="text-right"><strong>${{ comprobante.total|floatformat:2 }}</strong></td>
-            </tr>
-        </table>
+            <table class="totals-table">
+                <tr>
+                    <td>Subtotal:</td>
+                    <td class="text-right">${{ comprobante.subtotal|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td>Descuento:</td>
+                    <td class="text-right">${{ comprobante.descuento|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td>IVA (19%):</td>
+                    <td class="text-right">${{ comprobante.iva|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td>Total a Pagar:</td>
+                    <td class="text-right">${{ comprobante.total|floatformat:2 }}</td>
+                </tr>
+            </table>
+            <div class="clearfix"></div> <!-- Para limpiar el float de la tabla de totales -->
+        </div>
 
-        <div class="footer-legend">
+        <div class="section info-section">
+            <div class="info-block">
+                <h4>Información de Pago:</h4>
+                <p><strong>Método:</strong> Tarjeta de Crédito</p>
+                <p><strong>Estado:</strong> <span class="estado-pagado">Pagado</span></p>
+                <p><strong>Referencia:</strong> TXN-789456123</p>
+            </div>
+            <div class="info-block">
+                <h4>Información de Entrega:</h4>
+                <p><strong>Tipo:</strong> Domicilio</p>
+                <p><strong>Fecha:</strong> {{ comprobante.fecha_emision|date:"d/m/Y" }}</p>
+                <p><strong>Dirección:</strong> {{ comprobante.direccion_cliente }}</p>
+            </div>
+        </div>
+
+        <div class="section footer">
             <p>Fecha de Emisión: {{ comprobante.fecha_emision|date:"d/m/Y" }}</p>
+            <p>Gracias por su compra en Papelería Santiago</p>
+            <p>Para consultas: info@papeleriasantiago.com | WhatsApp: +57 300 123 4567</p>
         </div>
     </div>
 </body>

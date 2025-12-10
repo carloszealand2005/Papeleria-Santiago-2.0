@@ -97,6 +97,120 @@ class Cliente(models.Model):
         return f"{self.nombre} - {self.email}. \n Este cliente es una {self.tipo_cliente}."
 
 
+#----------------
+#Tabla favoritos cliente: 
+
+class FavoritosCliente(models.Model):
+    producto = models.ForeignKey(
+        Producto,
+        on_delete=models.RESTRICT, # No borrar producto si se borra el favorito asociado
+        related_name="favoritos_cliente"
+    )
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.RESTRICT, # No borrar cliente si se borra el favorito asociado
+        related_name="favoritos_cliente"
+    )
+
+    fecha_creacion = models.DateField(auto_now_add=True)
+
+
+    def __str__(self):
+        return f"<3 --> {self.cliente.nombre} - {self.producto.nombre} de marca {self.producto.marca}"
+   
+  
+#----------------
+# Tabla carrito:
+class Carrito(models.Model):
+    ESTADO_CARRITO_CHOICES = [
+        ('Activo', 'Activo'),
+        ('Inactivo', 'Inactivo'),
+        ('Convertido a pedido', 'Convertido a pedido'),
+        ('Abandonado', 'Abandonado'),
+    ]
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.RESTRICT, # No borrar cliente si tiene carrito
+        related_name="carritos"
+    )
+    fecha_creacion = models.DateField(auto_now_add=True) # Solo cuando se crea este registro
+    fecha_actualizacion = models.DateField(auto_now=True) # Cada vez que se hay un cambio en sus detalles. 
+    # estado = models.CharField(max_length=20, choices=ESTADO_CARRITO_CHOICES) # Eliminado, ahora es una propiedad calculada
+    subtotal_carrito = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
+
+    @property
+    def estado_dinamico(self):
+        if self.detalles_carrito.exists(): #Verificar si existen DetalleCarrito asociados. 
+            return 'Activo'
+        return 'Inactivo'
+
+    @property
+    def total_carrito(self):
+        # Suma el campo 'total_detalle_carrito' de todos los DetalleCarrito relacionados con este Carrito
+        total_agregado = self.detalles_carrito.aggregate(total_sum=Sum('total_detalle_carrito'))['total_sum']
+        return total_agregado if total_agregado is not None else Decimal('0.00')
+
+   
+
+
+    def __str__(self):
+        return f"Carrito de {self.cliente.nombre} - Estado: {self.estado_dinamico} - Total: {self.total_carrito}"
+
+class DetalleCarrito(models.Model):
+    carrito = models.ForeignKey(
+        Carrito,
+        on_delete=models.CASCADE, # Borrar detalle carrito si se borra el carrito asociado
+        related_name="detalles_carrito"
+    )
+    producto = models.ForeignKey(
+        Producto,
+        on_delete=models.RESTRICT, # No borrar producto si se borra el detalle carrito asociado
+    )
+
+    cantidad = models.IntegerField()
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    subtotal_detalle_carrito = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    descuento_detalle_carrito = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_detalle_carrito = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
+
+
+    # Método para calcular el subtotal y el total del detalle del carrito
+    def save(self, *args, **kwargs):
+
+         # Asegurarse de que el producto y el pedido existan antes de calcular el precio
+        if self.producto and self.carrito:
+            try:
+                # Obtener el objeto Precio asociado al producto
+                precio_obj = self.producto.precios # Usamos related_name="precios" del modelo Precio
+
+                # Determinar el precio unitario basado en el tipo de cliente
+                if self.carrito.cliente.tipo_cliente == 'Empresa':
+                    self.precio_unitario = precio_obj.pvm # Precio al por mayor
+                else:
+                    self.precio_unitario = precio_obj.pvp # Precio de venta al público
+            except Precio.DoesNotExist:
+                # PRODUCTO SIN PRECIO ASOCIADO. Por lo tanto, no se puede calcular el precio unitario.
+                raise ValueError("Producto sin precio asociado")
+
+
+
+        # Calcular subtotal y total una vez obtenido el precio unitario.
+     
+        if self.precio_unitario is not None:
+            self.subtotal_detalle_carrito = self.cantidad * self.precio_unitario
+            self.total_detalle_carrito = self.subtotal_detalle_carrito - self.descuento_detalle_carrito
+        else:
+            # PRODUCTO SIN PRECIO ASOCIADO. Por lo tanto, no se puede calcular el subtotal y total.
+            self.subtotal_detalle_carrito = None
+            self.total_detalle_carrito = None
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.cantidad} x {self.producto.SKU} en Carrito {self.carrito.id} que pertenece a {self.carrito.cliente.nombre}"
+
+
 #-----------
 # Tabla pedido:
 class Pedido(models.Model):
@@ -123,13 +237,13 @@ class Pedido(models.Model):
     @property
     def subtotal_general_comprobante(self):
         # Suma los subtotales de todos los DetallePedido asociados a este Pedido
-        subtotal_agregado = self.detalles.aggregate(subtotal_sum=Sum('subtotal'))['subtotal_sum']
+        subtotal_agregado = self.detalles_pedido.aggregate(subtotal_sum=Sum('subtotal_detalle_pedido'))['subtotal_sum']
         return subtotal_agregado if subtotal_agregado is not None else Decimal('0.00')
 
     @property
     def descuento_general_comprobante(self):
         # Suma los descuentos de todos los DetallePedido asociados a este Pedido
-        descuento_agregado = self.detalles.aggregate(descuento_sum=Sum('descuento'))['descuento_sum']
+        descuento_agregado = self.detalles_pedido.aggregate(descuento_sum=Sum('descuento_detalle_pedido'))['descuento_sum']
         return descuento_agregado if descuento_agregado is not None else Decimal('0.00')
 
     @property
@@ -146,19 +260,19 @@ class Pedido(models.Model):
   
         # WARNING:
         # POR AHORA, EL IVA SE CALCULA CON LA SUMA DE TODOS LOS IVA DE DETALLE_PEDIDO
-        iva_agregado = self.detalles.aggregate(iva_sum=Sum('iva'))['iva_sum']
+        iva_agregado = self.detalles_pedido.aggregate(iva_sum=Sum('iva_detalle_pedido'))['iva_sum']
         return iva_agregado if iva_agregado is not None else Decimal('0.00')
 
     @property
     def total_general_comprobante(self):
         # Suma los totales de todos los DetallePedido asociados a este Pedido
-        total_agregado = self.detalles.aggregate(total_sum=Sum('total'))['total_sum']
+        total_agregado = self.detalles_pedido.aggregate(total_sum=Sum('total_detalle_pedido'))['total_sum']
         return total_agregado if total_agregado is not None else Decimal('0.00')
 
     @property
     def monto_total(self):
         # Suma el campo 'total' de todos los DetallePedido relacionados con este Pedido
-        total_agregado = self.detalles.aggregate(total_sum=Sum('total'))['total_sum']
+        total_agregado = self.detalles_pedido.aggregate(total_sum=Sum('total_detalle_pedido'))['total_sum']
         return total_agregado if total_agregado is not None else Decimal('0.00')
 
 
@@ -171,7 +285,7 @@ class DetallePedido(models.Model):
     pedido = models.ForeignKey(
         Pedido,
         on_delete=models.CASCADE,    # borrar pedido → borrar sus detalles
-        related_name="detalles"
+        related_name="detalles_pedido"
     )
     producto = models.ForeignKey(
         Producto,
@@ -180,10 +294,10 @@ class DetallePedido(models.Model):
     
     cantidad = models.IntegerField()
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    iva = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    subtotal_detalle_pedido = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    iva_detalle_pedido = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    descuento_detalle_pedido = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_detalle_pedido = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     # Método para calcular el subtotal y el total del detalle del pedido
     def save(self, *args, **kwargs):
@@ -208,12 +322,12 @@ class DetallePedido(models.Model):
         # Calcular subtotal y total una vez obtenido el precio unitario.
      
         if self.precio_unitario is not None:
-            self.subtotal = self.cantidad * self.precio_unitario
-            self.total = self.subtotal - self.descuento
+            self.subtotal_detalle_pedido = self.cantidad * self.precio_unitario
+            self.total_detalle_pedido = self.subtotal_detalle_pedido - self.descuento_detalle_pedido
         else:
             # PRODUCTO SIN PRECIO ASOCIADO. Por lo tanto, no se puede calcular el subtotal y total.
-            self.subtotal = None
-            self.total = None
+            self.subtotal_detalle_pedido = None
+            self.total_detalle_pedido = None
         super().save(*args, **kwargs)
 
 

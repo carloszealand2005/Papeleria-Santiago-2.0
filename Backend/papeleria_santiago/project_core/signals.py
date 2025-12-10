@@ -1,6 +1,7 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from .models import Pedido, Comprobante, Cliente
+from .models import Pedido, Comprobante, Cliente, Carrito, DetalleCarrito
+import datetime
 
 
 #------------------
@@ -36,6 +37,15 @@ def crear_comprobante_al_pagar_pedido(sender, instance, created, **kwargs):
                 total=instance.total_general_comprobante,
                 metodo_pago='Tarjeta de crédito', # Por defecto, ajustar según lógica
                 estado_fiscal='Emitido',
-                # url_factura se dejaría en blanco inicialmente o se generaría después
+                # url_factura en blanco. TODO(PENDIENTE: GUARDAR URL DE LA FACTURA EN PRODUCCIÓN)
             )
             print(f"Comprobante creado para el Pedido {instance.id}")
+
+
+# Señal para actualizar la fecha_actualizacion del Carrito cuando cambia un DetalleCarrito
+
+
+@receiver([post_save, post_delete], sender=DetalleCarrito)
+def actualizar_fecha_carrito(sender, instance, **kwargs):
+    carrito = instance.carrito
+    carrito.save() # Al guardar el carrito, auto_now=True actualizará fecha_actualizacion

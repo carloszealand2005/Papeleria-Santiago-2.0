@@ -1,15 +1,40 @@
 from django.contrib import admin
 from .models import (
-    Cliente, Comprobante, Producto, Pedido, Precio,
-    Inventario, DetallePedido, Transportista
+    Cliente, FavoritosCliente, Comprobante, Producto, Pedido, Precio,
+    Inventario, DetallePedido, Transportista, Carrito, DetalleCarrito
 )
 
 # Registra tus modelos aquí.
 admin.site.register(Cliente)
+# admin.site.register(FavoritosCliente) # Se moverá debajo para personalización
 admin.site.register(Producto)
 admin.site.register(Precio)
 admin.site.register(Inventario)
 admin.site.register(DetallePedido)
+admin.site.register(DetalleCarrito)
+
+
+@admin.register(FavoritosCliente)
+class FavoritosClienteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cliente', 'producto', 'fecha_creacion')
+    list_filter = ('fecha_creacion', 'cliente', 'producto')
+    search_fields = ('cliente__nombre', 'producto__nombre', 'producto__SKU')
+    readonly_fields = ('fecha_creacion',)
+
+
+@admin.register(Carrito)
+class CarritoAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'cliente', 'fecha_creacion', 'fecha_actualizacion', 'estado_dinamico',
+        'total_carrito_display' # Incluimos la propiedad calculada
+    )
+
+    def total_carrito_display(self, obj):
+        # Accede a la propiedad @property total_carrito del modelo Carrito
+        return f"${obj.total_carrito:,.2f}" # Formateado como moneda
+    total_carrito_display.short_description = "Total del Carrito"
+
+
 admin.site.register(Transportista)
 
 
