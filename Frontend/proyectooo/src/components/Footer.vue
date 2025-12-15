@@ -28,19 +28,19 @@
           <h4 class="font-bold text-lg mb-6">Productos</h4>
           <ul class="space-y-3 text-slate-400">
             <li>
-              <a href="#" class="hover:text-white transition-colors">Oficina</a>
+              <a href="#" @click.prevent="goToProducts" class="hover:text-white transition-colors cursor-pointer">Oficina</a>
             </li>
             <li>
-              <a href="#" class="hover:text-white transition-colors">Escolar</a>
+              <a href="#" @click.prevent="goToProducts" class="hover:text-white transition-colors cursor-pointer">Escolar</a>
             </li>
             <li>
-              <a href="#" class="hover:text-white transition-colors">Arte y Diseño</a>
+              <a href="#" @click.prevent="goToProducts" class="hover:text-white transition-colors cursor-pointer">Arte y Diseño</a>
             </li>
             <li>
-              <a href="#" class="hover:text-white transition-colors">Tecnología</a>
+              <a href="#" @click.prevent="goToProducts" class="hover:text-white transition-colors cursor-pointer">Tecnología</a>
             </li>
             <li>
-              <a href="#" class="hover:text-white transition-colors">Papel</a>
+              <a href="#" @click.prevent="goToProducts" class="hover:text-white transition-colors cursor-pointer">Papel</a>
             </li>
           </ul>
         </div>
@@ -91,7 +91,18 @@
 
 <script>
 export default {
-  name: 'FooterComponent'
+  name: 'FooterComponent',
+  methods: {
+    goToProducts() {
+      this.$router.push('/productos');
+    },
+    goToOffers() {
+      this.$router.push('/ofertas');
+    },
+    goToHome() {
+      this.$router.push('/');
+    }
+  }
 }
 </script>
 

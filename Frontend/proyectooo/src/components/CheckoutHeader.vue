@@ -6,8 +6,8 @@
           <img
             src="https://static.readdy.ai/image/a6354382ff0904464d2c460063bc60ba/d66c997e03357d7855f38b760e34012f.jpeg"
             alt="Santiago Papelería"
-            class="h-12 w-auto"
-            @click="$emit('go-home')"
+            class="h-12 w-auto cursor-pointer"
+            @click="goToHome"
           >
         </div>
         <div class="flex items-center space-x-4">
@@ -37,7 +37,12 @@
 
 <script>
 export default {
-  name: 'CheckoutHeader'
+  name: 'CheckoutHeader',
+  methods: {
+    goToHome() {
+      this.$router.push('/');
+    }
+  }
 }
 </script>
 

@@ -1,6 +1,1 @@
 @import "tailwindcss";
-
-/* Clase personalizada rounded-button */
-.rounded-button {
-  border-radius: 0.5rem; /* equivalente a rounded-lg en Tailwind */
-}

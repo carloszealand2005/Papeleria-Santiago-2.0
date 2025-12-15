@@ -19,16 +19,16 @@
           <h4 class="font-semibold mb-4">Productos</h4>
           <ul class="space-y-2 text-sm text-gray-400">
             <li>
-              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="$emit('navigate', 'notebooks')">Cuadernos</a>
+              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="goToProducts">Cuadernos</a>
             </li>
             <li>
-              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="$emit('navigate', 'pens')">Bolígrafos</a>
+              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="goToProducts">Bolígrafos</a>
             </li>
             <li>
-              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="$emit('navigate', 'folders')">Archivadores</a>
+              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="goToProducts">Archivadores</a>
             </li>
             <li>
-              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="$emit('navigate', 'school')">Material Escolar</a>
+              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="goToProducts">Material Escolar</a>
             </li>
           </ul>
         </div>
@@ -36,16 +36,16 @@
           <h4 class="font-semibold mb-4">Soporte</h4>
           <ul class="space-y-2 text-sm text-gray-400">
             <li>
-              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="$emit('navigate', 'help')">Centro de Ayuda</a>
+              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="goToHome">Centro de Ayuda</a>
             </li>
             <li>
-              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="$emit('navigate', 'contact')">Contacto</a>
+              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="goToHome">Contacto</a>
             </li>
             <li>
-              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="$emit('navigate', 'warranty')">Garantías</a>
+              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="goToHome">Garantías</a>
             </li>
             <li>
-              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="$emit('navigate', 'returns')">Devoluciones</a>
+              <a href="#" class="hover:text-white cursor-pointer" @click.prevent="goToHome">Devoluciones</a>
             </li>
           </ul>
         </div>
@@ -68,7 +68,15 @@
 
 <script>
 export default {
-  name: 'CartFooter'
+  name: 'CartFooter',
+  methods: {
+    goToProducts() {
+      this.$router.push('/productos');
+    },
+    goToHome() {
+      this.$router.push('/');
+    }
+  }
 }
 </script>
 

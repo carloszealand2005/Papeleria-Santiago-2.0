@@ -7,7 +7,7 @@
       </div>
       <button 
         class="text-teal-600 hover:text-teal-700 font-medium cursor-pointer !rounded-button whitespace-nowrap"
-        @click="$emit('continue-shopping')"
+        @click="continueShopping"
       >
         <i class="fas fa-arrow-left mr-2"></i>
         Continuar Comprando
@@ -23,6 +23,11 @@ export default {
     itemCount: {
       type: Number,
       required: true
+    }
+  },
+  methods: {
+    continueShopping() {
+      this.$router.push('/');
     }
   }
 }

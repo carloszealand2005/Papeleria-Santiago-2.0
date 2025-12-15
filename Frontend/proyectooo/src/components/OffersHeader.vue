@@ -13,11 +13,11 @@
         
         <!-- Navigation -->
         <nav class="flex items-center space-x-8">
-          <a href="#" class="text-gray-700 hover:text-blue-600 font-medium text-sm transition-colors">Inicio</a>
-          <a href="#" class="text-gray-700 hover:text-blue-600 font-medium text-sm transition-colors">Productos</a>
-          <a href="#" style="color: #2563EB;" class="font-medium text-sm">Ofertas</a>
-          <a href="#" class="text-gray-700 hover:text-blue-600 font-medium text-sm transition-colors">Nosotros</a>
-          <a href="#" class="text-gray-700 hover:text-blue-600 font-medium text-sm transition-colors">Contacto</a>
+          <a href="#" @click.prevent="goToHome" class="text-gray-700 hover:text-blue-600 font-medium text-sm transition-colors cursor-pointer">Inicio</a>
+          <a href="#" @click.prevent="goToProducts" class="text-gray-700 hover:text-blue-600 font-medium text-sm transition-colors cursor-pointer">Productos</a>
+          <a href="#" style="color: #2563EB;" class="font-medium text-sm cursor-pointer">Ofertas</a>
+          <a href="#" class="text-gray-700 hover:text-blue-600 font-medium text-sm transition-colors cursor-pointer">Nosotros</a>
+          <a href="#" class="text-gray-700 hover:text-blue-600 font-medium text-sm transition-colors cursor-pointer">Contacto</a>
         </nav>
         
         <!-- Search and Cart -->
@@ -74,7 +74,13 @@ export default {
       }
     },
     goToCart() {
-      this.$emit('go-to-cart');
+      this.$router.push('/carrito');
+    },
+    goToHome() {
+      this.$router.push('/');
+    },
+    goToProducts() {
+      this.$router.push('/productos');
     }
   }
 }

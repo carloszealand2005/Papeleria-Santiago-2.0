@@ -16,23 +16,23 @@
           <a 
             href="#" 
             class="text-gray-600 hover:text-blue-600 transition-colors cursor-pointer"
-            @click.prevent="$emit('navigate', 'home')"
+            @click.prevent="goToHome"
           >
             Inicio
           </a>
           <a 
             href="#" 
             class="text-gray-600 hover:text-blue-600 transition-colors cursor-pointer"
-            @click.prevent="$emit('navigate', 'products')"
+            @click.prevent="goToProducts"
           >
             Productos
           </a>
           <a 
             href="#" 
             class="text-gray-600 hover:text-blue-600 transition-colors cursor-pointer"
-            @click.prevent="$emit('navigate', 'contact')"
+            @click.prevent="goToOffers"
           >
-            Contacto
+            Ofertas
           </a>
         </nav>
         
@@ -52,7 +52,18 @@
 
 <script>
 export default {
-  name: 'LoginHeader'
+  name: 'LoginHeader',
+  methods: {
+    goToHome() {
+      this.$router.push('/');
+    },
+    goToProducts() {
+      this.$router.push('/productos');
+    },
+    goToOffers() {
+      this.$router.push('/ofertas');
+    }
+  }
 }
 </script>
 

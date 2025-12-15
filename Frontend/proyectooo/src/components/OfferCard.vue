@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
-    <div class="relative">
+    <div class="relative cursor-pointer" @click="viewProduct">
       <img
         :src="product.image"
         :alt="product.name"
@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="p-4">
-      <h3 class="font-semibold text-gray-900 mb-2 text-sm">{{ product.name }}</h3>
+      <h3 class="font-semibold text-gray-900 mb-2 text-sm cursor-pointer hover:text-blue-600" @click="viewProduct">{{ product.name }}</h3>
       <div class="flex items-center justify-between mb-3">
         <div class="flex flex-col">
           <span class="text-lg font-bold" style="color: #2563EB;">${{ product.salePrice }}</span>
@@ -41,6 +41,9 @@ export default {
   methods: {
     addToCart() {
       this.$emit('add-to-cart', this.product);
+    },
+    viewProduct() {
+      this.$emit('select-product', this.product);
     }
   }
 }

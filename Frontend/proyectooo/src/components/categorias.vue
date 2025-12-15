@@ -67,6 +67,8 @@ export default {
     selectCategory(category) {
       console.log('Categoría seleccionada:', category.name);
       this.$emit('select-category', category);
+      // Navegar a productos cuando se selecciona una categoría
+      this.$router.push('/productos');
     }
   }
 };

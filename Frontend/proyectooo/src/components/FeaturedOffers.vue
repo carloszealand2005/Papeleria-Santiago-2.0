@@ -7,6 +7,7 @@
         :key="offer.id"
         :offer="offer"
         @add-to-cart="handleAddToCart"
+        @select-product="handleSelectProduct"
       />
     </div>
   </div>
@@ -29,6 +30,9 @@ export default {
   methods: {
     handleAddToCart(offer) {
       this.$emit('add-to-cart', offer);
+    },
+    handleSelectProduct(offer) {
+      this.$emit('select-product', offer);
     }
   }
 }

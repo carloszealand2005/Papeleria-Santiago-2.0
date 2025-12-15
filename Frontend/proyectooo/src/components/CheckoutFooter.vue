@@ -17,7 +17,7 @@
           <a 
             href="#" 
             class="hover:text-blue-600 cursor-pointer"
-            @click.prevent="$emit('navigate', 'privacy')"
+            @click.prevent="goToHome"
           >
             Política de Privacidad
           </a>
@@ -25,7 +25,7 @@
           <a 
             href="#" 
             class="hover:text-blue-600 cursor-pointer"
-            @click.prevent="$emit('navigate', 'terms')"
+            @click.prevent="goToHome"
           >
             Términos de Servicio
           </a>
@@ -37,7 +37,12 @@
 
 <script>
 export default {
-  name: 'CheckoutFooter'
+  name: 'CheckoutFooter',
+  methods: {
+    goToHome() {
+      this.$router.push('/');
+    }
+  }
 }
 </script>
 

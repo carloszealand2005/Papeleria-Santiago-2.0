@@ -7,8 +7,8 @@
             <img 
               src="https://static.readdy.ai/image/a6354382ff0904464d2c460063bc60ba/1d728dd92f6f8bab5ded8741c3d0bbae.jpeg" 
               alt="Santiago Papelería" 
-              class="h-10 w-auto"
-              @click="$emit('go-home')"
+              class="h-10 w-auto cursor-pointer"
+              @click="goToHome"
             >
           </div>
         </div>
@@ -16,35 +16,33 @@
           <a 
             href="#" 
             class="text-gray-700 hover:text-blue-600 text-sm font-medium cursor-pointer"
-            @click.prevent="$emit('navigate', 'home')"
+            @click.prevent="goToHome"
           >
             Inicio
           </a>
           <a 
             href="#" 
             class="text-gray-700 hover:text-blue-600 text-sm font-medium cursor-pointer"
-            @click.prevent="$emit('navigate', 'products')"
+            @click.prevent="goToProducts"
           >
             Productos
           </a>
           <a 
             href="#" 
             class="text-gray-700 hover:text-blue-600 text-sm font-medium cursor-pointer"
-            @click.prevent="$emit('navigate', 'offers')"
+            @click.prevent="goToOffers"
           >
             Ofertas
           </a>
           <a 
             href="#" 
             class="text-gray-700 hover:text-blue-600 text-sm font-medium cursor-pointer"
-            @click.prevent="$emit('navigate', 'about')"
           >
             Nosotros
           </a>
           <a 
             href="#" 
             class="text-gray-700 hover:text-blue-600 text-sm font-medium cursor-pointer"
-            @click.prevent="$emit('navigate', 'contact')"
           >
             Contacto
           </a>
@@ -65,7 +63,7 @@
               <i class="fas fa-search text-sm"></i>
             </button>
           </div>
-          <div class="relative" @click="$emit('go-to-cart')">
+          <div class="relative" @click="goToCart">
             <i class="fas fa-shopping-cart text-xl text-blue-600 cursor-pointer"></i>
             <span 
               v-if="cartCount > 0"
@@ -99,6 +97,18 @@ export default {
       if (this.searchQuery.trim()) {
         this.$emit('search', this.searchQuery);
       }
+    },
+    goToHome() {
+      this.$router.push('/');
+    },
+    goToProducts() {
+      this.$router.push('/productos');
+    },
+    goToOffers() {
+      this.$router.push('/ofertas');
+    },
+    goToCart() {
+      this.$router.push('/carrito');
     }
   }
 }
