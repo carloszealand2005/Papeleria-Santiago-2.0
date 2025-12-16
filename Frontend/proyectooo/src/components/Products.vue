@@ -81,32 +81,7 @@ export default {
         { id: 'art', name: 'Artísticos' },
         { id: 'tech', name: 'Tecnología' }
       ],
-      featuredProducts: [
-        {
-          id: 'featured-1',
-          name: 'Pack Escolar Completo',
-          description: 'Incluye 5 cuadernos, 10 plumas, estuche y más',
-          image: 'https://readdy.ai/api/search-image?query=back%20to%20school%20stationery%20bundle%20with%20notebooks%20pens%20pencils%20and%20supplies%20on%20clean%20white%20background%20professional%20product%20photography%20minimalist%20style%20commercial%20lighting&width=400&height=250&seq=004&orientation=landscape',
-          price: 498.00,
-          category: 'school'
-        },
-        {
-          id: 'featured-2',
-          name: 'Set de Oficina Premium',
-          description: 'Carpetas, archivadores y organizadores profesionales',
-          image: 'https://readdy.ai/api/search-image?query=professional%20office%20supplies%20set%20with%20folders%20binders%20and%20organizers%20on%20clean%20white%20background%20modern%20minimalist%20product%20photography%20commercial%20style&width=400&height=250&seq=005&orientation=landscape',
-          price: 599.00,
-          category: 'office'
-        },
-        {
-          id: 'featured-3',
-          name: 'Kit Artístico Profesional',
-          description: 'Lápices de colores, marcadores y materiales de dibujo',
-          image: 'https://readdy.ai/api/search-image?query=creative%20art%20supplies%20set%20with%20colored%20pencils%20markers%20and%20drawing%20materials%20on%20clean%20white%20background%20professional%20product%20photography%20minimalist%20style&width=400&height=250&seq=006&orientation=landscape',
-          price: 599.00,
-          category: 'art'
-        }
-      ],
+      featuredProducts: [], // Inicializamos un array vacío para los productos destacados de la API
       products: [] // Inicializamos un array vacío para los productos de la API
     }
   },
@@ -136,6 +111,7 @@ export default {
   },
   created() {
     this.fetchProducts();
+    this.fetchFeaturedProducts();
   },
   methods: {
     fetchProducts() {
@@ -182,6 +158,22 @@ export default {
       console.log('Subscribing email:', email);
       this.$emit('subscribe-newsletter', email);
       this.newsletterEmail = '';
+    },
+    fetchFeaturedProducts() {
+      axios.get('http://127.0.0.1:8000/api/productos/destacados/')
+        .then(response => {
+          this.featuredProducts = response.data.map(product => ({
+            id: product.SKU,
+            name: product.nombre,
+            description: product.descripcion,
+            image: product.imagen_url,
+            price: parseFloat(product.pvp),
+            category: product.categoria ? product.categoria.toLowerCase() : 'otros'
+          }));
+        })
+        .catch(error => {
+          console.error('Error fetching featured products:', error);
+        });
     }
   }
 }
