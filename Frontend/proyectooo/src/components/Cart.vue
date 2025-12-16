@@ -3,25 +3,21 @@
     <!-- Header -->
     <CartHeader 
       :cartCount="totalItems"
-      @go-home="$emit('go-home')"
-      @navigate="handleNavigate"
-      @go-to-cart="$emit('go-to-cart')"
       @search="handleSearch"
     />
     
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Cart Header -->
-      <CartPageHeader 
-        :itemCount="cartItems.length"
-        @continue-shopping="$emit('continue-shopping')"
+          <CartPageHeader 
+        :itemCount="currentCartItems.length"
       />
       
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Cart Items -->
         <div class="lg:col-span-2">
           <CartItems
-            :cartItems="cartItems"
+            :cartItems="currentCartItems"
             @increase-quantity="increaseQuantity"
             @decrease-quantity="decreaseQuantity"
             @remove-item="removeItem"
@@ -43,7 +39,7 @@
           :total="total"
           :selectedShipping="selectedShipping"
           @shipping-changed="handleShippingChanged"
-          @update-cart="updateCart"
+          @update-cart="updateCartItems"
           @proceed-checkout="proceedToCheckout"
         />
       </div>
@@ -55,7 +51,6 @@
     <!-- Footer -->
     <CartFooter 
       @navigate="handleNavigate"
-      @social="handleSocial"
     />
   </div>
 </template>
@@ -80,37 +75,7 @@ export default {
     CartBenefits,
     CartFooter
   },
-  props: {
-    cartItems: {
-      type: Array,
-      default: () => [
-        {
-          id: 1,
-          name: 'Cuaderno Universitario',
-          description: 'Cuaderno de 100 hojas rayado espiral',
-          price: 12.50,
-          quantity: 2,
-          image: 'https://readdy.ai/api/search-image?query=professional%20spiral%20notebook%20university%20style%20clean%20white%20background%20office%20supplies%20stationery%20product%20photography%20studio%20lighting%20minimal%20commercial%20style&width=200&height=200&seq=cart-notebook-1&orientation=squarish'
-        },
-        {
-          id: 2,
-          name: 'Set de Bolígrafos',
-          description: 'Pack de 10 bolígrafos azules BIC',
-          price: 8.75,
-          quantity: 1,
-          image: 'https://readdy.ai/api/search-image?query=professional%20blue%20ballpoint%20pens%20set%20office%20supplies%20clean%20white%20background%20stationery%20product%20photography%20studio%20lighting%20minimal%20commercial%20style&width=200&height=200&seq=cart-pens-1&orientation=squarish'
-        },
-        {
-          id: 3,
-          name: 'Archivador A4',
-          description: 'Archivador de palanca tamaño A4',
-          price: 15.99,
-          quantity: 1,
-          image: 'https://readdy.ai/api/search-image?query=professional%20office%20binder%20folder%20A4%20size%20clean%20white%20background%20office%20supplies%20stationery%20product%20photography%20studio%20lighting%20minimal%20commercial%20style&width=200&height=200&seq=cart-binder-1&orientation=squarish'
-        }
-      ]
-    }
-  },
+  inject: ['cartItems', 'updateCart', 'proceedCheckout'],
   data() {
     return {
       appliedDiscount: 0,
@@ -118,11 +83,14 @@ export default {
     }
   },
   computed: {
+    currentCartItems() {
+      return this.cartItems || [];
+    },
     totalItems() {
-      return this.cartItems.reduce((total, item) => total + item.quantity, 0);
+      return this.currentCartItems.reduce((total, item) => total + item.quantity, 0);
     },
     subtotal() {
-      return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+      return this.currentCartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
     },
     shipping() {
       return this.selectedShipping === 'express' ? 15.00 : 0;
@@ -139,26 +107,32 @@ export default {
   },
   methods: {
     increaseQuantity(itemId) {
-      const updatedItems = this.cartItems.map(item => {
+      const updatedItems = this.currentCartItems.map(item => {
         if (item.id === itemId) {
           return { ...item, quantity: item.quantity + 1 };
         }
         return item;
       });
-      this.$emit('cart-updated', updatedItems);
+      if (this.updateCart) {
+        this.updateCart(updatedItems);
+      }
     },
     decreaseQuantity(itemId) {
-      const updatedItems = this.cartItems.map(item => {
+      const updatedItems = this.currentCartItems.map(item => {
         if (item.id === itemId && item.quantity > 1) {
           return { ...item, quantity: item.quantity - 1 };
         }
         return item;
       });
-      this.$emit('cart-updated', updatedItems);
+      if (this.updateCart) {
+        this.updateCart(updatedItems);
+      }
     },
     removeItem(itemId) {
-      const updatedItems = this.cartItems.filter(item => item.id !== itemId);
-      this.$emit('cart-updated', updatedItems);
+      const updatedItems = this.currentCartItems.filter(item => item.id !== itemId);
+      if (this.updateCart) {
+        this.updateCart(updatedItems);
+      }
     },
     applyDiscount(code) {
       if (code === 'SAVE10') {
@@ -172,13 +146,28 @@ export default {
         this.showNotification('Código de descuento inválido', 'error');
       }
     },
-    updateCart() {
-      this.$emit('update-cart', this.cartItems);
+    updateCartItems() {
+      if (this.updateCart) {
+        this.updateCart(this.currentCartItems);
+      }
       this.showNotification('Carrito actualizado correctamente');
     },
     proceedToCheckout() {
-      this.$emit('proceed-checkout', {
-        items: this.cartItems,
+      // Validar que el carrito no esté vacío
+      if (!this.currentCartItems || this.currentCartItems.length === 0) {
+        this.showNotification('Tu carrito está vacío. Agrega productos antes de proceder al pago.', 'error');
+        return;
+      }
+
+      // Validar que todos los items tengan los datos necesarios
+      const validItems = this.currentCartItems.filter(item => item.name && item.price);
+      if (validItems.length === 0) {
+        this.showNotification('Error: Los productos en el carrito no tienen información válida.', 'error');
+        return;
+      }
+
+      const checkoutData = {
+        items: validItems,
         totals: {
           subtotal: this.subtotal,
           shipping: this.shipping,
@@ -186,10 +175,33 @@ export default {
           discount: this.discountAmount,
           total: this.total
         }
-      });
+      };
+      
+      try {
+        // Preparar los datos primero
+        if (this.proceedCheckout) {
+          this.proceedCheckout(checkoutData);
+        }
+        
+        // Esperar un momento para que los datos se actualicen antes de navegar
+        this.$nextTick(() => {
+          this.$router.push('/checkout');
+        });
+      } catch (error) {
+        console.error('Error al proceder al checkout:', error);
+        this.showNotification('Error al procesar el checkout. Por favor intenta de nuevo.', 'error');
+      }
     },
     handleNavigate(route) {
-      this.$emit('navigate', route);
+      if (route === 'home') {
+        this.$router.push('/');
+      } else if (route === 'products') {
+        this.$router.push('/productos');
+      } else if (route === 'offers') {
+        this.$router.push('/ofertas');
+      } else if (route === 'notebooks' || route === 'pens' || route === 'folders' || route === 'school') {
+        this.$router.push('/productos');
+      }
     },
     handleSearch(query) {
       this.$emit('search', query);

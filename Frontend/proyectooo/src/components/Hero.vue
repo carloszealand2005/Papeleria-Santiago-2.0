@@ -56,12 +56,10 @@ export default {
   name: "HeroSection",
   methods: {
     exploreProducts() {
-      console.log('Explorar productos');
-      this.$emit('explore-products');
+      this.$router.push('/productos');
     },
     viewCatalog() {
-      console.log('Ver catálogo');
-      this.$emit('view-catalog');
+      this.$router.push('/productos');
     }
   }
 }

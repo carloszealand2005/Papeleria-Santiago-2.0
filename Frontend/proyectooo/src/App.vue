@@ -1,120 +1,17 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- Vista de Login -->
-    <LoginPage v-if="currentView === 'login'" @go-to-home="currentView = 'home'" />
-    
-    <!-- Vista de Carrito -->
-    <CartPage 
-      v-else-if="currentView === 'cart'"
-      :cartItems="cartItems"
-      @go-home="currentView = 'home'"
-      @continue-shopping="currentView = 'home'"
-      @cart-updated="handleCartUpdate"
-      @proceed-checkout="handleCheckout"
-    />
-    
-    <!-- Vista de Checkout (Pago) -->
-    <CheckoutPage
-      v-else-if="currentView === 'checkout'"
-      :orderItems="checkoutOrderItems"
-      :totals="checkoutTotals"
-      @go-back="currentView = 'cart'"
-      @go-home="currentView = 'home'"
-      @complete-order="handleCompleteOrder"
-    />
-    
-    <!-- Vista de Factura -->
-    <ReceiptPage
-      v-else-if="currentView === 'receipt'"
-      :invoiceData="receiptData.invoiceData"
-      :customerData="receiptData.customerData"
-      :orderItems="receiptData.orderItems"
-      :totals="receiptData.totals"
-      :paymentInfo="receiptData.paymentInfo"
-      :deliveryInfo="receiptData.deliveryInfo"
-      @go-home="currentView = 'home'"
-    />
-    
-    <!-- Vista de Ofertas -->
-    <OffersPage
-      v-else-if="currentView === 'offers'"
-      :cartCount="totalCartItems"
-      @go-to-cart="currentView = 'cart'"
-      @add-to-cart="handleAddToCartFromOffers"
-      @search="handleSearch"
-      @subscribe-newsletter="handleSubscribeNewsletter"
-    />
-    
-    <!-- Vista de Productos -->
-    <ProductsPage
-      v-else-if="currentView === 'products'"
-      :cartCount="totalCartItems"
-      @go-to-cart="currentView = 'cart'"
-      @add-to-cart="handleAddToCartFromProducts"
-      @search="handleSearch"
-      @subscribe-newsletter="handleSubscribeNewsletter"
-    />
-    
-    <!-- Vista Principal (Home) -->
-    <template v-else>
-      <Header 
-        @go-to-login="currentView = 'login'"
-        @go-to-cart="currentView = 'cart'"
-        @go-to-home="currentView = 'home'"
-        @go-to-offers="currentView = 'offers'"
-        @go-to-products="currentView = 'products'"
-        :cartCount="totalCartItems"
-      />
-    <Hero />
-    <Categorias 
-      :mainCategories="mainCategories" 
-      :subCategories="subCategories" 
-      @select-category="selectCategory" 
-    />
-    <Novedades :featuredProducts="featuredProducts" />
-      <WhyChooseUs />
-      <Newsletter />
-    <Footer />
-    </template>
+    <router-view />
   </div>
 </template>
 
 <script>
-// Importa los componentes de la carpeta src/components/
-import Header from './components/Header.vue';
-import Hero from './components/Hero.vue';
-import Categorias from './components/categorias.vue';
-import Novedades from './components/Novedades.vue';
-import WhyChooseUs from './components/WhyChooseUs.vue';
-import Newsletter from './components/Newsletter.vue';
-import Footer from './components/Footer.vue';
-import LoginPage from './components/Login.vue';
-import CartPage from './components/Cart.vue';
-import CheckoutPage from './components/Checkout.vue';
-import ReceiptPage from './components/Receipt.vue';
-import OffersPage from './components/Offers.vue';
-import ProductsPage from './components/Products.vue';
+import './assets/tailwind.css'
 
 export default {
   name: 'App',
-  components: {
-    Header,
-    Hero,
-    Categorias,
-    Novedades,
-    WhyChooseUs,
-    Newsletter,
-    Footer,
-    LoginPage,
-    CartPage,
-    CheckoutPage,
-    ReceiptPage,
-    OffersPage,
-    ProductsPage
-  },
   data() {
     return {
-      currentView: 'home', // 'home', 'login', 'cart', 'checkout', 'receipt', 'offers' o 'products'
+      selectedProduct: null,
       checkoutOrderItems: [],
       checkoutTotals: {
         subtotal: 0,
@@ -176,7 +73,6 @@ export default {
           image: 'https://readdy.ai/api/search-image?query=professional%20office%20binder%20folder%20A4%20size%20clean%20white%20background%20office%20supplies%20stationery%20product%20photography%20studio%20lighting%20minimal%20commercial%20style&width=200&height=200&seq=cart-binder-1&orientation=squarish'
         }
       ],
-      // ** DATOS DE CATEGORÍAS PRINCIPALES **
       mainCategories: [
         {
           id: 1,
@@ -200,7 +96,6 @@ export default {
           image: 'https://readdy.ai/api/search-image?query=artistic%20supplies%20with%20professional%20colored%20pencils%20markers%20sketchbooks%20and%20paint%20tubes%20on%20creative%20workspace&width=400&height=250&seq=cat-art-01&orientation=landscape'
         }
       ],
-      // ** DATOS DE SUBCATEGORÍAS **
       subCategories: [
         { id: 11, name: 'Cuadernos', icon: 'fas fa-book' },
         { id: 12, name: 'Bolígrafos', icon: 'fas fa-pen' },
@@ -209,7 +104,6 @@ export default {
         { id: 15, name: 'Calculadoras', icon: 'fas fa-calculator' },
         { id: 16, name: 'Adhesivos', icon: 'fas fa-tape' }
       ],
-      // ** DATOS DE PRODUCTOS DESTACADOS **
       featuredProducts: [
         {
           id: 1,
@@ -249,140 +143,112 @@ export default {
       ]
     };
   },
+  provide() {
+    return {
+      cartItems: this.cartItems,
+      totalCartItems: this.totalCartItems,
+      mainCategories: this.mainCategories,
+      subCategories: this.subCategories,
+      featuredProducts: this.featuredProducts,
+      checkoutOrderItems: this.checkoutOrderItems,
+      checkoutTotals: this.checkoutTotals,
+      receiptData: this.receiptData,
+      selectedProduct: this.selectedProduct,
+      addToCart: this.handleAddToCart,
+      updateCart: this.handleCartUpdate,
+      proceedCheckout: this.handleCheckout,
+      completeOrderHandler: this.handleCompleteOrder,
+      selectProduct: this.handleSelectProduct
+    };
+  },
   computed: {
     totalCartItems() {
       return this.cartItems.reduce((total, item) => total + item.quantity, 0);
     }
   },
   methods: {
-    selectCategory(category) {
-      console.log('Categoría seleccionada:', category.name);
-      this.showNotification(`Navegando a ${category.name}`);
-    },
     handleCartUpdate(items) {
       this.cartItems = items;
       this.showNotification('Carrito actualizado');
     },
+    handleAddToCart(product) {
+      const existingItem = this.cartItems.find(item => item.id === product.id);
+      
+      if (existingItem) {
+        const updatedItems = this.cartItems.map(item => 
+          item.id === product.id 
+            ? { ...item, quantity: item.quantity + (product.quantity || 1) }
+            : item
+        );
+        this.cartItems = updatedItems;
+      } else {
+        const newItem = {
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          price: product.price || product.originalPrice || product.salePrice,
+          quantity: product.quantity || 1,
+          image: product.image || product.mainImage
+        };
+        this.cartItems = [...this.cartItems, newItem];
+      }
+      
+      this.showNotification(`${product.name} agregado al carrito`);
+    },
     handleCheckout(data) {
-      console.log('Proceder al checkout:', data);
-      
-      // Preparar datos para el checkout
-      this.prepareCheckoutData(data);
-      
-      // Cambiar a la vista de checkout
-      this.currentView = 'checkout';
+      try {
+        // Validar que haya datos
+        if (!data || !data.items || data.items.length === 0) {
+          console.error('Error: No hay items en el checkout');
+          return;
+        }
+        
+        this.prepareCheckoutData(data);
+        // No navegar aquí porque Cart.vue ya lo hace
+        // this.$router.push('/checkout');
+      } catch (error) {
+        console.error('Error en handleCheckout:', error);
+      }
     },
     prepareCheckoutData(checkoutData) {
-      // Convertir items del carrito al formato del checkout
-      this.checkoutOrderItems = checkoutData.items.map(item => ({
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        image: item.image
-      }));
-      
-      // Preparar totales
-      const subtotal = checkoutData.totals.subtotal;
-      const tax = checkoutData.totals.taxes || (subtotal * 0.16);
-      const total = checkoutData.totals.total;
-      
-      this.checkoutTotals = {
-        subtotal: subtotal,
-        tax: tax,
-        total: total
-      };
-    },
-    handleAddToCartFromOffers(product) {
-      // Buscar si el producto ya está en el carrito
-      const existingItem = this.cartItems.find(item => item.id === product.id);
-      
-      if (existingItem) {
-        // Si existe, incrementar cantidad
-        const updatedItems = this.cartItems.map(item => 
-          item.id === product.id 
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-        this.cartItems = updatedItems;
-      } else {
-        // Si no existe, agregar nuevo item
-        const newItem = {
-          id: product.id,
-          name: product.name,
-          price: product.salePrice || product.price,
-          quantity: 1,
-          image: product.image
+      try {
+        this.checkoutOrderItems = checkoutData.items.map(item => ({
+          name: item.name || 'Producto sin nombre',
+          quantity: item.quantity || 1,
+          price: item.price || 0,
+          image: item.image || ''
+        }));
+        
+        const subtotal = checkoutData.totals?.subtotal || 0;
+        const tax = checkoutData.totals?.taxes || (subtotal * 0.16);
+        const total = checkoutData.totals?.total || (subtotal + tax);
+        
+        this.checkoutTotals = {
+          subtotal: subtotal,
+          tax: tax,
+          total: total
         };
-        this.cartItems = [...this.cartItems, newItem];
+      } catch (error) {
+        console.error('Error en prepareCheckoutData:', error);
+        throw error;
       }
-      
-      this.showNotification(`${product.name} agregado al carrito`);
-    },
-    handleAddToCartFromProducts(product) {
-      // Buscar si el producto ya está en el carrito
-      const existingItem = this.cartItems.find(item => item.id === product.id);
-      
-      if (existingItem) {
-        // Si existe, incrementar cantidad
-        const updatedItems = this.cartItems.map(item => 
-          item.id === product.id 
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-        this.cartItems = updatedItems;
-      } else {
-        // Si no existe, agregar nuevo item
-        const newItem = {
-          id: product.id,
-          name: product.name,
-          price: product.price || product.originalPrice || product.salePrice,
-          quantity: 1,
-          image: product.image
-        };
-        this.cartItems = [...this.cartItems, newItem];
-      }
-      
-      this.showNotification(`${product.name} agregado al carrito`);
-    },
-    handleSearch(query) {
-      console.log('Buscando:', query);
-      // Aquí puedes implementar la lógica de búsqueda
-    },
-    handleSubscribeNewsletter(email) {
-      console.log('Suscribiendo email:', email);
-      this.showNotification('¡Gracias por suscribirte!');
     },
     handleCompleteOrder(orderData) {
-      console.log('Orden completada:', orderData);
+      const invoiceNumber = 'INV-' + Date.now();
+      const invoiceDate = new Date().toLocaleDateString('es-CO');
       
-      // Preparar datos para la factura
-      this.prepareReceiptData(orderData);
-      
-      // Cambiar a la vista de factura
-      this.currentView = 'receipt';
-      
-      this.showNotification('¡Pedido realizado con éxito!');
-    },
-    prepareReceiptData(orderData) {
-      // Convertir items del checkout al formato de la factura
-      const orderItems = orderData.orderItems.map(item => ({
+      const orderItems = orderData.items.map(item => ({
         name: item.name,
         quantity: item.quantity,
         price: item.price,
-        total: item.price * item.quantity
+        subtotal: item.price * item.quantity
       }));
       
-      // Calcular totales
-      const subtotal = orderData.totals.subtotal;
-      const discount = orderData.totals.discount || 0;
-      const tax = orderData.totals.tax || (subtotal * 0.19);
-      const total = orderData.totals.total;
+      const subtotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
+      const discount = orderData.discount || 0;
+      const tax = (subtotal - discount) * 0.16;
+      const total = subtotal - discount + tax;
       
-      // Generar número de factura
-      const invoiceNumber = 'FAC-B-' + new Date().getTime().toString().slice(-8);
-      const invoiceDate = new Date().toLocaleDateString('es-CO');
-      
-      // Preparar datos de la factura
       this.receiptData = {
         invoiceData: {
           number: invoiceNumber,
@@ -390,8 +256,8 @@ export default {
         },
         customerData: {
           name: orderData.billingInfo.fullName || 'Cliente',
-          id: '1.059.885.432', // Esto debería venir del usuario logueado
-          email: 'cliente@email.com', // Esto debería venir del usuario logueado
+          id: '1.059.885.432',
+          email: 'cliente@email.com',
           address: orderData.billingInfo.address || 'No especificada'
         },
         orderItems: orderItems,
@@ -412,6 +278,34 @@ export default {
           address: orderData.billingInfo.address || 'No especificada'
         }
       };
+      
+      this.$router.push('/factura');
+    },
+    handleSelectProduct(product) {
+      const productWithDetails = {
+        ...product,
+        sku: product.sku || `PROD-${product.id}`,
+        rating: product.rating || 4,
+        reviewCount: product.reviewCount || 0,
+        description: product.description || 'Descripción del producto',
+        features: product.features || [
+          'Alta calidad',
+          'Diseño moderno',
+          'Garantía incluida'
+        ],
+        mainImage: product.image || product.mainImage,
+        gallery: product.gallery || [
+          product.image,
+          product.image,
+          product.image,
+          product.image
+        ],
+        originalPrice: product.originalPrice || null,
+        discount: product.discount || null
+      };
+      
+      this.selectedProduct = productWithDetails;
+      this.$router.push({ name: 'ProductDetails', params: { id: product.id } });
     },
     getPaymentMethodName(payment) {
       const methods = {
@@ -438,7 +332,7 @@ export default {
       } else if (shipping === 'standard') {
         daysToAdd = 5;
       } else {
-        daysToAdd = 0; // Recogida en tienda
+        daysToAdd = 0;
       }
       
       const deliveryDate = new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
@@ -461,67 +355,24 @@ export default {
 </script>
 
 <style scoped>
-/* Pega aquí el bloque de estilos (media queries, etc.) que estaba al final del archivo original */
 @media print {
-body {
-margin: 0;
-padding: 0;
-}
-.max-w-4xl {
-max-width: 100%;
-margin: 0;
-padding: 0;
-}
-.bg-gray-100 {
-background: white !important;
-}
-.shadow-lg {
-box-shadow: none !important;
-}
-button {
-display: none !important;
-}
-}
-/* Receipt specific styles */
-.receipt-container {
-background: white;
-}
-/* Table styles for better readability */
-table {
-border-collapse: collapse;
-}
-table th,
-table td {
-border: 1px solid #e5e5e5;
-}
-/* Hover effects for better UX */
-tr:hover {
-background-color: #f9f9f9;
-}
-/* Responsive design */
-@media (max-width: 768px) {
-.grid-cols-2 {
-grid-template-columns: 1fr;
-}
-.text-3xl {
-font-size: 1.5rem;
-}
-.text-2xl {
-font-size: 1.25rem;
-}
-.space-x-4 {
-flex-direction: column;
-align-items: flex-start;
-}
-.space-x-4 > * {
-margin-right: 0 !important;
-margin-bottom: 0.5rem;
-}
-.overflow-x-auto {
-overflow-x: scroll;
-}
-table {
-min-width: 600px;
-}
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  .max-w-4xl {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .bg-gray-100 {
+    background: white !important;
+  }
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+  button {
+    display: none !important;
+  }
 }
 </style>

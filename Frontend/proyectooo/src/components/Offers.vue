@@ -4,7 +4,6 @@
     <OffersHeader 
       :cartCount="cartCount"
       @search="handleSearch"
-      @go-to-cart="$emit('go-to-cart')"
     />
     
     <!-- Hero Banner -->
@@ -25,12 +24,14 @@
       <FeaturedOffers
         :featuredOffers="featuredOffers"
         @add-to-cart="handleAddToCart"
+        @select-product="handleSelectProduct"
       />
       
       <!-- All Offers Grid -->
       <AllOffers
         :filteredProducts="filteredProducts"
         @add-to-cart="handleAddToCart"
+        @select-product="handleSelectProduct"
       />
       
       <!-- Newsletter Section -->
@@ -66,12 +67,7 @@ export default {
     OffersNewsletter,
     OffersFooter
   },
-  props: {
-    cartCount: {
-      type: Number,
-      default: 0
-    }
-  },
+  inject: ['totalCartItems', 'addToCart', 'selectProduct'],
   data() {
     return {
       selectedCategory: 'all',
@@ -202,6 +198,9 @@ export default {
     }
   },
   computed: {
+    cartCount() {
+      return this.totalCartItems || 0;
+    },
     filteredProducts() {
       let filtered = this.products;
       
@@ -230,8 +229,14 @@ export default {
       this.sortBy = sortValue;
     },
     handleAddToCart(product) {
-      console.log('Adding to cart:', product.name);
-      this.$emit('add-to-cart', product);
+      if (this.addToCart) {
+        this.addToCart(product);
+      }
+    },
+    handleSelectProduct(product) {
+      if (this.selectProduct) {
+        this.selectProduct(product);
+      }
     },
     handleSearch(query) {
       console.log('Searching for:', query);

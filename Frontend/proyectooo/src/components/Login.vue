@@ -43,16 +43,14 @@ export default {
   },
   methods: {
     goToHome() {
-      this.$emit('go-to-home');
+      this.$router.push('/');
     },
     handleNavigate(route) {
-      console.log('Navegar a:', route);
-      // Si navega a home, emitir evento
       if (route === 'home') {
-        this.goToHome();
+        this.$router.push('/');
+      } else {
+        this.$router.push(`/${route}`);
       }
-      // Implementar navegación con Vue Router
-      // this.$router.push(`/${route}`);
     },
     handleShowAccountInfo() {
       console.log('Mostrar información de cuenta');
@@ -68,15 +66,11 @@ export default {
       // Implementar redirección según el destino
       // this.$router.push(`/${destination}`);
     },
-    handleGoToRegister(type) {
-      console.log('Ir a registro:', type);
-      // Implementar navegación a página de registro
-      // this.$router.push(`/register?type=${type}`);
+    handleGoToRegister() {
+      this.$router.push('/registro');
     },
     handleForgotPassword() {
-      console.log('Olvidé mi contraseña');
-      // Implementar navegación a página de recuperación de contraseña
-      // this.$router.push('/forgot-password');
+      this.$router.push('/recuperar-contraseña');
     },
     handleUserTypeChanged(type) {
       console.log('Tipo de usuario cambiado:', type);

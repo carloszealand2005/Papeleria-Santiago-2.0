@@ -3,7 +3,7 @@
     <!-- Botón para volver al inicio -->
     <div class="max-w-4xl mx-auto px-4 pt-4">
       <button 
-        @click="$emit('go-home')"
+        @click="goToHome"
         class="text-blue-600 hover:text-blue-700 font-medium transition-colors cursor-pointer mb-4"
       >
         <i class="fas fa-arrow-left mr-2"></i>Volver al inicio
@@ -65,79 +65,52 @@ export default {
     ReceiptFooter,
     ReceiptActions
   },
-  props: {
-    invoiceData: {
-      type: Object,
-      default: () => ({
+  inject: ['receiptData'],
+  computed: {
+    invoiceData() {
+      return this.receiptData?.invoiceData || {
         number: 'FAC-B-20251126',
-        date: '26/11/2024'
-      })
+        date: new Date().toLocaleDateString('es-CO')
+      };
     },
-    customerData: {
-      type: Object,
-      default: () => ({
-        name: 'Aarón Robles',
+    customerData() {
+      return this.receiptData?.customerData || {
+        name: 'Cliente',
         id: '1.059.885.432',
-        email: 'aaron75@gmail.com',
-        address: 'El león'
-      })
+        email: 'cliente@email.com',
+        address: 'No especificada'
+      };
     },
-    orderItems: {
-      type: Array,
-      default: () => [
-        {
-          name: 'Goma en gel',
-          quantity: 10,
-          price: 1.50,
-          total: 15.00
-        },
-        {
-          name: 'Cuaderno universitario',
-          quantity: 5,
-          price: 3.20,
-          total: 16.00
-        },
-        {
-          name: 'Bolígrafo BIC azul',
-          quantity: 20,
-          price: 0.80,
-          total: 16.00
-        },
-        {
-          name: 'Resma papel bond A4',
-          quantity: 2,
-          price: 12.50,
-          total: 25.00
-        }
-      ]
+    orderItems() {
+      return this.receiptData?.orderItems || [];
     },
-    totals: {
-      type: Object,
-      default: () => ({
-        subtotal: 72.00,
-        discount: 0.00,
-        tax: 13.68,
-        total: 85.68
-      })
+    totals() {
+      return this.receiptData?.totals || {
+        subtotal: 0,
+        discount: 0,
+        tax: 0,
+        total: 0
+      };
     },
-    paymentInfo: {
-      type: Object,
-      default: () => ({
+    paymentInfo() {
+      return this.receiptData?.paymentInfo || {
         method: 'Tarjeta de Crédito',
         status: 'Pagado',
         reference: 'TXN-789456123'
-      })
+      };
     },
-    deliveryInfo: {
-      type: Object,
-      default: () => ({
+    deliveryInfo() {
+      return this.receiptData?.deliveryInfo || {
         type: 'Domicilio',
-        date: '28/11/2024',
-        address: 'El león - Calle 45 #12-34'
-      })
+        date: new Date().toLocaleDateString('es-CO'),
+        address: 'No especificada'
+      };
     }
   },
   methods: {
+    goToHome() {
+      this.$router.push('/');
+    },
     handlePrint() {
       // La lógica de impresión ya está en ReceiptActions
       this.showNotification('Imprimiendo comprobante...');

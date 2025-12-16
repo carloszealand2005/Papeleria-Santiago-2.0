@@ -21,7 +21,7 @@
           class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100"
         >
           <!-- Product Image -->
-          <div class="relative h-56 overflow-hidden bg-slate-50">
+          <div class="relative h-56 overflow-hidden bg-slate-50 cursor-pointer" @click="viewProduct(product)">
             <img 
               :src="product.image" 
               :alt="product.name" 
@@ -55,7 +55,7 @@
           <!-- Product Info -->
           <div class="p-5">
             <div class="mb-3">
-              <h3 class="font-semibold text-slate-900 text-lg mb-1 group-hover:text-blue-600 transition-colors">
+              <h3 class="font-semibold text-slate-900 text-lg mb-1 group-hover:text-blue-600 transition-colors cursor-pointer" @click="viewProduct(product)">
                 {{ product.name }}
               </h3>
               <p class="text-slate-600 text-sm">{{ product.category }}</p>
@@ -98,9 +98,11 @@ export default {
       console.log('Agregar al carrito:', product);
       this.$emit('add-to-cart', product);
     },
+    viewProduct(product) {
+      this.$emit('select-product', product);
+    },
     viewAllProducts() {
-      console.log('Ver todos los productos');
-      this.$emit('view-all-products');
+      this.$router.push('/productos');
     }
   }
 }

@@ -24,7 +24,6 @@ npm install axios
 
 ### 3. Ejecutar el servidor de desarrollo
 ```bash
-npm run serve
 ```
 
 El proyecto estará disponible en `http://localhost:8080` (o el puerto que indique la consola)

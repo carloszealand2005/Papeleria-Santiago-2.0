@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Header -->
-    <CheckoutHeader @go-home="$emit('go-home')" />
+    <CheckoutHeader />
     
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-6 py-8">
@@ -61,7 +61,7 @@
     </div>
     
     <!-- Security Footer -->
-    <CheckoutFooter @navigate="handleNavigate" />
+    <CheckoutFooter />
   </div>
 </template>
 
@@ -83,38 +83,23 @@ export default {
     PaymentMethod,
     CheckoutFooter
   },
-  props: {
-    orderItems: {
-      type: Array,
-      default: () => [
-        {
-          name: 'Cuaderno Profesional A4',
-          quantity: 2,
-          price: 120.00,
-          image: 'https://readdy.ai/api/search-image?query=modern%20office%20notebook%20with%20spiral%20binding%20on%20clean%20white%20background%20minimalist%20product%20photography%20studio%20lighting%20professional%20commercial%20style&width=80&height=80&seq=001&orientation=squarish'
-        },
-        {
-          name: 'Set de Plumas Gel',
-          quantity: 1,
-          price: 85.00,
-          image: 'https://readdy.ai/api/search-image?query=set%20of%20colorful%20gel%20pens%20arranged%20neatly%20on%20white%20background%20professional%20product%20photography%20clean%20minimalist%20style%20office%20supplies&width=80&height=80&seq=002&orientation=squarish'
-        },
-        {
-          name: 'Marcadores Fluorescentes',
-          quantity: 1,
-          price: 65.00,
-          image: 'https://readdy.ai/api/search-image?query=yellow%20highlighter%20markers%20set%20on%20clean%20white%20background%20professional%20product%20photography%20minimalist%20style%20office%20supplies%20commercial%20lighting&width=80&height=80&seq=003&orientation=squarish'
+  inject: ['checkoutOrderItems', 'checkoutTotals', 'completeOrderHandler'],
+  mounted() {
+    // Validar que haya datos de checkout antes de mostrar la página
+    this.$nextTick(() => {
+      try {
+        const hasOrderItems = (this.checkoutOrderItems && this.checkoutOrderItems.length > 0) ||
+                              (this.orderItems && this.orderItems.length > 0);
+        
+        if (!hasOrderItems) {
+          console.warn('No hay items en el checkout, redirigiendo al carrito');
+          this.$router.push('/carrito');
         }
-      ]
-    },
-    totals: {
-      type: Object,
-      default: () => ({
-        subtotal: 270.00,
-        tax: 43.20,
-        total: 313.20
-      })
-    }
+      } catch (error) {
+        console.error('Error en mounted de Checkout:', error);
+        this.$router.push('/carrito');
+      }
+    });
   },
   data() {
     return {
@@ -136,6 +121,30 @@ export default {
     }
   },
   computed: {
+    orderItems() {
+      try {
+        return this.checkoutOrderItems || [];
+      } catch (error) {
+        console.error('Error al obtener orderItems:', error);
+        return [];
+      }
+    },
+    totals() {
+      try {
+        return this.checkoutTotals || {
+          subtotal: 0,
+          tax: 0,
+          total: 0
+        };
+      } catch (error) {
+        console.error('Error al obtener totals:', error);
+        return {
+          subtotal: 0,
+          tax: 0,
+          total: 0
+        };
+      }
+    },
     shippingCost() {
       if (this.selectedShipping === 'express') {
         return 50.00;
@@ -159,7 +168,7 @@ export default {
       this.cardInfo = cardInfo;
     },
     goBack() {
-      this.$emit('go-back');
+      this.$router.push('/carrito');
     },
     completeOrder() {
       if (this.validateForm()) {
@@ -169,14 +178,18 @@ export default {
           shippingCost: this.shippingCost,
           payment: this.selectedPayment,
           cardInfo: this.selectedPayment === 'card' ? this.cardInfo : null,
-          orderItems: this.orderItems,
+          items: this.orderItems,
           totals: {
             ...this.totals,
             shipping: this.shippingCost,
             total: this.totals.total + this.shippingCost
           }
         };
-        this.$emit('complete-order', orderData);
+        if (this.completeOrderHandler) {
+          this.completeOrderHandler(orderData);
+        }
+        // Navegar a la factura después de completar la orden
+        this.$router.push('/factura');
       }
     },
     validateForm() {
@@ -191,9 +204,6 @@ export default {
         }
       }
       return true;
-    },
-    handleNavigate(route) {
-      this.$emit('navigate', route);
     }
   }
 }

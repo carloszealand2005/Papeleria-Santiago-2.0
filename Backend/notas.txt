@@ -11,6 +11,9 @@ Este paso se hace primero, estando en la raíz Backend.
 python -m venv env
 Explicación: Esto creará una carpeta llamada env directamente dentro de la carpeta Backend (ej. C:\Users\V I C T U S\OneDrive\Desktop\Papeleria Santiago\Backend\env). El .gitignore ya está configurado para ignorar esta carpeta.
 
+// da permisos para activar el entorno virtual de python
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
 3. Activar el Entorno Virtual:
 Ahora activan el entorno virtual desde la raíz Backend.
 Para Usuarios de PowerShell (Windows):
@@ -25,6 +28,10 @@ Explicación: Después de activar el entorno, verán (env) o un nombre similar a
 Estando aún en la raíz Backend, instalarán las dependencias.
 pip install -r requirements.txt
 pip install xhtml2pdf Pillow
+pip install Django==5.2.8
+pip install djangorestframework==3.16.1
+pip install django-cors-headers==4.9.0
+pip install django-filter
 Explicación: Esto instalará todas las librerías de Python listadas en requirements.txt dentro de su entorno virtual.
 
 5. Navegar a la Carpeta papeleria_santiago:

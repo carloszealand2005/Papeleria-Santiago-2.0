@@ -79,23 +79,19 @@ export default {
       }
     },
     goToCart() {
-      console.log('Ir al carrito');
-      // Navegar al carrito
-      this.$emit('go-to-cart');
+      this.$router.push('/carrito');
     },
     goToLogin() {
-      console.log('Ir al login');
-      // Emitir evento para cambiar a la vista de login
-      this.$emit('go-to-login');
+      this.$router.push('/login');
     },
     goToHome() {
-      this.$emit('go-to-home');
+      this.$router.push('/');
     },
     goToProducts() {
-      this.$emit('go-to-products');
+      this.$router.push('/productos');
     },
     goToOffers() {
-      this.$emit('go-to-offers');
+      this.$router.push('/ofertas');
     }
   }
 }
