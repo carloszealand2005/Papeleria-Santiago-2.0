@@ -92,6 +92,10 @@ En el sistema actual (Dobra) se manejan roles como administrador y personas enca
 Se debe actualizar el stock de forma manual cada vez que se compra un producto 
 
 
+ANYTIME TO MIGRATE:
+python manage.py makemigrations
+python manage.py migrate
+
 ---------------
 Comandos
 .\env\Scripts\activate  -> Activar entorno virtual
@@ -118,3 +122,55 @@ http://127.0.0.1:8000/pedidos/<int:pedido_id>/comprobante/pdf/
 ERRORES COMUNES AL INSTALAR:
 Puede que reportlab de error después de ejecutar requirements.txt con la instalación
 Dado el caso, ejecutar:     pip install xhtml2pdf Pillow
+
+
+URL_ENDPOINTS @views.py
+
+
+/api/productos/
+
+http://127.0.0.1:8000/api/productos/?search=goma (search in nombre, marca, descripción)
+http://127.0.0.1:8000/api/productos/?categoria=oficina 
+http://127.0.0.1:8000/api/productos/?marca=pelikan
+
+
+http://127.0.0.1:8000/api/productos/?ordering=nombre (Orden ascendente)
+http://127.0.0.1:8000/api/productos/?ordering=-pvp (Orden descendente)
+
+http://127.0.0.1:8000/api/productos/?precio_min=10.00
+http://127.0.0.1:8000/api/productos/?precio_max=50.00
+
+
+http://127.0.0.1:8000/api/productos/?precio_min=10.00&precio_max=50.00
+
+
+DETALLE CARRITO:
+
+POST -> http://127.0.0.1:8000/api/carritos/id_carrito/detalles/ (ADD NEW ITEM TO CART)
+BODY: {"producto_sku": "110530", "cantidad": 100} (IT UPDATES, NOT SUMS)
+
+
+GET -> /api/carritos/{carrito_pk}/detalles/ (ALL DETAILS OF A CART)
+
+
+DELETE -> http://127.0.0.1:8000/api/carritos/id_carrito/detalles/SKU/
+BODY: NOT REQUIRED. 
+
+GET -> /api/productos/destacados/ (FIRST 50)
+
+GET -> /api/productos/destacados/?limite=X (ADD LIMIT)
+
+POST -> http://127.0.0.1:8000/api/carritos/{id_carrito}/pagar/ (Finish a car payment)
+
+DRAFTS:
+pip install drf-nested-routers
+
+El total_vendidos de producto se sumará al momento de crear un detallepedido
+Tener en cuenta que pedido tiene estados. Se debe simplificar ya que un pedido representa un pago hecho;
+El carrito es el que tiene estados I.E: Activo, Inactivo, Pagado 
+
+
+TODO: 
+- VERIFICAR QUE AL PAGAR UN CARRITO TENGA ALGÚN ITEM CARRITO ASOCIADO / RECHAZAR CASO CONTRARIO 
+- VERIFICAR EL STOCK AL MOMENTO DE INTENTAR HACER UNA PETICIÓN DE AÑADIR AL CARRITO
+- VERIFICAR QUE SOLO PUEDA EXISTIR 1 SOLA REFERENCIA DE PRECIO/INVENTARIO A UN PRODUCTO ESPECÍFICO
