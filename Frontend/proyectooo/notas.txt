@@ -1,0 +1,5 @@
+Errores:
+Avoided redundant navigation to current location: "/". 
+No hacer nada cuándo se navega a la misma location 
+
+

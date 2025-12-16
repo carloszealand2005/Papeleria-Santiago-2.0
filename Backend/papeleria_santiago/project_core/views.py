@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
-from .models import Comprobante, Pedido, Producto, Carrito, DetalleCarrito, Cliente, DetallePedido # Importamos DetallePedido
+from .models import Comprobante, Pedido, Producto, Carrito, DetalleCarrito, Cliente, DetallePedido, Inventario # Importamos DetallePedido e Inventario
 from rest_framework import viewsets, filters, status # Importar filters y status
 from rest_framework.decorators import action # Importar action
 from django_filters.rest_framework import DjangoFilterBackend # Importar DjangoFilterBackend
@@ -59,7 +59,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter] # Añadir backends de filtro y búsqueda
-    filterset_fields = ['categoria', 'marca'] # Filtrar por categoría y marca
+    filterset_fields = ['categoria', 'marca', 'SKU'] # Filtrar por categoría, marca y SKU
     search_fields = ['nombre', 'descripcion', 'SKU', 'codigo_barras'] # Campos para búsqueda de texto
     ordering_fields = ['SKU', 'nombre', 'pvp', 'pvm'] # Campos para ordenar resultados
 
@@ -204,16 +204,50 @@ class DetalleCarritoViewSet(viewsets.ModelViewSet):
         except Producto.DoesNotExist:
             return Response({'error': 'Producto no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
         
-        detalle_carrito, created = DetalleCarrito.objects.get_or_create(
-            carrito=carrito,
-            producto=producto,
-            defaults={'cantidad': cantidad}
-        )
+        # Validación de stock
+        try:
+            inventario = producto.inventario # Asumiendo related_name 'inventario' en Producto a Inventario
+        except Inventario.DoesNotExist:
+            return Response({'error': 'Producto sin registro de inventario.'}, status=status.HTTP_404_NOT_FOUND)
 
-        if not created:
-            # Si el DetalleCarrito ya existe, actualizamos la cantidad (no sumamos)
-            detalle_carrito.cantidad = cantidad
-            detalle_carrito.save()
+        # Buscar si el DetalleCarrito ya existe para este producto en este carrito
+        try:
+            detalle_carrito_existente = DetalleCarrito.objects.get(
+                carrito=carrito,
+                producto=producto
+            )
+            cantidad_previa = detalle_carrito_existente.cantidad
+            
+            # Validar el cambio de cantidad
+            cambio_stock = cantidad - cantidad_previa
+            if inventario.stock - cambio_stock < 0:
+                return Response(
+                    {'error': f'No hay suficiente stock para el producto {producto.nombre}. Stock disponible: {inventario.stock + cantidad_previa} (ya tienes {cantidad_previa} en el carrito)'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Actualizar el DetalleCarrito existente
+            detalle_carrito_existente.cantidad = cantidad
+            detalle_carrito_existente.save()
+            inventario.stock -= cambio_stock # Restar el cambio neto del stock
+            inventario.save()
+            detalle_carrito = detalle_carrito_existente
+            created = False
+        except DetalleCarrito.DoesNotExist:
+            # Si el DetalleCarrito no existe, es un nuevo item en el carrito
+            if inventario.stock - cantidad < 0:
+                 return Response(
+                    {'error': f'No hay suficiente stock para el producto {producto.nombre}. Stock disponible: {inventario.stock}'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            detalle_carrito = DetalleCarrito.objects.create(
+                carrito=carrito,
+                producto=producto,
+                cantidad=cantidad
+            )
+            inventario.stock -= cantidad # Restar la cantidad completa del stock
+            inventario.save()
+            created = True
 
         serializer = self.get_serializer(detalle_carrito)
         return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
@@ -230,6 +264,16 @@ class DetalleCarritoViewSet(viewsets.ModelViewSet):
         except DetalleCarrito.DoesNotExist:
             return Response({'error': 'Detalle de carrito no encontrado con ese producto.'}, status=status.HTTP_404_NOT_FOUND)
         
+        # Antes de eliminar el DetalleCarrito, devolver la cantidad al stock
+        producto = detalle_carrito.producto
+        try:
+            inventario = producto.inventario
+            inventario.stock += detalle_carrito.cantidad
+            inventario.save()
+        except Inventario.DoesNotExist:
+            # Si no hay inventario, se registra o se maneja como un error, pero no bloquea la eliminación del detalle
+            print(f"Advertencia: Producto {producto.SKU} sin registro de inventario al eliminar detalle.")
+
         self.perform_destroy(detalle_carrito)
         return Response(status=status.HTTP_204_NO_CONTENT)
 

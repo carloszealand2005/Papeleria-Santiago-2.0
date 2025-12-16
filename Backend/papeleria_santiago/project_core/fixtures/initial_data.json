@@ -1,0 +1,416 @@
+[
+    {
+      "model": "project_core.categoria",
+      "pk": 1,
+      "fields": {
+        "nombre_categoria": "Oficina",
+        "descripcion_categoria": "Artículos para uso en oficinas."
+      }
+    },
+    {
+      "model": "project_core.categoria",
+      "pk": 2,
+      "fields": {
+        "nombre_categoria": "Escolar",
+        "descripcion_categoria": "Materiales para estudiantes."
+      }
+    },
+    {
+      "model": "project_core.subcategoria",
+      "pk": 1,
+      "fields": {
+        "nombre_subcategoria": "Papelería",
+        "descripcion_categoria": "Productos de papel y escritura.",
+        "categoria": 1
+      }
+    },
+    {
+      "model": "project_core.subcategoria",
+      "pk": 2,
+      "fields": {
+        "nombre_subcategoria": "Escritura",
+        "descripcion_categoria": "Instrumentos para escribir.",
+        "categoria": 1
+      }
+    },
+    {
+      "model": "project_core.subcategoria",
+      "pk": 3,
+      "fields": {
+        "nombre_subcategoria": "Manualidades",
+        "descripcion_categoria": "Materiales para proyectos artísticos.",
+        "categoria": 2
+      }
+    },
+    {
+      "model": "project_core.variante",
+      "pk": 1,
+      "fields": {
+        "nombre_variante": "Tamaño Carta",
+        "descripcion_variante": "Para documentos estándar.",
+        "subcategoria": 1
+      }
+    },
+    {
+      "model": "project_core.variante",
+      "pk": 2,
+      "fields": {
+        "nombre_variante": "Tamaño Oficio",
+        "descripcion_variante": "Para documentos legales.",
+        "subcategoria": 1
+      }
+    },
+    {
+      "model": "project_core.variante",
+      "pk": 3,
+      "fields": {
+        "nombre_variante": "Color Azul",
+        "descripcion_variante": "Tinta azul estándar.",
+        "subcategoria": 2
+      }
+    },
+    {
+      "model": "project_core.variante",
+      "pk": 4,
+      "fields": {
+        "nombre_variante": "Color Negro",
+        "descripcion_variante": "Tinta negra estándar.",
+        "subcategoria": 2
+      }
+    },
+    {
+      "model": "project_core.variante",
+      "pk": 5,
+      "fields": {
+        "nombre_variante": "Metálico",
+        "descripcion_variante": "Acabado brillante, ideal para decoración.",
+        "subcategoria": 3
+      }
+    },
+    {
+      "model": "project_core.variante",
+      "pk": 6,
+      "fields": {
+        "nombre_variante": "Plástico",
+        "descripcion_variante": "Material duradero y ligero.",
+        "subcategoria": 3
+      }
+    },
+    {
+      "model": "project_core.producto",
+      "pk": "CUA001",
+      "fields": {
+        "codigo_barras": "789123456001",
+        "nombre": "Cuaderno Profesional",
+        "descripcion": "Cuaderno tamaño carta de 100 hojas, tapa dura.",
+        "marca": "PaperMax",
+        "categoria": 1,
+        "subcategoria": 1,
+        "variante": 1,
+        "total_vendidos": 120,
+        "imagen_url": "http://example.com/cuaderno_pro.jpg",
+        "imagen_url2": null,
+        "imagen_url3": null,
+        "imagen_url4": null,
+        "caracteristica1": "100 hojas",
+        "caracteristica2": "Tapa dura",
+        "caracteristica3": "Rayado",
+        "caracteristica4": null,
+        "caracteristica5": null
+      }
+    },
+    {
+      "model": "project_core.precio",
+      "pk": 1,
+      "fields": {
+        "producto": "CUA001",
+        "pvp": "8.50",
+        "pvm": "6.00",
+        "iva": "19.00"
+      }
+    },
+    {
+      "model": "project_core.inventario",
+      "pk": 1,
+      "fields": {
+        "producto": "CUA001",
+        "stock": 150,
+        "ubicacion_bodega": "Aisle 1, Shelf 3"
+      }
+    },
+    {
+      "model": "project_core.producto",
+      "pk": "BOL002",
+      "fields": {
+        "codigo_barras": "789123456002",
+        "nombre": "Bolígrafo Retráctil",
+        "descripcion": "Bolígrafo de gel con punta fina.",
+        "marca": "GelWrite",
+        "categoria": 1,
+        "subcategoria": 2,
+        "variante": 3,
+        "total_vendidos": 250,
+        "imagen_url": "http://example.com/boligrafo_azul.jpg",
+        "imagen_url2": null,
+        "imagen_url3": null,
+        "imagen_url4": null,
+        "caracteristica1": "Punta 0.5mm",
+        "caracteristica2": "Tinta gel",
+        "caracteristica3": null,
+        "caracteristica4": null,
+        "caracteristica5": null
+      }
+    },
+    {
+      "model": "project_core.precio",
+      "pk": 2,
+      "fields": {
+        "producto": "BOL002",
+        "pvp": "2.15",
+        "pvm": "1.50",
+        "iva": "19.00"
+      }
+    },
+    {
+      "model": "project_core.inventario",
+      "pk": 2,
+      "fields": {
+        "producto": "BOL002",
+        "stock": 500,
+        "ubicacion_bodega": "Aisle 2, Bin 1"
+      }
+    },
+    {
+      "model": "project_core.producto",
+      "pk": "RES003",
+      "fields": {
+        "codigo_barras": "789123456003",
+        "nombre": "Resaltador Fluorescente",
+        "descripcion": "Resaltador de tinta brillante para documentos.",
+        "marca": "HighlightPro",
+        "categoria": 1,
+        "subcategoria": 2,
+        "variante": 3,
+        "total_vendidos": 300,
+        "imagen_url": null,
+        "imagen_url2": null,
+        "imagen_url3": null,
+        "imagen_url4": null,
+        "caracteristica1": "Punta biselada",
+        "caracteristica2": "Color amarillo",
+        "caracteristica3": null,
+        "caracteristica4": null,
+        "caracteristica5": null
+      }
+    },
+    {
+      "model": "project_core.precio",
+      "pk": 3,
+      "fields": {
+        "producto": "RES003",
+        "pvp": "1.75",
+        "pvm": "1.00",
+        "iva": "19.00"
+      }
+    },
+    {
+      "model": "project_core.inventario",
+      "pk": 3,
+      "fields": {
+        "producto": "RES003",
+        "stock": 350,
+        "ubicacion_bodega": "Aisle 2, Bin 5"
+      }
+    },
+    {
+      "model": "project_core.producto",
+      "pk": "ENG004",
+      "fields": {
+        "codigo_barras": "789123456004",
+        "nombre": "Engrapadora de Oficina",
+        "descripcion": "Engrapadora de metal para uso pesado.",
+        "marca": "StrongHold",
+        "categoria": 1,
+        "subcategoria": 1,
+        "variante": 2,
+        "total_vendidos": 80,
+        "imagen_url": null,
+        "imagen_url2": null,
+        "imagen_url3": null,
+        "imagen_url4": null,
+        "caracteristica1": "Capacidad 20 hojas",
+        "caracteristica2": "Estructura metálica",
+        "caracteristica3": null,
+        "caracteristica4": null,
+        "caracteristica5": null
+      }
+    },
+    {
+      "model": "project_core.precio",
+      "pk": 4,
+      "fields": {
+        "producto": "ENG004",
+        "pvp": "12.00",
+        "pvm": "9.50",
+        "iva": "19.00"
+      }
+    },
+    {
+      "model": "project_core.inventario",
+      "pk": 4,
+      "fields": {
+        "producto": "ENG004",
+        "stock": 70,
+        "ubicacion_bodega": "Aisle 3, Shelf 1"
+      }
+    },
+    {
+      "model": "project_core.producto",
+      "pk": "PEG005",
+      "fields": {
+        "codigo_barras": "789123456005",
+        "nombre": "Pegamento Líquido",
+        "descripcion": "Pegamento multiusos para papel y cartón.",
+        "marca": "Adherix",
+        "categoria": 2,
+        "subcategoria": 3,
+        "variante": 6,
+        "total_vendidos": 400,
+        "imagen_url": null,
+        "imagen_url2": null,
+        "imagen_url3": null,
+        "imagen_url4": null,
+        "caracteristica1": "200 ml",
+        "caracteristica2": "Secado rápido",
+        "caracteristica3": "No tóxico",
+        "caracteristica4": null,
+        "caracteristica5": null
+      }
+    },
+    {
+      "model": "project_core.precio",
+      "pk": 5,
+      "fields": {
+        "producto": "PEG005",
+        "pvp": "3.20",
+        "pvm": "2.50",
+        "iva": "19.00"
+      }
+    },
+    {
+      "model": "project_core.inventario",
+      "pk": 5,
+      "fields": {
+        "producto": "PEG005",
+        "stock": 280,
+        "ubicacion_bodega": "Aisle 4, Bin 2"
+      }
+    },
+    {
+      "model": "project_core.producto",
+      "pk": "TIJ006",
+      "fields": {
+        "codigo_barras": "789123456006",
+        "nombre": "Tijeras Escolares",
+        "descripcion": "Tijeras de seguridad con punta roma para niños.",
+        "marca": "SafeCut",
+        "categoria": 2,
+        "subcategoria": 3,
+        "variante": 6,
+        "total_vendidos": 180,
+        "imagen_url": null,
+        "imagen_url2": null,
+        "imagen_url3": null,
+        "imagen_url4": null,
+        "caracteristica1": "Punta roma",
+        "caracteristica2": "Mango ergonómico",
+        "caracteristica3": "Acero inoxidable",
+        "caracteristica4": null,
+        "caracteristica5": null
+      }
+    },
+    {
+      "model": "project_core.precio",
+      "pk": 6,
+      "fields": {
+        "producto": "TIJ006",
+        "pvp": "4.50",
+        "pvm": "3.20",
+        "iva": "19.00"
+      }
+    },
+    {
+      "model": "project_core.inventario",
+      "pk": 6,
+      "fields": {
+        "producto": "TIJ006",
+        "stock": 220,
+        "ubicacion_bodega": "Aisle 4, Shelf 5"
+      }
+    },
+    {
+      "model": "project_core.producto",
+      "pk": "PEN007",
+      "fields": {
+        "codigo_barras": "789123456007",
+        "nombre": "Estuche de Lápices",
+        "descripcion": "Estuche con 12 lápices de colores variados.",
+        "marca": "ColorArt",
+        "categoria": 2,
+        "subcategoria": 2,
+        "variante": 5,
+        "total_vendidos": 210,
+        "imagen_url": null,
+        "imagen_url2": null,
+        "imagen_url3": null,
+        "imagen_url4": null,
+        "caracteristica1": "12 colores",
+        "caracteristica2": "No tóxicos",
+        "caracteristica3": "Madera de cedro",
+        "caracteristica4": null,
+        "caracteristica5": null
+      }
+    },
+    {
+      "model": "project_core.precio",
+      "pk": 7,
+      "fields": {
+        "producto": "PEN007",
+        "pvp": "6.99",
+        "pvm": "5.00",
+        "iva": "19.00"
+      }
+    },
+    {
+      "model": "project_core.inventario",
+      "pk": 7,
+      "fields": {
+        "producto": "PEN007",
+        "stock": 180,
+        "ubicacion_bodega": "Aisle 5, Bin 3"
+      }
+    },
+    {
+      "model": "project_core.cliente",
+      "pk": 1,
+      "fields": {
+        "user": null,
+        "nombre": "Juan Pérez",
+        "cedula": "1234567890",
+        "telefono": "0987654321",
+        "email": "juan.perez@example.com",
+        "direccion": "Calle Falsa 123",
+        "tipo_cliente": "Persona"
+      }
+    },
+    {
+      "model": "project_core.carrito",
+      "pk": 1,
+      "fields": {
+        "cliente": 1,
+        "fecha_creacion": "2023-01-01",
+        "fecha_actualizacion": "2023-01-01",
+        "subtotal_carrito": "0.00"
+      }
+    }
+  ]

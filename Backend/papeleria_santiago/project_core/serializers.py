@@ -5,12 +5,10 @@ from .models import Producto, Precio, Carrito, DetalleCarrito, Cliente # Importa
 # Serializador para el modelo Producto
 #------------------
 class ProductoSerializer(serializers.ModelSerializer):
-    # Para incluir campos relacionados (precio), podemos usar SerializerMethodField o anidarlos
-    # Aquí, queremos el precio de venta al público (pvp) y al por mayor (pvm) directamente.
-    # Como Precio es OneToOneField en Producto, podemos accederlo directamente.
-    # Si Precio fuera ManyToOne, necesitaríamos un campo anidado o un SerializerMethodField.
+    categoria = serializers.StringRelatedField(read_only=True)
+    subcategoria = serializers.StringRelatedField(read_only=True)
+    variante = serializers.StringRelatedField(read_only=True)
 
-    # Añadir un campo para el precio del producto
     pvp = serializers.DecimalField(max_digits=10, decimal_places=2, source='precios.pvp', read_only=True)
     pvm = serializers.DecimalField(max_digits=10, decimal_places=2, source='precios.pvm', read_only=True)
 
@@ -19,7 +17,8 @@ class ProductoSerializer(serializers.ModelSerializer):
         fields = [
             'SKU', 'codigo_barras', 'nombre', 'descripcion',
             'marca', 'categoria', 'subcategoria', 'variante',
-            'imagen_url', 'pvp', 'pvm' # Incluimos los campos de precio aquí
+            'caracteristica1', 'caracteristica2', 'caracteristica3', 'caracteristica4', 'caracteristica5',
+            'imagen_url', 'imagen_url2', 'imagen_url3', 'imagen_url4', 'pvp', 'pvm'
         ]
 
 

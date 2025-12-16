@@ -12,6 +12,30 @@ from decimal import Decimal # Necesario para cálculos precisos
 # Así mismo con un ejemplo de producto vendido
 #-----------
 
+#------
+# Tablas de categoría, subcategoría y variantes
+class Categoria(models.Model):
+    nombre_categoria = models.CharField(max_length=50)
+    descripcion_categoria = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.nombre_categoria}"
+
+class Subcategoria(models.Model):
+    nombre_subcategoria = models.CharField(max_length=50) # Fixed typo: charField -> CharField
+    descripcion_categoria = models.TextField(blank=True, null=True)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.nombre_subcategoria}"
+
+class Variante(models.Model):
+    nombre_variante = models.CharField(max_length=50)
+    descripcion_variante = models.TextField(blank=True, null=True)
+    subcategoria = models.ForeignKey(Subcategoria, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.nombre_variante}"
 
 #----------------
 # Tabla producto:
@@ -24,17 +48,26 @@ class Producto(models.Model):
     marca = models.CharField(max_length=50, blank=True, null=True)
 
 
-    categoria = models.CharField(max_length=50, blank=True, null=True)
-    subcategoria = models.CharField(max_length=50, blank=True, null=True)
-    variante = models.CharField(max_length=50, blank=True, null=True)
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, blank=True, null=True)
+    subcategoria = models.ForeignKey(Subcategoria, on_delete=models.SET_NULL, blank=True, null=True)
+    variante = models.ForeignKey(Variante, on_delete=models.SET_NULL, blank=True, null=True)
+
+    caracteristica1 = models.CharField(max_length=50, blank=True, null=True)
+    caracteristica2 = models.CharField(max_length=50, blank=True, null=True)
+    caracteristica3 = models.CharField(max_length=50, blank=True, null=True)
+    caracteristica4 = models.CharField(max_length=50, blank=True, null=True)
+    caracteristica5 = models.CharField(max_length=50, blank=True, null=True)
+
+    imagen_url = models.URLField(blank=True, null=True)
+    imagen_url2 = models.URLField(blank=True, null=True)
+    imagen_url3 = models.URLField(blank=True, null=True)
+    imagen_url4 = models.URLField(blank=True, null=True)
 
     total_vendidos = models.IntegerField(default=0)
-    imagen_url = models.URLField(blank=True, null=True)
 
 
     def __str__(self):
-        return f"{self.SKU} - {self.nombre}"
-
+        return f"{self.SKU} - {self.nombre}. Se han vendido {self.total_vendidos} unidades."
 
 #----------------
 # Tabla precio: 

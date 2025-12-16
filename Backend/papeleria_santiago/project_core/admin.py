@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
-    Cliente, FavoritosCliente, Comprobante, Producto, Pedido, Precio,
-    Inventario, DetallePedido, Transportista, Carrito, DetalleCarrito
+    Categoria, Cliente, FavoritosCliente, Comprobante, Producto, Pedido, Precio,
+    Inventario, DetallePedido, Subcategoria, Transportista, Carrito, DetalleCarrito, Variante
 )
 
 # Registra tus modelos aquí.
@@ -13,6 +13,9 @@ admin.site.register(Inventario)
 admin.site.register(DetallePedido)
 admin.site.register(DetalleCarrito)
 
+admin.site.register(Categoria)
+admin.site.register(Subcategoria)
+admin.site.register(Variante)
 
 @admin.register(FavoritosCliente)
 class FavoritosClienteAdmin(admin.ModelAdmin):

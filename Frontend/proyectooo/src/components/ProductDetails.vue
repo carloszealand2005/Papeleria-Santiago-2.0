@@ -16,6 +16,7 @@
 <script>
 import ProductDetailsHeader from './ProductDetailsHeader.vue';
 import ProductDetailsContent from './ProductDetailsContent.vue';
+import axios from 'axios';
 
 export default {
   name: 'ProductDetailsPage',
@@ -23,14 +24,10 @@ export default {
     ProductDetailsHeader,
     ProductDetailsContent
   },
-  inject: ['selectedProduct', 'addToCart', 'selectProduct'],
-  computed: {
-    product() {
-      return this.selectedProduct || this.getDefaultProduct();
-    }
-  },
+  inject: ['addToCart', 'selectProduct'],
   data() {
     return {
+      product: null, // Para almacenar los detalles del producto de la API
       relatedProducts: [
         {
           id: 2,
@@ -67,35 +64,63 @@ export default {
       ]
     };
   },
+  created() {
+    this.fetchProductDetails();
+  },
+  watch: {
+    '$route.params.id': {
+      immediate: true,
+      handler(newId) {
+        if (newId) {
+          this.fetchProductDetails();
+        }
+      }
+    }
+  },
   methods: {
-    getDefaultProduct() {
-      return {
-        id: 1,
-        name: 'Cuaderno Premium A4',
-        sku: 'CUA-001',
-        price: 24.99,
-        originalPrice: 29.99,
-        discount: 17,
-        rating: 4,
-        reviewCount: 156,
-        category: 'Cuadernos',
-        description: 'Cuaderno de alta calidad con hojas punteadas, perfecto para tomar notas, dibujar o planificar. Fabricado con materiales sostenibles y tapa dura resistente que protege el contenido.',
-        features: [
-          '120 páginas de papel de 90g/m²',
-          'Hojas punteadas para máxima versatilidad',
-          'Tapa dura resistente al desgaste',
-          'Banda elástica y marcapáginas incluido',
-          'Papel sin ácido que previene el amarillamiento',
-          'Tamaño A4 (210 x 297 mm)'
-        ],
-        mainImage: 'https://readdy.ai/api/search-image?query=Premium%20A4%20notebook%20with%20dotted%20pages%20high%20quality%20hardcover%20stationery%20office%20supplies%20clean%20white%20background%20product%20photography&width=500&height=500&seq=prod-main-001&orientation=squarish',
-        gallery: [
-          'https://readdy.ai/api/search-image?query=Premium%20A4%20notebook%20with%20dotted%20pages%20high%20quality%20hardcover%20stationery%20office%20supplies%20clean%20white%20background%20product%20photography&width=120&height=120&seq=prod-gal-001&orientation=squarish',
-          'https://readdy.ai/api/search-image?query=Premium%20A4%20notebook%20opened%20showing%20dotted%20pages%20clean%20white%20background%20product%20detail%20photography&width=120&height=120&seq=prod-gal-002&orientation=squarish',
-          'https://readdy.ai/api/search-image?query=Premium%20A4%20notebook%20back%20cover%20with%20elastic%20band%20bookmark%20clean%20white%20background%20product%20photography&width=120&height=120&seq=prod-gal-003&orientation=squarish',
-          'https://readdy.ai/api/search-image?query=Premium%20A4%20notebook%20side%20view%20showing%20thickness%20and%20quality%20binding%20clean%20white%20background%20product%20photography&width=120&height=120&seq=prod-gal-004&orientation=squarish'
-        ]
-      };
+    fetchProductDetails() {
+      const sku = this.$route.params.id;
+      if (!sku) {
+        console.error('SKU not found in route params.');
+        return;
+      }
+      axios.get(`http://127.0.0.1:8000/api/productos/?SKU=${sku}`)
+        .then(response => {
+          if (response.data && response.data.length > 0) {
+            const productData = response.data[0];
+            this.product = {
+              id: productData.SKU,
+              name: productData.nombre,
+              description: productData.descripcion,
+              price: parseFloat(productData.pvp),
+              originalPrice: parseFloat(productData.pvp), // Usamos pvp como originalPrice
+              discount: 0, // No hay descuento en el JSON, lo dejamos en 0
+              category: productData.categoria,
+              mainImage: productData.imagen_url,
+              gallery: [
+                productData.imagen_url,
+                productData.imagen_url2,
+                productData.imagen_url3,
+                productData.imagen_url4,
+              ].filter(url => url !== null && url !== ''), // Filtramos URLs nulas o vacías
+              features: [
+                productData.caracteristica1,
+                productData.caracteristica2,
+                productData.caracteristica3,
+                productData.caracteristica4,
+                productData.caracteristica5,
+              ].filter(feature => feature !== null && feature !== ''), // Filtramos características nulas o vacías
+              brand: productData.marca,
+            };
+          } else {
+            console.warn('No product data found for SKU:', sku);
+            this.product = null; // O establecer un producto por defecto si es necesario
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching product details:', error);
+          this.product = null; // Restablecer el producto en caso de error
+        });
     },
     handleAddToCart(product) {
       if (this.addToCart) {
