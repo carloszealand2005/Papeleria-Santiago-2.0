@@ -55,7 +55,9 @@ import FeaturedProducts from './FeaturedProducts.vue';
 import AllProducts from './AllProducts.vue';
 import ProductsNewsletter from './ProductsNewsletter.vue';
 import ProductsFooter from './ProductsFooter.vue';
-import axios from 'axios'; // Importamos axios
+//iort axios from axios;
+import { mapGetters } from 'vuex'; // Importamos mapGetters de Vuex
+import api from '@/utils/api'; // Importamos la instancia configurada de Axios
 
 export default {
   name: 'ProductsPage',
@@ -75,27 +77,22 @@ export default {
       sortBy: 'discount',
       newsletterEmail: '',
       filterCategories: [
-        { id: 'all', name: 'Todas' },
-        { id: 'school', name: 'Escolares' },
-        { id: 'office', name: 'Oficina' },
-        { id: 'art', name: 'Artísticos' },
-        { id: 'tech', name: 'Tecnología' }
+        { id: 'all', name: 'Todos' },
+        { id: 'manualidades', name: 'Manualidades' },
+        { id: 'escritura', name: 'Escritura' },
+        { id: 'papeleria', name: 'Papelería' }
       ],
       featuredProducts: [], // Inicializamos un array vacío para los productos destacados de la API
       products: [] // Inicializamos un array vacío para los productos de la API
     }
   },
   computed: {
+    ...mapGetters(['isAuthenticated']),
     cartCount() {
       return this.totalCartItems || 0;
     },
     filteredProducts() {
       let filtered = this.products;
-      
-      // Filtrar por categoría
-      if (this.selectedCategory !== 'all') {
-        filtered = filtered.filter(product => product.category === this.selectedCategory);
-      }
       
       // Ordenar
       if (this.sortBy === 'discount') {
@@ -111,11 +108,11 @@ export default {
   },
   created() {
     this.fetchProducts();
-    this.fetchFeaturedProducts();
+    this.fetchFeaturedProducts(this.selectedCategory); // Llamar con la categoría inicial 'all'
   },
   methods: {
     fetchProducts() {
-      axios.get('http://127.0.0.1:8000/api/productos/')
+      api.get('/productos/')
         .then(response => {
           this.products = response.data.map(product => ({
             // Mapeamos los campos del backend a la estructura que espera el frontend
@@ -136,11 +133,16 @@ export default {
     },
     handleCategoryChange(categoryId) {
       this.selectedCategory = categoryId;
+      this.fetchFeaturedProducts(categoryId); // Llamar a la API con la nueva subcategoría
     },
     handleSortChange(sortValue) {
       this.sortBy = sortValue;
     },
     handleAddToCart(product) {
+      if (!this.isAuthenticated) {
+        this.$router.push('/registro');
+        return;
+      }
       if (this.addToCart) {
         this.addToCart(product);
       }
@@ -159,8 +161,15 @@ export default {
       this.$emit('subscribe-newsletter', email);
       this.newsletterEmail = '';
     },
-    fetchFeaturedProducts() {
-      axios.get('http://127.0.0.1:8000/api/productos/destacados/')
+    fetchFeaturedProducts(subcategoria = 'all') {
+      let url = 'http://127.0.0.1:8000/api/productos/destacados/';
+      if (subcategoria !== 'all') {
+        url += `?limite=15&subcategoria=${subcategoria}`;
+      } else {
+        url += `?limite=15`; // Para 'Todos', también aplicamos un límite de 15, pero sin filtro de subcategoría
+      }
+
+      api.get(url)
         .then(response => {
           this.featuredProducts = response.data.map(product => ({
             id: product.SKU,

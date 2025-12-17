@@ -16,7 +16,8 @@
 <script>
 import ProductDetailsHeader from './ProductDetailsHeader.vue';
 import ProductDetailsContent from './ProductDetailsContent.vue';
-import axios from 'axios';
+import api from '@/utils/api'; // Importamos la instancia configurada de Axios
+import { mapGetters } from 'vuex'; // Importamos mapGetters de Vuex
 
 export default {
   name: 'ProductDetailsPage',
@@ -25,6 +26,9 @@ export default {
     ProductDetailsContent
   },
   inject: ['addToCart', 'selectProduct'],
+  computed: {
+    ...mapGetters(['isAuthenticated']),
+  },
   data() {
     return {
       product: null, // Para almacenar los detalles del producto de la API
@@ -84,7 +88,7 @@ export default {
         console.error('SKU not found in route params.');
         return;
       }
-      axios.get(`http://127.0.0.1:8000/api/productos/?SKU=${sku}`)
+      api.get(`/productos/?SKU=${sku}`)
         .then(response => {
           if (response.data && response.data.length > 0) {
             const productData = response.data[0];
@@ -122,10 +126,28 @@ export default {
           this.product = null; // Restablecer el producto en caso de error
         });
     },
-    handleAddToCart(product) {
-      if (this.addToCart) {
-        this.addToCart(product);
+    handleAddToCart(cartItem) {
+      if (!this.isAuthenticated) {
+        this.$router.push('/registro');
+        return;
       }
+
+      const { id: producto_sku, quantity } = cartItem; // El cartItem ya tiene el id (SKU) y la quantity
+      const cartId = 1; // ID de carrito estático por ahora
+
+      api.post(`/carritos/${cartId}/detalles/`, {
+        producto_sku: producto_sku,
+        cantidad: quantity
+      })
+      .then(response => {
+        console.log('Producto añadido al carrito:', response.data);
+        // Aquí puedes añadir lógica para mostrar una notificación de éxito al usuario
+        // o actualizar el contador del carrito en el frontend (tarea pendiente)
+      })
+      .catch(error => {
+        console.error('Error al añadir producto al carrito:', error);
+        // Aquí puedes añadir lógica para mostrar una notificación de error al usuario
+      });
     },
     handleSelectProduct(product) {
       if (this.selectProduct) {

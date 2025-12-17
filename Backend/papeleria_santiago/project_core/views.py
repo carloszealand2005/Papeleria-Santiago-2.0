@@ -79,6 +79,11 @@ class ProductoViewSet(viewsets.ModelViewSet):
         if precio_max:
             queryset = queryset.filter(precios__pvp__lte=precio_max)
             
+        # Filtrar por nombre de subcategoría (case-insensitive)
+        subcategoria_nombre = self.request.query_params.get('subcategoria')
+        if subcategoria_nombre:
+            queryset = queryset.filter(subcategoria__nombre_subcategoria__iexact=subcategoria_nombre)
+
         return queryset
     
     @action(detail=False, methods=['get'])
@@ -90,7 +95,14 @@ class ProductoViewSet(viewsets.ModelViewSet):
         except ValueError:
             return Response({'error': 'El parámetro limite debe ser un número entero.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        productos_destacados = self.get_queryset().order_by('-total_vendidos')[:limite]
+        productos_destacados = self.get_queryset()
+
+        # Aplicar filtro por subcategoría si se proporciona
+        subcategoria_nombre = self.request.query_params.get('subcategoria')
+        if subcategoria_nombre:
+            productos_destacados = productos_destacados.filter(subcategoria__nombre_subcategoria__iexact=subcategoria_nombre)
+
+        productos_destacados = productos_destacados.order_by('-total_vendidos')[:limite]
         serializer = self.get_serializer(productos_destacados, many=True)
         return Response(serializer.data)
 

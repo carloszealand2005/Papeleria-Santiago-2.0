@@ -20,6 +20,7 @@ cd proyectooo
 ```bash
 npm install
 npm install axios
+npm install vuex@3 --save
 ```
 
 ### 3. Ejecutar el servidor de desarrollo

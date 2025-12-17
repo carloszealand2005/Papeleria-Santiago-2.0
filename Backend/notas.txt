@@ -131,8 +131,9 @@ URL_ENDPOINTS @views.py
 
 http://127.0.0.1:8000/api/productos/?search=goma (search in nombre, marca, descripción)
 http://127.0.0.1:8000/api/productos/?categoria=oficina 
+http://127.0.0.1:8000/api/productos/?subcategoria=oficina 
 http://127.0.0.1:8000/api/productos/?marca=pelikan
-
+http://127.0.0.1:8000/api/productos/?SKU=CUA001
 
 http://127.0.0.1:8000/api/productos/?ordering=nombre (Orden ascendente)
 http://127.0.0.1:8000/api/productos/?ordering=-pvp (Orden descendente)
@@ -157,11 +158,15 @@ DELETE -> http://127.0.0.1:8000/api/carritos/id_carrito/detalles/SKU/
 BODY: NOT REQUIRED. 
 
 GET -> /api/productos/destacados/ (FIRST 50)
-
+GET -> /api/productos/destacados/?subcategoria=manualidades
 GET -> /api/productos/destacados/?limite=X (ADD LIMIT)
+GET -> /api/productos/destacados/?limite=30&subcategoria=manualidades
 
 POST -> http://127.0.0.1:8000/api/carritos/{id_carrito}/pagar/ (Finish a car payment)
 
+
+POST -> http://127.0.0.1:8000/api/autenticacion/
+{"email": "cdsa@gmail.com", username = "username", "password": "password"}
 DRAFTS:
 pip install drf-nested-routers
 
@@ -169,8 +174,18 @@ El total_vendidos de producto se sumará al momento de crear un detallepedido
 Tener en cuenta que pedido tiene estados. Se debe simplificar ya que un pedido representa un pago hecho;
 El carrito es el que tiene estados I.E: Activo, Inactivo, Pagado 
 
+DONE:
+- Al momento de ubicar un producto al carrito, se hace la verificación de stock, se actualiza el stock
+- Si ese producto ya pertenecía al carrito, se hace la validación: newamount-oldamount y se resta eso al stock
+
+- Al momento de eliminar un producto del carrito, se devuelve el stock a la tienda
 
 TODO: 
 - VERIFICAR QUE AL PAGAR UN CARRITO TENGA ALGÚN ITEM CARRITO ASOCIADO / RECHAZAR CASO CONTRARIO 
 - VERIFICAR EL STOCK AL MOMENTO DE INTENTAR HACER UNA PETICIÓN DE AÑADIR AL CARRITO
-- VERIFICAR QUE SOLO PUEDA EXISTIR 1 SOLA REFERENCIA DE PRECIO/INVENTARIO A UN PRODUCTO ESPECÍFICO
+- VERIFICAR QUE SOLO PUEDA EXISTIR 1 SOLA REFERENCIA DE PRECIO/INVENTARIO A UN PRODUCTO 
+
+
+PostgreSQL: 
+- INSTALAR DOS DEPENDENCIAS ENTORNO VIRTUAL 
+INSERT, VISTA, URL 
