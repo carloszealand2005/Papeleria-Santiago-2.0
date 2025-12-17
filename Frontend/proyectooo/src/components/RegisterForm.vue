@@ -214,6 +214,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'; // Importamos mapActions de Vuex
+
 export default {
   name: 'RegisterForm',
   data() {
@@ -268,6 +270,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['register']), // Mapeamos la acción 'register' de Vuex
     validateEmail() {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (this.formData.email && !emailRegex.test(this.formData.email)) {
@@ -295,22 +298,21 @@ export default {
 
       this.isLoading = true;
       try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Handle successful registration
-        console.log('Registro exitoso:', this.formData);
-        this.$emit('register-success', this.formData);
-        
-        // Reset form or redirect
-        this.$nextTick(() => {
-          alert('¡Cuenta creada exitosamente! Por favor, verifica tu correo electrónico.');
-          this.goToLogin();
+        const response = await this.register({ // Llamamos a la acción 'register' de Vuex
+          email: this.formData.email,
+          username: this.formData.fullName,
+          password: this.formData.password
         });
+
+        console.log('Registro exitoso:', response);
+        this.$emit('register-success', response);
+
       } catch (error) {
         console.error('Error en el registro:', error);
-        this.$emit('error', 'Error al crear la cuenta. Por favor, inténtalo de nuevo.');
-        alert('Error al crear la cuenta. Por favor, inténtalo de nuevo.');
+        const errorMessage = error.response && error.response.data && (error.response.data.email || error.response.data.username || error.response.data.password || error.response.data.detail)
+                             ? (error.response.data.email || error.response.data.username || error.response.data.password || error.response.data.detail)
+                             : 'Error al crear la cuenta. Por favor, inténtalo de nuevo.';
+        this.$emit('error', errorMessage);
       } finally {
         this.isLoading = false;
       }
@@ -345,4 +347,3 @@ input[type="number"] {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>
-

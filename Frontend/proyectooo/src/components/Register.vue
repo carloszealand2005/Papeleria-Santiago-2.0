@@ -45,7 +45,7 @@ export default {
     },
     handleRegisterSuccess(data) {
       console.log('Registro exitoso:', data);
-      this.$router.push('/login');
+      this.$router.push('/'); // Redirigimos a la pantalla principal
     },
     handleGoToLogin() {
       this.$router.push('/login');

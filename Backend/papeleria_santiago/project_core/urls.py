@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested.routers import NestedDefaultRouter
 from . import views
-from .auth_views import RegistroView # Importar la vista de registro
+from .auth_views import RegistroView, LoginView # Importar la vista de registro y la vista de Login
 
 # Crear un router y registrar nuestros viewsets con él
 router = DefaultRouter()
@@ -15,7 +15,8 @@ carrito_router.register(r'detalles', views.DetalleCarritoViewSet, basename='carr
 
 urlpatterns = [
     path('pedidos/<int:pedido_id>/comprobante/pdf/', views.generar_factura_pdf, name='generar_factura_pdf'),
-    path('api/autenticacion/', RegistroView.as_view(), name='registro'), # Nueva URL para el registro
+    path('api/autenticacion/registro/', RegistroView.as_view(), name='registro'), # Nueva URL para el registro
+    path('api/autenticacion/login/', LoginView.as_view(), name='login'), # Nueva URL para el login
     path('api/', include(router.urls)),
     path('api/', include(carrito_router.urls)), # Incluir las URLs del router anidado
 ]

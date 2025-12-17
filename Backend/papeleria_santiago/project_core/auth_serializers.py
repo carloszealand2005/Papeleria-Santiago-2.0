@@ -30,3 +30,28 @@ class RegistroSerializer(serializers.ModelSerializer):
         )
         return user
 
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(required=False, allow_blank=True)
+    email = serializers.EmailField(required=False, allow_blank=True)
+    password = serializers.CharField(write_only=True, required=True)
+
+    def validate(self, data):
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+
+        if not (username or email):
+            raise serializers.ValidationError("Debe proporcionar un nombre de usuario o un correo electrónico.")
+
+        user = None
+        if username:
+            user = User.objects.filter(username=username).first()
+        elif email:
+            user = User.objects.filter(email=email).first()
+        
+        if user and user.check_password(password):
+            data['user'] = user
+        else:
+            raise serializers.ValidationError("Credenciales inválidas.")
+
+        return data

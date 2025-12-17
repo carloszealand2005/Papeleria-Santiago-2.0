@@ -1,11 +1,18 @@
 <template>
   <div class="min-h-screen bg-gray-50">
+    <!-- Botón de Logout Temporal -->
+    <div v-if="isAuthenticated" class="fixed top-4 right-4 z-50">
+      <button @click="logout" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-lg transition duration-200">
+        Cerrar Sesión
+      </button>
+    </div>
     <router-view />
   </div>
 </template>
 
 <script>
 import './assets/tailwind.css'
+import { mapGetters, mapActions } from 'vuex'; // Importamos mapGetters y mapActions
 
 export default {
   name: 'App',
@@ -162,11 +169,13 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(['isAuthenticated']), // Mapeamos el getter 'isAuthenticated'
     totalCartItems() {
       return this.cartItems.reduce((total, item) => total + item.quantity, 0);
     }
   },
   methods: {
+    ...mapActions(['logout']), // Mapeamos la acción 'logout' de Vuex
     handleCartUpdate(items) {
       this.cartItems = items;
       this.showNotification('Carrito actualizado');
