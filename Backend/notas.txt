@@ -164,9 +164,20 @@ GET -> /api/productos/destacados/?limite=30&subcategoria=manualidades
 
 POST -> http://127.0.0.1:8000/api/carritos/{id_carrito}/pagar/ (Finish a car payment)
 
-
+AUTH: 
 POST -> http://127.0.0.1:8000/api/autenticacion/
-{"email": "cdsa@gmail.com", username = "username", "password": "password"}
+{"email": "cdsa@gmail.com", "username" = "username", "password": "password"}
+
+POST -> /api/autenticacion/registro/
+{"email": "cdsa@gmail.com", "username" = "username", "password": "password"}
+RETURNS: CAMPO TOKEN
+
+
+POST -> /api/autenticacion/login/
+{"email": "cdsa@gmail.com", "password": "password"}
+RETURNS: CAMPO TOKEN 
+
+
 DRAFTS:
 pip install drf-nested-routers
 

@@ -44,6 +44,16 @@
     
     <!-- Security Footer -->
     <ProductsFooter />
+
+    <!-- Auth Prompt Modal -->
+    <AuthPromptModal 
+      :showModal="showAuthPromptModal"
+      @close="closeAuthPromptModal"
+      @go-to-register="goToRegisterFromModal"
+      @go-to-login="goToLoginFromModal"
+      @continue-shopping="continueShoppingFromModal"
+    />
+
   </div>
 </template>
 
@@ -55,9 +65,9 @@ import FeaturedProducts from './FeaturedProducts.vue';
 import AllProducts from './AllProducts.vue';
 import ProductsNewsletter from './ProductsNewsletter.vue';
 import ProductsFooter from './ProductsFooter.vue';
-//iort axios from axios;
-import { mapGetters } from 'vuex'; // Importamos mapGetters de Vuex
-import api from '@/utils/api'; // Importamos la instancia configurada de Axios
+import AuthPromptModal from './AuthPromptModal.vue'; // Importamos el nuevo modal
+import { mapGetters } from 'vuex';
+import api from '@/utils/api';
 
 export default {
   name: 'ProductsPage',
@@ -68,7 +78,8 @@ export default {
     FeaturedProducts,
     AllProducts,
     ProductsNewsletter,
-    ProductsFooter
+    ProductsFooter,
+    AuthPromptModal // Registramos el nuevo modal
   },
   inject: ['totalCartItems', 'addToCart', 'selectProduct'],
   data() {
@@ -82,8 +93,9 @@ export default {
         { id: 'escritura', name: 'Escritura' },
         { id: 'papeleria', name: 'Papelería' }
       ],
-      featuredProducts: [], // Inicializamos un array vacío para los productos destacados de la API
-      products: [] // Inicializamos un array vacío para los productos de la API
+      featuredProducts: [],
+      products: [],
+      showAuthPromptModal: false, // Controla la visibilidad del modal
     }
   },
   computed: {
@@ -108,39 +120,37 @@ export default {
   },
   created() {
     this.fetchProducts();
-    this.fetchFeaturedProducts(this.selectedCategory); // Llamar con la categoría inicial 'all'
+    this.fetchFeaturedProducts(this.selectedCategory);
   },
   methods: {
     fetchProducts() {
       api.get('/productos/')
         .then(response => {
           this.products = response.data.map(product => ({
-            // Mapeamos los campos del backend a la estructura que espera el frontend
             id: product.SKU,
             name: product.nombre,
-            brand: product.marca, // Añadimos la marca para el ProductCard
+            brand: product.marca,
             image: product.imagen_url,
-            originalPrice: parseFloat(product.pvp), // Usamos pvp como originalPrice
-            salePrice: parseFloat(product.pvp), // Por ahora, salePrice es igual a pvp
-            discount: 0, // Por ahora no hay descuento desde el backend, lo dejamos en 0
-            category: product.categoria ? product.categoria.toLowerCase() : 'otros' // Aseguramos que la categoría sea minúscula para el filtro, y un default si es null
+            originalPrice: parseFloat(product.pvp),
+            salePrice: parseFloat(product.pvp),
+            discount: 0,
+            category: product.categoria ? product.categoria.toLowerCase() : 'otros'
           }));
         })
         .catch(error => {
           console.error('Error fetching products:', error);
-          // Puedes añadir lógica para mostrar un mensaje de error al usuario
         });
     },
     handleCategoryChange(categoryId) {
       this.selectedCategory = categoryId;
-      this.fetchFeaturedProducts(categoryId); // Llamar a la API con la nueva subcategoría
+      this.fetchFeaturedProducts(categoryId);
     },
     handleSortChange(sortValue) {
       this.sortBy = sortValue;
     },
     handleAddToCart(product) {
       if (!this.isAuthenticated) {
-        this.$router.push('/registro');
+        this.showAuthPromptModal = true; // Muestra el modal si no está autenticado
         return;
       }
       if (this.addToCart) {
@@ -166,7 +176,7 @@ export default {
       if (subcategoria !== 'all') {
         url += `?limite=15&subcategoria=${subcategoria}`;
       } else {
-        url += `?limite=15`; // Para 'Todos', también aplicamos un límite de 15, pero sin filtro de subcategoría
+        url += `?limite=15`;
       }
 
       api.get(url)
@@ -183,11 +193,25 @@ export default {
         .catch(error => {
           console.error('Error fetching featured products:', error);
         });
-    }
+    },
+    // Métodos para manejar los eventos del AuthPromptModal
+    closeAuthPromptModal() {
+      this.showAuthPromptModal = false;
+    },
+    goToRegisterFromModal() {
+      this.showAuthPromptModal = false;
+      this.$router.push('/registro');
+    },
+    goToLoginFromModal() {
+      this.showAuthPromptModal = false;
+      this.$router.push('/login');
+    },
+    continueShoppingFromModal() {
+      this.showAuthPromptModal = false;
+    },
   }
 }
 </script>
 
 <style scoped>
 </style>
-

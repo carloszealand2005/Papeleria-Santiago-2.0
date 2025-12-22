@@ -10,20 +10,31 @@
       @add-to-cart="handleAddToCart"
       @select-product="handleSelectProduct"
     />
+
+    <!-- Auth Prompt Modal -->
+    <AuthPromptModal 
+      :showModal="showAuthPromptModal"
+      @close="closeAuthPromptModal"
+      @go-to-register="goToRegisterFromModal"
+      @go-to-login="goToLoginFromModal"
+      @continue-shopping="continueShoppingFromModal"
+    />
   </div>
 </template>
 
 <script>
 import ProductDetailsHeader from './ProductDetailsHeader.vue';
 import ProductDetailsContent from './ProductDetailsContent.vue';
-import api from '@/utils/api'; // Importamos la instancia configurada de Axios
-import { mapGetters } from 'vuex'; // Importamos mapGetters de Vuex
+import AuthPromptModal from './AuthPromptModal.vue'; // Importamos el nuevo modal
+import api from '@/utils/api';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'ProductDetailsPage',
   components: {
     ProductDetailsHeader,
-    ProductDetailsContent
+    ProductDetailsContent,
+    AuthPromptModal // Registramos el nuevo modal
   },
   inject: ['addToCart', 'selectProduct'],
   computed: {
@@ -31,7 +42,7 @@ export default {
   },
   data() {
     return {
-      product: null, // Para almacenar los detalles del producto de la API
+      product: null,
       relatedProducts: [
         {
           id: 2,
@@ -65,7 +76,8 @@ export default {
           rating: 4,
           image: 'https://readdy.ai/api/search-image?query=Premium%20A4%20folder%20office%20organization%20supplies%20clean%20professional%20design%20white%20background%20product%20photography&width=300&height=300&seq=rel-prod-004&orientation=squarish'
         }
-      ]
+      ],
+      showAuthPromptModal: false, // Controla la visibilidad del modal
     };
   },
   created() {
@@ -97,8 +109,8 @@ export default {
               name: productData.nombre,
               description: productData.descripcion,
               price: parseFloat(productData.pvp),
-              originalPrice: parseFloat(productData.pvp), // Usamos pvp como originalPrice
-              discount: 0, // No hay descuento en el JSON, lo dejamos en 0
+              originalPrice: parseFloat(productData.pvp),
+              discount: 0,
               category: productData.categoria,
               mainImage: productData.imagen_url,
               gallery: [
@@ -106,34 +118,34 @@ export default {
                 productData.imagen_url2,
                 productData.imagen_url3,
                 productData.imagen_url4,
-              ].filter(url => url !== null && url !== ''), // Filtramos URLs nulas o vacías
+              ].filter(url => url !== null && url !== ''),
               features: [
                 productData.caracteristica1,
                 productData.caracteristica2,
                 productData.caracteristica3,
                 productData.caracteristica4,
                 productData.caracteristica5,
-              ].filter(feature => feature !== null && feature !== ''), // Filtramos características nulas o vacías
+              ].filter(feature => feature !== null && feature !== ''),
               brand: productData.marca,
             };
           } else {
             console.warn('No product data found for SKU:', sku);
-            this.product = null; // O establecer un producto por defecto si es necesario
+            this.product = null;
           }
         })
         .catch(error => {
           console.error('Error fetching product details:', error);
-          this.product = null; // Restablecer el producto en caso de error
+          this.product = null;
         });
     },
     handleAddToCart(cartItem) {
       if (!this.isAuthenticated) {
-        this.$router.push('/registro');
+        this.showAuthPromptModal = true; // Muestra el modal si no está autenticado
         return;
       }
 
-      const { id: producto_sku, quantity } = cartItem; // El cartItem ya tiene el id (SKU) y la quantity
-      const cartId = 1; // ID de carrito estático por ahora
+      const { id: producto_sku, quantity } = cartItem;
+      const cartId = 1;
 
       api.post(`/carritos/${cartId}/detalles/`, {
         producto_sku: producto_sku,
@@ -141,12 +153,9 @@ export default {
       })
       .then(response => {
         console.log('Producto añadido al carrito:', response.data);
-        // Aquí puedes añadir lógica para mostrar una notificación de éxito al usuario
-        // o actualizar el contador del carrito en el frontend (tarea pendiente)
       })
       .catch(error => {
         console.error('Error al añadir producto al carrito:', error);
-        // Aquí puedes añadir lógica para mostrar una notificación de error al usuario
       });
     },
     handleSelectProduct(product) {
@@ -155,13 +164,26 @@ export default {
       }
     },
     handleSearch(query) {
-      // Navegar a productos con búsqueda
       this.$router.push({ path: '/productos', query: { search: query } });
-    }
+    },
+    // Métodos para manejar los eventos del AuthPromptModal
+    closeAuthPromptModal() {
+      this.showAuthPromptModal = false;
+    },
+    goToRegisterFromModal() {
+      this.showAuthPromptModal = false;
+      this.$router.push('/registro');
+    },
+    goToLoginFromModal() {
+      this.showAuthPromptModal = false;
+      this.$router.push('/login');
+    },
+    continueShoppingFromModal() {
+      this.showAuthPromptModal = false;
+    },
   }
 }
 </script>
 
 <style scoped>
 </style>
-

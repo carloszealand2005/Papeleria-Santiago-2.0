@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Cliente
+from .models import Cliente, Carrito # Importar también el modelo Carrito
 
 class RegistroSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
@@ -22,12 +22,20 @@ class RegistroSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         
-        Cliente.objects.create(
+        cliente = Cliente.objects.create( # Almacenar la instancia del Cliente creado
             user=user,
             nombre=user.username, # Nombre del cliente igual al username
             email=user.email,     # Email del cliente igual al email del user
             tipo_cliente='Persona' # Asignar un tipo de cliente por defecto
         )
+
+        # Crear un carrito para el cliente recién creado
+        # NOTA: El ID del carrito será autogenerado y no será el mismo que el del usuario,
+        # pero el carrito estará asociado directamente a este cliente y, por ende, a este usuario.
+        Carrito.objects.create(
+            cliente=cliente
+        )
+        
         return user
 
 class LoginSerializer(serializers.Serializer):

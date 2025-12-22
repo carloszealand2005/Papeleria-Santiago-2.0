@@ -29,9 +29,11 @@
                 type="text"
                 required
                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                :class="{ 'border-red-300': serverErrors.username }"
                 placeholder="Ingresa tu nombre completo"
               />
             </div>
+            <p v-if="serverErrors.username" class="mt-1 text-xs text-red-600">{{ serverErrors.username[0] }}</p>
           </div>
 
           <!-- Email Field -->
@@ -49,12 +51,13 @@
                 type="email"
                 required
                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                :class="{ 'border-red-300': emailError }"
+                :class="{ 'border-red-300': emailError || serverErrors.email }"
                 placeholder="tu@ejemplo.com"
                 @blur="validateEmail"
               />
             </div>
             <p v-if="emailError" class="mt-1 text-xs text-red-600">{{ emailError }}</p>
+            <p v-if="serverErrors.email" class="mt-1 text-xs text-red-600">{{ serverErrors.email[0] }}</p>
           </div>
 
           <!-- Password Field -->
@@ -72,6 +75,7 @@
                 :type="showPassword ? 'text' : 'password'"
                 required
                 class="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                :class="{ 'border-red-300': serverErrors.password }"
                 placeholder="Crea una contraseña segura"
                 @input="checkPasswordStrength"
               />
@@ -98,6 +102,7 @@
                 </span>
               </div>
             </div>
+            <p v-if="serverErrors.password" class="mt-1 text-xs text-red-600">{{ serverErrors.password[0] }}</p>
           </div>
 
           <!-- Confirm Password Field -->
@@ -163,7 +168,7 @@
           <!-- Register Button -->
           <button
             type="submit"
-            :disabled="!isFormValid"
+            :disabled="!isFormValid || isLoading"
             class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 cursor-pointer"
           >
             <i v-if="isLoading" class="fas fa-spinner fa-spin mr-2"></i>
@@ -214,7 +219,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'; // Importamos mapActions de Vuex
+import { mapActions } from 'vuex';
 
 export default {
   name: 'RegisterForm',
@@ -233,7 +238,12 @@ export default {
       isLoading: false,
       emailError: '',
       passwordMismatch: false,
-      passwordStrength: 0
+      passwordStrength: 0,
+      serverErrors: { // Nuevo objeto para almacenar errores del servidor
+        username: null,
+        email: null,
+        password: null,
+      },
     };
   },
   computed: {
@@ -244,7 +254,10 @@ export default {
         this.formData.password.length >= 6 &&
         this.formData.confirmPassword === this.formData.password &&
         this.formData.acceptTerms &&
-        !this.emailError
+        !this.emailError &&
+        !this.serverErrors.username && // Considerar errores del servidor en la validez del formulario
+        !this.serverErrors.email &&
+        !this.serverErrors.password
       );
     },
     passwordStrengthWidth() {
@@ -270,7 +283,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['register']), // Mapeamos la acción 'register' de Vuex
+    ...mapActions(['register']),
     validateEmail() {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (this.formData.email && !emailRegex.test(this.formData.email)) {
@@ -278,6 +291,7 @@ export default {
       } else {
         this.emailError = '';
       }
+      this.serverErrors.email = null; // Limpiar error de servidor al validar cliente
     },
     checkPasswordStrength() {
       const password = this.formData.password;
@@ -288,17 +302,24 @@ export default {
       if (/[0-9]/.test(password)) strength++;
       if (/[^A-Za-z0-9]/.test(password)) strength++;
       this.passwordStrength = Math.min(strength, 4);
+      this.serverErrors.password = null; // Limpiar error de servidor al cambiar contraseña
     },
     checkPasswordMatch() {
       this.passwordMismatch = this.formData.confirmPassword !== '' &&
         this.formData.confirmPassword !== this.formData.password;
     },
     async handleRegister() {
-      if (!this.isFormValid) return;
-
       this.isLoading = true;
+      // Limpiar errores previos del servidor
+      this.serverErrors = { username: null, email: null, password: null };
+
+      if (!this.isFormValid) {
+        this.isLoading = false;
+        return;
+      }
+
       try {
-        const response = await this.register({ // Llamamos a la acción 'register' de Vuex
+        const response = await this.register({ 
           email: this.formData.email,
           username: this.formData.fullName,
           password: this.formData.password
@@ -309,10 +330,26 @@ export default {
 
       } catch (error) {
         console.error('Error en el registro:', error);
-        const errorMessage = error.response && error.response.data && (error.response.data.email || error.response.data.username || error.response.data.password || error.response.data.detail)
-                             ? (error.response.data.email || error.response.data.username || error.response.data.password || error.response.data.detail)
-                             : 'Error al crear la cuenta. Por favor, inténtalo de nuevo.';
-        this.$emit('error', errorMessage);
+        if (error.response && error.response.data) {
+          const errors = error.response.data;
+          if (errors.username) {
+            this.serverErrors.username = errors.username;
+          }
+          if (errors.email) {
+            this.serverErrors.email = errors.email;
+          }
+          if (errors.password) {
+            this.serverErrors.password = errors.password;
+          }
+          // Emitir un error general si no hay errores de campo específicos o si hay un error 'detail'
+          if (!errors.username && !errors.email && !errors.password && errors.detail) {
+            this.$emit('error', errors.detail);
+          } else if (!errors.username && !errors.email && !errors.password) {
+            this.$emit('error', 'Error desconocido al crear la cuenta. Por favor, inténtalo de nuevo.');
+          }
+        } else {
+          this.$emit('error', 'Error de red o servidor no disponible. Por favor, inténtalo de nuevo.');
+        }
       } finally {
         this.isLoading = false;
       }
@@ -326,6 +363,15 @@ export default {
       if (this.formData.confirmPassword) {
         this.checkPasswordMatch();
       }
+    },
+    'formData.email'() {
+      this.serverErrors.email = null; // Limpiar error de email del servidor al cambiar el campo
+    },
+    'formData.fullName'() {
+      this.serverErrors.username = null; // Limpiar error de username del servidor al cambiar el campo
+    },
+    'formData.password'() {
+      this.serverErrors.password = null; // Limpiar error de password del servidor al cambiar el campo
     }
   }
 }

@@ -34,6 +34,12 @@
           </div>
         </div>
 
+        <!-- Mensaje de error del servidor -->
+        <div v-if="serverError" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <strong class="font-bold">¡Error!</strong>
+          <span class="block sm:inline"> {{ serverError }}</span>
+        </div>
+
         <!-- Login Form -->
         <form @submit.prevent="handleLogin" class="space-y-6">
           <!-- Email Field -->
@@ -52,6 +58,7 @@
                 required
                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
                 :placeholder="userType === 'wholesale' ? 'empresa@ejemplo.com' : 'tu@email.com'"
+                @input="clearServerError"
               >
             </div>
           </div>
@@ -70,6 +77,7 @@
                 required
                 class="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
                 placeholder="Ingresa tu contraseña"
+                @input="clearServerError"
               >
               <button 
                 type="button"
@@ -81,7 +89,7 @@
             </div>
           </div>
 
-          <!-- Additional fields for wholesale users -->
+          <!-- Additional fields for wholesale users (mantener si es relevante para el futuro) -->
           <div v-if="userType === 'wholesale'" class="space-y-4">
             <div>
               <label for="company" class="block text-sm font-medium text-gray-700 mb-2">Nombre de la Empresa</label>
@@ -179,6 +187,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'; // Importamos mapActions de Vuex
+
 export default {
   name: 'LoginForm',
   data() {
@@ -186,6 +196,7 @@ export default {
       userType: 'individual',
       showPassword: false,
       isLoading: false,
+      serverError: null, // Nuevo: para errores del servidor
       loginForm: {
         email: '',
         password: '',
@@ -195,6 +206,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['login']), // Mapeamos la acción 'login' de Vuex
     setUserType(type) {
       this.userType = type;
       // Limpiar campos específicos al cambiar tipo
@@ -206,108 +218,51 @@ export default {
     togglePassword() {
       this.showPassword = !this.showPassword;
     },
+    clearServerError() {
+      this.serverError = null;
+    },
     async handleLogin() {
       this.isLoading = true;
+      this.serverError = null; // Limpiar errores previos
 
       try {
-        // Validación básica
+        // Validación básica (mantener por si acaso, aunque el backend también validará)
         if (!this.loginForm.email || !this.loginForm.password) {
-          this.showError('Por favor completa todos los campos requeridos');
+          this.serverError = 'Por favor, ingresa tu correo y contraseña.';
           return;
         }
 
-        // Validación para mayoristas
-        if (this.userType === 'wholesale' && !this.loginForm.company) {
-          this.showError('Por favor ingresa el nombre de tu empresa');
-          return;
-        }
-
-        // Simular llamada API
-        await this.simulateApiCall();
-
-        // Preparado para integrar con API real
-        // const loginData = {
-        //   email: this.loginForm.email,
-        //   password: this.loginForm.password,
-        //   userType: this.userType,
-        //   company: this.userType === 'wholesale' ? this.loginForm.company : null,
-        //   rememberMe: this.loginForm.rememberMe
-        // };
-        // 
-        // const response = await fetch('/api/auth/login', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(loginData)
-        // });
-        //
-        // if (response.ok) {
-        //   const userData = await response.json();
-        //   // Guardar token y datos del usuario
-        //   localStorage.setItem('userToken', userData.token);
-        //   localStorage.setItem('userType', this.userType);
-        //   // Redireccionar según tipo de usuario
-        //   this.redirectAfterLogin();
-        // } else {
-        //   this.showError('Credenciales inválidas');
-        // }
-
-        this.showSuccess('¡Inicio de sesión exitoso!');
-        
-        // Emitir evento de login exitoso
-        this.$emit('login-success', {
-          userType: this.userType,
-          email: this.loginForm.email
+        // Llamar a la acción 'login' de Vuex
+        const response = await this.login({ 
+          email: this.loginForm.email,
+          password: this.loginForm.password
         });
 
-        setTimeout(() => {
-          this.redirectAfterLogin();
-        }, 1500);
+        console.log('Inicio de sesión exitoso:', response);
+        this.$emit('login-success', response); // Emitir evento de login exitoso
+        
+        // Redirigir al home después de un login exitoso
+        this.$router.push('/');
 
       } catch (error) {
-        console.error('Login error:', error);
-        this.showError('Error al iniciar sesión. Inténtalo de nuevo.');
+        console.error('Error en el inicio de sesión:', error);
+        if (error.response && error.response.data && error.response.data.non_field_errors) {
+          this.serverError = error.response.data.non_field_errors[0];
+        } else {
+          this.serverError = 'Error al iniciar sesión. Por favor, inténtalo de nuevo.';
+        }
       } finally {
         this.isLoading = false;
-      }
-    },
-    async simulateApiCall() {
-      return new Promise(resolve => setTimeout(resolve, 2000));
-    },
-    redirectAfterLogin() {
-      if (this.userType === 'wholesale') {
-        console.log('Redirigiendo a dashboard mayorista...');
-        this.$emit('redirect', 'wholesale-dashboard');
-        // window.location.href = '/dashboard-mayorista';
-      } else {
-        console.log('Redirigiendo a tienda...');
-        this.$emit('redirect', 'store');
-        // window.location.href = '/tienda';
       }
     },
     goToRegister(type) {
       console.log(`Redirigiendo a registro: ${type}`);
       this.$emit('go-to-register', type);
-      // Aquí se puede implementar la navegación a la página de registro
-      // this.$router.push(`/register?type=${type}`);
-    },
-    showError(message) {
-      // Implementar notificación de error
-      console.error(message);
-      this.$emit('error', message);
-      // En una implementación real, podrías usar una librería de notificaciones
-      alert(message);
-    },
-    showSuccess(message) {
-      // Implementar notificación de éxito  
-      console.log(message);
-      this.$emit('success', message);
-      // En una implementación real, podrías usar una librería de notificaciones
-      alert(message);
     }
   }
 }
 </script>
 
 <style scoped>
+/* Las clases de Tailwind CSS ya están en el template */
 </style>
-

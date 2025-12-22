@@ -4,7 +4,7 @@ from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
 from .models import Comprobante, Pedido, Producto, Carrito, DetalleCarrito, Cliente, DetallePedido, Inventario # Importamos DetallePedido e Inventario
-from rest_framework import viewsets, filters, status # Importar filters y status
+from rest_framework import viewsets, filters, status, mixins, permissions # Importar filters, status, mixins y permissions
 from rest_framework.decorators import action # Importar action
 from django_filters.rest_framework import DjangoFilterBackend # Importar DjangoFilterBackend
 from .serializers import ProductoSerializer, CarritoSerializer, DetalleCarritoSerializer # Importar el serializador
@@ -284,6 +284,215 @@ class DetalleCarritoViewSet(viewsets.ModelViewSet):
             inventario.save()
         except Inventario.DoesNotExist:
             # Si no hay inventario, se registra o se maneja como un error, pero no bloquea la eliminación del detalle
+            print(f"Advertencia: Producto {producto.SKU} sin registro de inventario al eliminar detalle.")
+
+        self.perform_destroy(detalle_carrito)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+#-------------------
+# Los ViewSet que se presentan a continuación son los usados para producción
+# Requieren que se envíen los token de autenticación en la cabecera
+#
+#------------------
+# ViewSet para el carrito del usuario autenticado (API REST)
+#------------------
+class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Quitar mixins.ListModelMixin
+    serializer_class = CarritoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+        try:
+            cliente = user.cliente_profile
+            carrito = cliente.carritos.filter(detalles_carrito__isnull=False).first()
+            if not carrito:
+                carrito = cliente.carritos.first()
+                if not carrito:
+                    carrito = Carrito.objects.create(cliente=cliente)
+            return carrito
+        except Cliente.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND("Perfil de cliente no encontrado para este usuario.")
+
+    @action(detail=False, methods=['get'], url_path='obtener') # Nueva acción para GET /api/mi-carrito/obtener/
+    def retrieve_my_cart(self, request):
+        carrito = self.get_object()
+        serializer = self.get_serializer(carrito)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['post'], url_path='pagar')
+    def pagar(self, request):
+        carrito = self.get_object() # Obtiene el carrito del usuario autenticado
+
+        # --- 1. Autorización (ya manejada por permission_classes = [permissions.IsAuthenticated]) ---
+        # Asegurarse de que el carrito realmente pertenezca al usuario autenticado (doble chequeo)
+        if not carrito.cliente or not carrito.cliente.user or carrito.cliente.user != request.user:
+            return Response({'error': 'No tienes permiso para pagar este carrito.'}, status=status.HTTP_403_FORBIDDEN)
+
+        # --- 2. Validar Carrito --- 
+        if not carrito.detalles_carrito.exists():
+            return Response({'error': 'El carrito está vacío, no se puede realizar el pago.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # --- 3. Crear Pedido (estado inicial 'Pagado') ---
+            pedido = Pedido.objects.create(
+                cliente=carrito.cliente,
+                estado_pedido='Pagado',
+            )
+
+            # --- 4. Crear DetallePedido a partir de DetalleCarrito ---
+            for detalle_carrito in carrito.detalles_carrito.all():
+                DetallePedido.objects.create(
+                    pedido=pedido,
+                    producto=detalle_carrito.producto,
+                    cantidad=detalle_carrito.cantidad,
+                    precio_unitario=detalle_carrito.precio_unitario,
+                    subtotal_detalle_pedido=detalle_carrito.subtotal_detalle_carrito,
+                    iva_detalle_pedido=detalle_carrito.iva_detalle_carrito,
+                    descuento_detalle_pedido=detalle_carrito.descuento_detalle_carrito,
+                    total_detalle_pedido=detalle_carrito.total_detalle_carrito,
+                )
+
+            # --- 5. Crear Comprobante después de que todos los DetallePedido estén creados ---
+            Comprobante.objects.create(
+                pedido=pedido,
+                numero_factura=f"FAC-{pedido.id}-{pedido.fecha_pedido.strftime('%Y%m%d')}",
+                cedula_cliente=pedido.cliente.cedula if pedido.cliente.cedula else 'NO ESPECIFICADO',
+                direccion_cliente=pedido.cliente.direccion,
+                email_cliente=pedido.cliente.email,
+                subtotal=pedido.subtotal_general_comprobante,
+                descuento=pedido.descuento_general_comprobante,
+                iva=pedido.iva_general_comprobante,
+                total=pedido.total_general_comprobante,
+                metodo_pago='Tarjeta de crédito',
+                estado_fiscal='Emitido',
+            )
+            
+            # --- 6. Borrar DetalleCarrito del carrito original ---
+            carrito.detalles_carrito.all().delete()
+            carrito.save() # Guarda el carrito para actualizar la fecha_actualizacion
+
+            return Response({'message': 'Carrito pagado y pedido creado exitosamente.', 'pedido_id': pedido.id}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#------------------
+# ViewSet para los detalles del carrito del usuario autenticado (API REST)
+#------------------
+class MiCarritoDetalleViewSet(
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
+):
+    serializer_class = DetalleCarritoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'producto__SKU'
+
+    def get_queryset(self):
+        user = self.request.user
+        try:
+            cliente = user.cliente_profile
+            carrito = cliente.carritos.first() # Obtener el primer carrito del cliente
+            if not carrito:
+                raise Carrito.DoesNotExist("No active cart found for this user.")
+            return DetalleCarrito.objects.filter(carrito=carrito)
+        except Cliente.DoesNotExist:
+            return DetalleCarrito.objects.none() # No hay cliente, no hay detalles de carrito
+        except Carrito.DoesNotExist:
+            return DetalleCarrito.objects.none() # No hay carrito, no hay detalles de carrito
+
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        try:
+            cliente = user.cliente_profile
+            carrito = cliente.carritos.first()
+            if not carrito:
+                carrito = Carrito.objects.create(cliente=cliente) # Crear carrito si no existe
+        except Cliente.DoesNotExist:
+            return Response({'error': 'Perfil de cliente no encontrado para este usuario.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        producto_sku = request.data.get('producto_sku')
+        cantidad = request.data.get('cantidad')
+
+        if not producto_sku or not cantidad:
+            return Response({'error': 'Producto SKU y cantidad son requeridos.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            producto = Producto.objects.get(SKU=producto_sku)
+        except Producto.DoesNotExist:
+            return Response({'error': 'Producto no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Validación de stock
+        try:
+            inventario = producto.inventario
+        except Inventario.DoesNotExist:
+            return Response({'error': 'Producto sin registro de inventario.'}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            detalle_carrito_existente = DetalleCarrito.objects.get(
+                carrito=carrito,
+                producto=producto
+            )
+            cantidad_previa = detalle_carrito_existente.cantidad
+            
+            cambio_stock = cantidad - cantidad_previa
+            if inventario.stock - cambio_stock < 0:
+                return Response(
+                    {'error': f'No hay suficiente stock para el producto {producto.nombre}. Stock disponible: {inventario.stock + cantidad_previa} (ya tienes {cantidad_previa} en el carrito)'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            detalle_carrito_existente.cantidad = cantidad
+            detalle_carrito_existente.save()
+            inventario.stock -= cambio_stock
+            inventario.save()
+            detalle_carrito = detalle_carrito_existente
+            created = False
+        except DetalleCarrito.DoesNotExist:
+            if inventario.stock - cantidad < 0:
+                 return Response(
+                    {'error': f'No hay suficiente stock para el producto {producto.nombre}. Stock disponible: {inventario.stock}'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            detalle_carrito = DetalleCarrito.objects.create(
+                carrito=carrito,
+                producto=producto,
+                cantidad=cantidad
+            )
+            inventario.stock -= cantidad
+            inventario.save()
+            created = True
+
+        serializer = self.get_serializer(detalle_carrito)
+        return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        user = self.request.user
+        try:
+            cliente = user.cliente_profile
+            carrito = cliente.carritos.first()
+            if not carrito:
+                raise Carrito.DoesNotExist("No active cart found for this user.")
+        except Cliente.DoesNotExist:
+            return Response({'error': 'Perfil de cliente no encontrado para este usuario.'}, status=status.HTTP_404_NOT_FOUND)
+        except Carrito.DoesNotExist:
+            return Response({'error': 'Carrito no encontrado para este usuario.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        producto_sku = self.kwargs['producto__SKU']
+
+        try:
+            detalle_carrito = DetalleCarrito.objects.get(carrito=carrito, producto__SKU=producto_sku)
+        except DetalleCarrito.DoesNotExist:
+            return Response({'error': 'Detalle de carrito no encontrado con ese producto en tu carrito.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        producto = detalle_carrito.producto
+        try:
+            inventario = producto.inventario
+            inventario.stock += detalle_carrito.cantidad
+            inventario.save()
+        except Inventario.DoesNotExist:
             print(f"Advertencia: Producto {producto.SKU} sin registro de inventario al eliminar detalle.")
 
         self.perform_destroy(detalle_carrito)
