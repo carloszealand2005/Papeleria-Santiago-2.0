@@ -170,7 +170,7 @@ class Carrito(models.Model):
     fecha_creacion = models.DateField(auto_now_add=True) # Solo cuando se crea este registro
     fecha_actualizacion = models.DateField(auto_now=True) # Cada vez que se hay un cambio en sus detalles. 
     # estado = models.CharField(max_length=20, choices=ESTADO_CARRITO_CHOICES) # Eliminado, ahora es una propiedad calculada
-    subtotal_carrito = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    # subtotal_carrito = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # Eliminado, ahora es una propiedad calculada
 
 
     @property
@@ -178,6 +178,21 @@ class Carrito(models.Model):
         if self.detalles_carrito.exists(): #Verificar si existen DetalleCarrito asociados. 
             return 'Activo'
         return 'Inactivo'
+    
+    @property
+    def subtotal_carrito(self):
+        subtotal_agregado = self.detalles_carrito.aggregate(subtotal_sum=Sum('subtotal_detalle_carrito'))['subtotal_sum']
+        return subtotal_agregado if subtotal_agregado is not None else Decimal('0.00')
+
+    @property
+    def descuento_carrito(self):
+        descuento_agregado = self.detalles_carrito.aggregate(descuento_sum=Sum('descuento_detalle_carrito'))['descuento_sum']
+        return descuento_agregado if descuento_agregado is not None else Decimal('0.00')
+    
+    @property
+    def iva_carrito(self):
+        iva_agregado = self.detalles_carrito.aggregate(iva_sum=Sum('iva_detalle_carrito'))['iva_sum']
+        return iva_agregado if iva_agregado is not None else Decimal('0.00')
 
     @property
     def total_carrito(self):

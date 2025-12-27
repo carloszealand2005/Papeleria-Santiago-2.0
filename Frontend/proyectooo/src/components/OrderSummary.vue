@@ -12,13 +12,14 @@
           <span class="text-gray-600">Envío</span>
           <span class="font-medium">${{ shipping.toFixed(2) }}</span>
         </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600">Impuestos</span>
-          <span class="font-medium">${{ taxes.toFixed(2) }}</span>
+        <!-- Campo para Total Descuento - siempre visible -->
+        <div class="flex justify-between text-green-600">
+          <span>Total Descuento</span>
+          <span>-${{ totalDiscount.toFixed(2) }}</span>
         </div>
-        <div v-if="discountAmount > 0" class="flex justify-between text-green-600">
-          <span>Descuento</span>
-          <span>-${{ discountAmount.toFixed(2) }}</span>
+        <div class="flex justify-between">
+          <span class="text-gray-600">Total IVA</span>
+          <span class="font-medium">${{ totalIva.toFixed(2) }}</span>
         </div>
         <div class="border-t border-gray-200 pt-4">
           <div class="flex justify-between text-lg font-bold">
@@ -102,11 +103,11 @@ export default {
       type: Number,
       required: true
     },
-    taxes: {
+    totalIva: { // Nuevo prop para Total IVA
       type: Number,
       required: true
     },
-    discountAmount: {
+    totalDiscount: { // Nuevo prop para Total Descuento
       type: Number,
       default: 0
     },
@@ -140,4 +141,3 @@ export default {
 
 <style scoped>
 </style>
-

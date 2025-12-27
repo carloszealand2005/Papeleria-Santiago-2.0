@@ -323,6 +323,17 @@ class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Qu
     def pagar(self, request):
         carrito = self.get_object() # Obtiene el carrito del usuario autenticado
 
+    @action(detail=False, methods=['get'], url_path='conteo')
+    def conteo(self, request):
+        """
+        Retorna el número total de ítems distintos en el carrito del usuario autenticado.
+        """
+        carrito = self.get_object() # Obtiene el carrito del usuario autenticado
+        # `detalles_carrito.count()` cuenta cuántos objetos DetalleCarrito hay.
+        # Cada DetalleCarrito representa un tipo de producto distinto en el carrito.
+        item_count = carrito.detalles_carrito.count()
+        return Response({'conteo_items_carrito': item_count}, status=status.HTTP_200_OK)
+
         # --- 1. Autorización (ya manejada por permission_classes = [permissions.IsAuthenticated]) ---
         # Asegurarse de que el carrito realmente pertenezca al usuario autenticado (doble chequeo)
         if not carrito.cliente or not carrito.cliente.user or carrito.cliente.user != request.user:

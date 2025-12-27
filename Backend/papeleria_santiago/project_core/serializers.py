@@ -30,7 +30,7 @@ class DetalleCarritoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DetalleCarrito
-        fields = ['id', 'producto_sku', 'producto', 'cantidad', 'precio_unitario', 'subtotal_detalle_carrito', 'descuento_detalle_carrito', 'total_detalle_carrito', 'carrito']
+        fields = ['id', 'producto_sku', 'producto', 'cantidad', 'precio_unitario', 'subtotal_detalle_carrito', 'descuento_detalle_carrito', 'iva_detalle_carrito', 'total_detalle_carrito', 'carrito']
         read_only_fields = ['precio_unitario', 'subtotal_detalle_carrito', 'total_detalle_carrito', 'carrito']
 
 class CarritoSerializer(serializers.ModelSerializer):
@@ -40,5 +40,5 @@ class CarritoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Carrito
-        fields = ['id', 'cliente', 'cliente_nombre', 'cliente_tipo', 'fecha_creacion', 'fecha_actualizacion', 'estado_dinamico', 'subtotal_carrito', 'total_carrito', 'detalles_carrito']
-        read_only_fields = ['cliente', 'fecha_creacion', 'fecha_actualizacion', 'estado_dinamico', 'subtotal_carrito', 'total_carrito']
+        fields = ['id', 'cliente', 'cliente_nombre', 'cliente_tipo', 'fecha_creacion', 'fecha_actualizacion', 'estado_dinamico', 'subtotal_carrito', 'descuento_carrito', 'iva_carrito', 'total_carrito', 'detalles_carrito']
+        read_only_fields = ['cliente', 'fecha_creacion', 'fecha_actualizacion', 'estado_dinamico', 'subtotal_carrito', 'descuento_carrito', 'iva_carrito', 'total_carrito']

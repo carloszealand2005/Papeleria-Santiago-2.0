@@ -44,7 +44,7 @@
     
     <!-- Security Footer -->
     <ProductsFooter />
-
+    
     <!-- Auth Prompt Modal -->
     <AuthPromptModal 
       :showModal="showAuthPromptModal"
@@ -81,7 +81,7 @@ export default {
     ProductsFooter,
     AuthPromptModal // Registramos el nuevo modal
   },
-  inject: ['totalCartItems', 'addToCart', 'selectProduct'],
+  inject: ['totalCartItems', 'selectProduct'], // addToCart ha sido removido
   data() {
     return {
       selectedCategory: 'all',
@@ -148,13 +148,22 @@ export default {
     handleSortChange(sortValue) {
       this.sortBy = sortValue;
     },
-    handleAddToCart(product) {
+    async handleAddToCart(product) {
       if (!this.isAuthenticated) {
         this.showAuthPromptModal = true; // Muestra el modal si no está autenticado
         return;
       }
-      if (this.addToCart) {
-        this.addToCart(product);
+      try {
+        await api.post('/mi-carrito-detalles/', {
+          producto_sku: product.id,
+          cantidad: 1
+        });
+        this.showNotification(`"${product.name}" añadido al carrito.`, 'success');
+        // Opcional: Recargar el contador del carrito si es necesario
+        // this.$emit('cart-updated'); 
+      } catch (error) {
+        console.error('Error al añadir producto al carrito:', error);
+        this.showNotification('Error al añadir producto al carrito.', 'error');
       }
     },
     handleSelectProduct(product) {
@@ -209,6 +218,23 @@ export default {
     continueShoppingFromModal() {
       this.showAuthPromptModal = false;
     },
+    showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      const bgColor = type === 'error' ? 'bg-red-600' : 'bg-green-600';
+      notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all`;
+      notification.textContent = message;
+
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+          if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
   }
 }
 </script>
