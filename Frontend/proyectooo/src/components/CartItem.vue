@@ -13,8 +13,17 @@
     <div class="flex-1">
       <h3 class="font-semibold text-gray-900 mb-1">{{ item.producto.nombre }}</h3>
       <p class="text-sm text-gray-600 mb-2">{{ item.producto.descripcion }}</p>
-      <p class="text-sm text-gray-500 line-through opacity-75">${{ parseFloat(item.precio_unitario).toFixed(2) }}</p>
-      <p class="text-lg font-bold text-green-600">${{ parseFloat(item.precio_unitario).toFixed(2) }}</p>
+      <!-- Conditional Discount Display -->
+      <template v-if="item.producto.descuento_publico > 0">
+        <div class="flex items-center space-x-2">
+          <p class="text-sm text-gray-500 line-through opacity-75">${{ parseFloat(item.producto.pvp).toFixed(2) }}</p>
+          <span class="text-sm font-semibold text-green-700">-{{ parseFloat(item.producto.descuento_publico).toFixed(0) }}%</span>
+        </div>
+        <p class="text-lg font-bold text-green-600">${{ parseFloat(item.precio_unitario).toFixed(2) }}</p>
+      </template>
+      <template v-else>
+        <p class="text-lg font-bold text-gray-900">${{ parseFloat(item.precio_unitario).toFixed(2) }}</p>
+      </template>
     </div>
     
     <!-- Quantity Controls -->
@@ -36,7 +45,9 @@
     
     <!-- Total Price -->
     <div class="text-right">
-      <p class="font-bold text-lg text-gray-900">${{ itemTotal.toFixed(2) }}</p>
+      <p class="font-bold text-lg text-gray-900">
+        ${{ itemTotal.toFixed(2) }}
+      </p>
     </div>
     
     <!-- Remove Button -->
@@ -60,7 +71,10 @@ export default {
   },
   computed: {
     itemTotal() {
-      return parseFloat(this.item.precio_unitario * this.item.cantidad);
+      // Usamos subtotal_detalle_carrito para el total del item si está disponible, de lo contrario, calculamos con precio_unitario
+      return this.item.subtotal_detalle_carrito !== undefined && this.item.subtotal_detalle_carrito !== null
+        ? parseFloat(this.item.subtotal_detalle_carrito)
+        : parseFloat(this.item.precio_unitario) * this.item.cantidad;
     }
   },
   methods: {

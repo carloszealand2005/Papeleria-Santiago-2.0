@@ -84,9 +84,10 @@ class Precio(models.Model):
     pvm = models.DecimalField(max_digits=10, decimal_places=2) # Precio de venta al mayor
     iva = models.DecimalField(max_digits=4, decimal_places=2)  # porcentaje de IVA
 
-    
+    descuento_publico = models.DecimalField(max_digits= 5, decimal_places=2, default=Decimal(0.00))
+    descuento_mayorista = models.DecimalField(max_digits= 5, decimal_places=2, default=Decimal(0.00))
     def __str__(self):
-        return f"Precio {self.pvp} para {self.producto.SKU} \n El precio al por mayor para este producto es: {self.pvm}"
+        return f"Precio {self.pvp} para {self.producto.SKU} \n El precio al por mayor para este producto es: {self.pvm}. -> Descuento publico: {self.descuento_publico}% -> Descuento mayorista: {self.descuento_mayorista}%"
 
 #----------------
 # Tabla inventaio:
@@ -169,8 +170,7 @@ class Carrito(models.Model):
     )
     fecha_creacion = models.DateField(auto_now_add=True) # Solo cuando se crea este registro
     fecha_actualizacion = models.DateField(auto_now=True) # Cada vez que se hay un cambio en sus detalles. 
-    # estado = models.CharField(max_length=20, choices=ESTADO_CARRITO_CHOICES) # Eliminado, ahora es una propiedad calculada
-    # subtotal_carrito = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # Eliminado, ahora es una propiedad calculada
+   
 
 
     @property
@@ -181,7 +181,7 @@ class Carrito(models.Model):
     
     @property
     def subtotal_carrito(self):
-        subtotal_agregado = self.detalles_carrito.aggregate(subtotal_sum=Sum('subtotal_detalle_carrito'))['subtotal_sum']
+        subtotal_agregado = self.detalles_carrito.aggregate(subtotal_sum=Sum('subtotal_antes_descuento'))['subtotal_sum']
         return subtotal_agregado if subtotal_agregado is not None else Decimal('0.00')
 
     @property
@@ -219,6 +219,7 @@ class DetalleCarrito(models.Model):
 
     cantidad = models.IntegerField()
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    subtotal_antes_descuento = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # Nuevo campo
     subtotal_detalle_carrito = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     iva_detalle_carrito = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     descuento_detalle_carrito = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -229,43 +230,57 @@ class DetalleCarrito(models.Model):
     # Método para calcular el subtotal y el total del detalle del carrito
     def save(self, *args, **kwargs):
 
-         # Asegurarse de que el producto y el pedido existan antes de calcular el precio
         if self.producto and self.carrito:
             try:
-                # Obtener el objeto Precio asociado al producto
-                precio_obj = self.producto.precios # Usamos related_name="precios" del modelo Precio
+                precio_obj = self.producto.precios
 
-                # Determinar el precio unitario basado en el tipo de cliente
+                # Determinar el precio unitario base (antes de descuento) y el porcentaje de descuento
+                base_precio_unitario = Decimal('0.00')
+                descuento_porcentaje = Decimal('0.00')
+
                 if self.carrito.cliente.tipo_cliente == 'Empresa':
-                    self.precio_unitario = precio_obj.pvm # Precio al por mayor
+                    base_precio_unitario = precio_obj.pvm
+                    descuento_porcentaje = precio_obj.descuento_mayorista
                 else:
-                    self.precio_unitario = precio_obj.pvp # Precio de venta al público
+                    base_precio_unitario = precio_obj.pvp
+                    descuento_porcentaje = precio_obj.descuento_publico
+
+                # Calcular el subtotal antes de aplicar cualquier descuento
+                self.subtotal_antes_descuento = self.cantidad * base_precio_unitario
+
+                # Aplicar descuento al precio unitario
+                if descuento_porcentaje > Decimal('0.00'):
+                    descuento_factor = descuento_porcentaje / Decimal('100.00')
+                    self.precio_unitario = base_precio_unitario * (Decimal('1.00') - descuento_factor)
+                    # Almacenar el monto del descuento aplicado en este detalle
+                    self.descuento_detalle_carrito = (base_precio_unitario - self.precio_unitario) * self.cantidad
+                else:
+                    self.precio_unitario = base_precio_unitario
+                    self.descuento_detalle_carrito = Decimal('0.00')
+
             except Precio.DoesNotExist:
-                # PRODUCTO SIN PRECIO ASOCIADO. Por lo tanto, no se puede calcular el precio unitario.
                 raise ValueError("Producto sin precio asociado")
 
-
-
-        # Calcular subtotal y total una vez obtenido el precio unitario.
-     
         if self.precio_unitario is not None:
+            # El subtotal se calcula con el precio unitario YA con descuento aplicado
             self.subtotal_detalle_carrito = self.cantidad * self.precio_unitario
 
-            # Calcular IVA del detalle del carrito
-            # Asegurarse de que producto.precios.iva exista y sea Decimal
+            # Calcular IVA del detalle del carrito sobre el subtotal ya con descuento
             if self.producto.precios and self.producto.precios.iva is not None:
-                # Convertir el porcentaje de IVA a un factor decimal
                 iva_porcentaje = self.producto.precios.iva / Decimal('100.00')
                 self.iva_detalle_carrito = self.subtotal_detalle_carrito * iva_porcentaje
             else:
-                self.iva_detalle_carrito = Decimal('0.00') # Si no hay IVA definido, asumimos 0
+                self.iva_detalle_carrito = Decimal('0.00')
 
-            descuento = Decimal(str(self.descuento_detalle_carrito)) if self.descuento_detalle_carrito is not None else Decimal('0.00')
-            self.total_detalle_carrito = self.subtotal_detalle_carrito - descuento + self.iva_detalle_carrito # Incluir IVA en el total
+            # El total_detalle_carrito ya no necesita restar self.descuento_detalle_carrito aquí
+            # porque self.precio_unitario ya tiene el descuento aplicado.
+            # Simplemente suma el subtotal y el IVA.
+            self.total_detalle_carrito = self.subtotal_detalle_carrito + self.iva_detalle_carrito
         else:
-            # PRODUCTO SIN PRECIO ASOCIADO. Por lo tanto, no se puede calcular el subtotal y total.
+            self.subtotal_antes_descuento = None # Asegurar que también sea None si no hay precio
             self.subtotal_detalle_carrito = None
-            self.iva_detalle_carrito = None # También establecer IVA a None
+            self.iva_detalle_carrito = None
+            self.descuento_detalle_carrito = Decimal('0.00')
             self.total_detalle_carrito = None
         super().save(*args, **kwargs)
 

@@ -2,7 +2,6 @@
   <div class="min-h-screen bg-gray-50">
     <!-- Header -->
     <ProductsHeader 
-      :cartCount="cartCount"
       @search="handleSearch"
     />
     
@@ -65,7 +64,7 @@ import FeaturedProducts from './FeaturedProducts.vue';
 import AllProducts from './AllProducts.vue';
 import ProductsNewsletter from './ProductsNewsletter.vue';
 import ProductsFooter from './ProductsFooter.vue';
-import AuthPromptModal from './AuthPromptModal.vue'; // Importamos el nuevo modal
+import AuthPromptModal from './AuthPromptModal.vue';
 import { mapGetters } from 'vuex';
 import api from '@/utils/api';
 
@@ -79,9 +78,9 @@ export default {
     AllProducts,
     ProductsNewsletter,
     ProductsFooter,
-    AuthPromptModal // Registramos el nuevo modal
+    AuthPromptModal
   },
-  inject: ['totalCartItems', 'selectProduct'], // addToCart ha sido removido
+  inject: ['selectProduct'], // Eliminamos cartItemCount de inject
   data() {
     return {
       selectedCategory: 'all',
@@ -95,14 +94,11 @@ export default {
       ],
       featuredProducts: [],
       products: [],
-      showAuthPromptModal: false, // Controla la visibilidad del modal
+      showAuthPromptModal: false,
     }
   },
   computed: {
-    ...mapGetters(['isAuthenticated']),
-    cartCount() {
-      return this.totalCartItems || 0;
-    },
+    ...mapGetters(['isAuthenticated', 'cartItemCount']), // Mapeamos cartItemCount desde Vuex
     filteredProducts() {
       let filtered = this.products;
       
@@ -150,7 +146,7 @@ export default {
     },
     async handleAddToCart(product) {
       if (!this.isAuthenticated) {
-        this.showAuthPromptModal = true; // Muestra el modal si no está autenticado
+        this.showAuthPromptModal = true;
         return;
       }
       try {
@@ -159,8 +155,8 @@ export default {
           cantidad: 1
         });
         this.showNotification(`"${product.name}" añadido al carrito.`, 'success');
-        // Opcional: Recargar el contador del carrito si es necesario
-        // this.$emit('cart-updated'); 
+        // Después de añadir al carrito, actualizamos el conteo en Vuex
+        this.$store.commit('SET_CART_ITEM_COUNT', this.cartItemCount + 1);
       } catch (error) {
         console.error('Error al añadir producto al carrito:', error);
         this.showNotification('Error al añadir producto al carrito.', 'error');
@@ -203,7 +199,6 @@ export default {
           console.error('Error fetching featured products:', error);
         });
     },
-    // Métodos para manejar los eventos del AuthPromptModal
     closeAuthPromptModal() {
       this.showAuthPromptModal = false;
     },

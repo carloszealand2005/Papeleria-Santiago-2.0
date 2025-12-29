@@ -9,12 +9,16 @@ export default new Vuex.Store({
     isLoggedIn: false,
     token: null, // Para almacenar el token de autenticación
     user: null, // Para almacenar la información del usuario logeado
+    cartItemCount: 0, // Nuevo estado para el conteo de ítems del carrito
   },
   mutations: {
     SET_AUTH_DATA(state, { isLoggedIn, user, token }) {
       state.isLoggedIn = isLoggedIn;
       state.user = user;
       state.token = token;
+    },
+    SET_CART_ITEM_COUNT(state, count) {
+      state.cartItemCount = count;
     },
   },
   actions: {
@@ -47,12 +51,14 @@ export default new Vuex.Store({
     logout({ commit }) {
       localStorage.removeItem('user-token'); // Eliminamos el token de localStorage
       commit('SET_AUTH_DATA', { isLoggedIn: false, user: null, token: null });
+      commit('SET_CART_ITEM_COUNT', 0); // También reseteamos el conteo del carrito al cerrar sesión
     },
   },
   getters: {
     isAuthenticated: state => state.token !== null, // El usuario está autenticado si hay un token
     getToken: state => state.token,
     getUser: state => state.user,
+    cartItemCount: state => state.cartItemCount, // Getter para el conteo de ítems del carrito
   },
   modules: {
     // Aquí puedes modularizar tu store para aplicaciones más grandes

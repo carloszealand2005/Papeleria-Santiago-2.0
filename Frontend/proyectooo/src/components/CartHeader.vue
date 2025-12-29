@@ -66,10 +66,10 @@
           <div class="relative" @click="goToCart">
             <i class="fas fa-shopping-cart text-xl text-blue-600 cursor-pointer"></i>
             <span 
-              v-if="cartCount > 0"
+              v-if="cartItemCount > 0"
               class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
             >
-              {{ cartCount }}
+              {{ cartItemCount }}
             </span>
           </div>
         </div>
@@ -79,18 +79,24 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'; // Importar mapGetters
+
 export default {
   name: 'CartHeader',
-  props: {
-    cartCount: {
-      type: Number,
-      default: 0
-    }
-  },
+  // Eliminamos la prop cartItemCount
+  // props: {
+  //   cartItemCount: {
+  //     type: Number,
+  //     default: 0
+  //   }
+  // },
   data() {
     return {
       searchQuery: ''
     }
+  },
+  computed: {
+    ...mapGetters(['cartItemCount']), // Mapeamos cartItemCount directamente desde Vuex
   },
   methods: {
     handleSearch() {
@@ -116,4 +122,3 @@ export default {
 
 <style scoped>
 </style>
-

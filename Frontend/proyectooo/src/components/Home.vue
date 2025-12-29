@@ -6,7 +6,6 @@
       @go-to-home="goToHome"
       @go-to-offers="goToOffers"
       @go-to-products="goToProducts"
-      :cartCount="cartCount"
     />
     <Hero />
     <Categorias 
@@ -16,8 +15,8 @@
     />
     <Novedades 
       :featuredProducts="featuredProducts"
-      @select-product="handleSelectProduct"
       @add-to-cart="handleAddToCart"
+      @select-product="handleSelectProduct"
     />
     <WhyChooseUs />
     <Newsletter />
@@ -33,6 +32,7 @@ import Novedades from './Novedades.vue';
 import WhyChooseUs from './WhyChooseUs.vue';
 import Newsletter from './Newsletter.vue';
 import Footer from './Footer.vue';
+// import { mapGetters } from 'vuex'; // Eliminado, ya no se usa
 
 export default {
   name: 'HomePage',
@@ -45,12 +45,11 @@ export default {
     Newsletter,
     Footer
   },
-  inject: ['cartItems', 'totalCartItems', 'mainCategories', 'subCategories', 'featuredProducts', 'addToCart', 'selectProduct'],
-  computed: {
-    cartCount() {
-      return this.totalCartItems || 0;
-    }
-  },
+  inject: ['cartItems', 'mainCategories', 'subCategories', 'featuredProducts', 'addToCart', 'selectProduct'],
+  // Ya no necesitamos mapear cartItemCount aquí si no se usa directamente en Home.vue
+  // computed: {
+  //   ...mapGetters(['cartItemCount']),
+  // },
   methods: {
     goToLogin() {
       this.$router.push('/login');
@@ -86,4 +85,3 @@ export default {
 
 <style scoped>
 </style>
-

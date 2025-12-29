@@ -144,25 +144,42 @@ http://127.0.0.1:8000/api/productos/?precio_max=50.00
 
 http://127.0.0.1:8000/api/productos/?precio_min=10.00&precio_max=50.00
 
+-----
+DETALLES CARRITO:
 
-DETALLE CARRITO:
+CABECERA REQUERIDA EN CADA UNA DE LAS PETICIONES:
+Key: Authorization
+Value: Token <USER_TOKEN>
+------
 
-POST -> http://127.0.0.1:8000/api/carritos/id_carrito/detalles/ (ADD NEW ITEM TO CART)
+GET -> http://127.0.0.1:8000/api/mi-carrito/obtener/ (Obtener el carrito los detalles del carrito del usuario)
+
+POST -> http://127.0.0.1:8000/api/mi-carrito/pagar/ (Terminar el pedido del carrito, generando factura)
+
+POST -> http://127.0.0.1:8000/api/mi-carrito-detalles/ (para añadir o actualizar un producto)
 BODY: {"producto_sku": "110530", "cantidad": 100} (IT UPDATES, NOT SUMS)
 
 
-GET -> /api/carritos/{carrito_pk}/detalles/ (ALL DETAILS OF A CART)
+GET -> http://127.0.0.1:8000/api/mi-carrito-detalles/ (para listar todos los detalles)
 
 
-DELETE -> http://127.0.0.1:8000/api/carritos/id_carrito/detalles/SKU/
-BODY: NOT REQUIRED. 
+GET -> http://127.0.0.1:8000/api/mi-carrito-detalles/{producto_sku}/ (para obtener un detalle específico)
 
+
+DELETE -> http://127.0.0.1:8000/api/mi-carrito-detalles/{producto_sku}/ (para eliminar un producto)
+
+
+GET -> http://127.0.0.1:8000/api/mi-carrito/conteo/ (conseguir el conteo de items del carrito)
+----
+
+---
 GET -> /api/productos/destacados/ (FIRST 50)
 GET -> /api/productos/destacados/?subcategoria=manualidades
 GET -> /api/productos/destacados/?limite=X (ADD LIMIT)
 GET -> /api/productos/destacados/?limite=30&subcategoria=manualidades
+---
 
-POST -> http://127.0.0.1:8000/api/carritos/{id_carrito}/pagar/ (Finish a car payment)
+
 
 AUTH: 
 POST -> http://127.0.0.1:8000/api/autenticacion/
@@ -170,13 +187,22 @@ POST -> http://127.0.0.1:8000/api/autenticacion/
 
 POST -> /api/autenticacion/registro/
 {"email": "cdsa@gmail.com", "username" = "username", "password": "password"}
-RETURNS: CAMPO TOKEN
+RETURNS: {
+    "token": "ea630287e1e8cdaefd9d45e8b6610be1c57f455d",
+    "username": "POSTA",
+    "email": "carldav3id1106@gmail.com",
+    "message": "Inicio de sesión exitoso."
+}
 
 
 POST -> /api/autenticacion/login/
 {"email": "cdsa@gmail.com", "password": "password"}
-RETURNS: CAMPO TOKEN 
-
+RETURNS: {
+    "token": "ea630287e1e8cdaefd9d45e8b6610be1c57f455d",
+    "username": "POSTA",
+    "email": "carldav3id1106@gmail.com",
+    "message": "Inicio de sesión exitoso."
+}
 
 DRAFTS:
 pip install drf-nested-routers

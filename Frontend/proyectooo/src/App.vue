@@ -12,7 +12,8 @@
 
 <script>
 import './assets/tailwind.css'
-import { mapGetters, mapActions } from 'vuex'; // Importamos mapGetters y mapActions
+import { mapGetters, mapActions } from 'vuex';
+import api from './utils/api';
 
 export default {
   name: 'App',
@@ -120,7 +121,7 @@ export default {
           originalPrice: '29.99',
           isNew: true,
           discount: 17,
-          image: 'https://readdy.ai/api/search-image?query=premium%20spiral%20notebook%20with%20elegant%20cover%20design%20on%20clean%20white%20background%20professional%20product%20photography%20high%20quality&width=300&height=300&seq=prod-new-01&orientation=squarish'
+          image: 'https://readdy.ai/api/search-image?query=premium%20spiral%20notebook%20con%20elegant%20cover%20design%20on%20clean%20white%20background%20professional%20product%20photography%20high%20quality&width=300&height=300&seq=prod-new-01&orientation=squarish'
         },
         {
           id: 2,
@@ -128,7 +129,7 @@ export default {
           category: 'Escritura',
           price: '18.50',
           isNew: true,
-          image: 'https://readdy.ai/api/search-image?query=elegant%20gel%20pen%20set%20in%20professional%20packaging%20with%20multiple%20colors%20on%20clean%20white%20background%20product%20photography&width=300&height=300&seq=prod-new-02&orientation=squarish'
+          image: 'https://readdy.ai/api/search-image?query=elegant%20gel%20pen%20set%20in%20professional%20packaging%20con%20multiple%20colors%20on%20clean%20white%20background%20product%20photography&width=300&height=300&seq=prod-new-02&orientation=squarish'
         },
         {
           id: 3,
@@ -137,7 +138,7 @@ export default {
           price: '45.00',
           originalPrice: '60.00',
           discount: 25,
-          image: 'https://readdy.ai/api/search-image?query=modern%20desk%20organizer%20with%20multiple%20compartments%20for%20office%20supplies%20clean%20minimalist%20design%20professional%20photography&width=300&height=300&seq=prod-new-03&orientation=squarish'
+          image: 'https://readdy.ai/api/search-image?query=modern%20desk%20organizer%20con%20multiple%20compartments%20for%20office%20supplies%20clean%20minimalist%20design%20professional%20photography&width=300&height=300&seq=prod-new-03&orientation=squarish'
         },
         {
           id: 4,
@@ -145,15 +146,16 @@ export default {
           category: 'Arte',
           price: '89.99',
           isNew: true,
-          image: 'https://readdy.ai/api/search-image?query=professional%20art%20marker%20set%20in%20elegant%20case%20with%20vibrant%20colors%20for%20artists%20clean%20white%20background%20product%20photography&width=300&height=300&seq=prod-new-04&orientation=squarish'
+          image: 'https://readdy.ai/api/search-image?query=professional%20art%20marker%20set%20in%20elegant%20case%20con%20vibrant%20colors%20for%20artists%20clean%20white%20background%20product%20photography&width=300&height=300&seq=prod-new-04&orientation=squarish'
         }
-      ]
+      ],
+      // localCartItemCount: 0, // Eliminado, ya que el conteo viene de Vuex
     };
   },
   provide() {
     return {
       cartItems: this.cartItems,
-      totalCartItems: this.totalCartItems,
+      // cartItemCount: this.cartItemCount, // Eliminado, ya que el conteo viene de Vuex
       mainCategories: this.mainCategories,
       subCategories: this.subCategories,
       featuredProducts: this.featuredProducts,
@@ -169,16 +171,44 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['isAuthenticated']), // Mapeamos el getter 'isAuthenticated'
-    totalCartItems() {
-      return this.cartItems.reduce((total, item) => total + item.quantity, 0);
+    ...mapGetters(['isAuthenticated', 'cartItemCount']), // Mapeamos los getters de Vuex
+    // cartItemCount() { // Eliminado, ya que el conteo viene de Vuex
+    //   return this.localCartItemCount; 
+    // }
+  },
+  watch: {
+    isAuthenticated(newVal) {
+      console.log('App.vue - isAuthenticated changed:', newVal); // Debugging
+      if (newVal) {
+        this.fetchCartItemCount();
+      } else {
+        this.$store.commit('SET_CART_ITEM_COUNT', 0); // Reseteamos el conteo en Vuex
+      }
+    }
+  },
+  created() {
+    console.log('App.vue - created hook, isAuthenticated:', this.isAuthenticated); // Debugging
+    if (this.isAuthenticated) {
+      this.fetchCartItemCount();
     }
   },
   methods: {
     ...mapActions(['logout']), // Mapeamos la acción 'logout' de Vuex
+    async fetchCartItemCount() {
+      try {
+        console.log('App.vue - Fetching cart item count...'); // Debugging
+        const response = await api.get('/mi-carrito/conteo/');
+        this.$store.commit('SET_CART_ITEM_COUNT', response.data.conteo_items_carrito); // Actualizamos el conteo en Vuex
+        console.log('App.vue - Cart item count fetched:', this.$store.getters.cartItemCount); // Debugging
+      } catch (error) {
+        console.error('App.vue - Error al obtener el conteo del carrito:', error); // Debugging
+        this.$store.commit('SET_CART_ITEM_COUNT', 0);
+      }
+    },
     handleCartUpdate(items) {
       this.cartItems = items;
       this.showNotification('Carrito actualizado');
+      this.fetchCartItemCount(); // Actualizar el conteo después de una actualización
     },
     handleAddToCart(product) {
       const existingItem = this.cartItems.find(item => item.id === product.id);
@@ -203,6 +233,7 @@ export default {
       }
       
       this.showNotification(`${product.name} agregado al carrito`);
+      this.fetchCartItemCount(); // Actualizar el conteo después de añadir al carrito
     },
     handleCheckout(data) {
       try {

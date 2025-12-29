@@ -40,10 +40,10 @@
           >
             <i class="fas fa-shopping-cart"></i>
             <span 
-              v-if="cartCount > 0"
+              v-if="cartItemCount > 0"
               class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
             >
-              {{ cartCount }}
+              {{ cartItemCount }}
             </span>
           </button>
         </div>
@@ -53,23 +53,28 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'OffersHeader',
-  props: {
-    cartCount: {
-      type: Number,
-      default: 0
-    }
-  },
+  // Eliminamos la prop cartItemCount
+  // props: {
+  //   cartItemCount: {
+  //     type: Number,
+  //     default: 0
+  //   }
+  // },
   data() {
     return {
-      searchQuery: ''
+      searchQuery: '',
     }
+  },
+  computed: {
+    ...mapGetters(['isAuthenticated', 'cartItemCount']), // Mapeamos cartItemCount directamente desde Vuex
   },
   methods: {
     handleSearch() {
       if (this.searchQuery.trim()) {
-        console.log('Buscando:', this.searchQuery);
         this.$emit('search', this.searchQuery);
       }
     },
@@ -88,4 +93,3 @@ export default {
 
 <style scoped>
 </style>
-

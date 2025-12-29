@@ -2,7 +2,6 @@
   <div class="min-h-screen bg-gray-50">
     <!-- Header -->
     <OffersHeader 
-      :cartCount="cartCount"
       @search="handleSearch"
     />
     
@@ -31,6 +30,7 @@
       <AllOffers
         :filteredProducts="filteredProducts"
         @add-to-cart="handleAddToCart"
+        @add-to-cart-from-offers="handleAddToCart"
         @select-product="handleSelectProduct"
       />
       
@@ -55,6 +55,8 @@ import FeaturedOffers from './FeaturedOffers.vue';
 import AllOffers from './AllOffers.vue';
 import OffersNewsletter from './OffersNewsletter.vue';
 import OffersFooter from './OffersFooter.vue';
+import { mapGetters } from 'vuex';
+import api from '@/utils/api'; // Importar la instancia de API
 
 export default {
   name: 'OffersPage',
@@ -67,7 +69,7 @@ export default {
     OffersNewsletter,
     OffersFooter
   },
-  inject: ['totalCartItems', 'addToCart', 'selectProduct'],
+  inject: ['addToCart', 'selectProduct'],
   data() {
     return {
       selectedCategory: 'all',
@@ -198,9 +200,7 @@ export default {
     }
   },
   computed: {
-    cartCount() {
-      return this.totalCartItems || 0;
-    },
+    ...mapGetters(['cartItemCount']), // Mapeamos cartItemCount desde Vuex
     filteredProducts() {
       let filtered = this.products;
       
@@ -228,9 +228,22 @@ export default {
     handleSortChange(sortValue) {
       this.sortBy = sortValue;
     },
-    handleAddToCart(product) {
-      if (this.addToCart) {
-        this.addToCart(product);
+    async handleAddToCart(product) {
+      if (!this.isAuthenticated) {
+        this.showAuthPromptModal = true;
+        return;
+      }
+      try {
+        await api.post('/mi-carrito-detalles/', {
+          producto_sku: product.id,
+          cantidad: 1
+        });
+        this.showNotification(`"${product.name}" añadido al carrito.`, 'success');
+        // Después de añadir al carrito, actualizamos el conteo en Vuex
+        this.$store.commit('SET_CART_ITEM_COUNT', this.cartItemCount + 1);
+      } catch (error) {
+        console.error('Error al añadir producto al carrito:', error);
+        this.showNotification('Error al añadir producto al carrito.', 'error');
       }
     },
     handleSelectProduct(product) {
@@ -246,6 +259,60 @@ export default {
       console.log('Subscribing email:', email);
       this.$emit('subscribe-newsletter', email);
       this.newsletterEmail = '';
+    },
+    fetchFeaturedProducts(subcategoria = 'all') {
+      let url = 'http://127.0.0.1:8000/api/productos/destacados/';
+      if (subcategoria !== 'all') {
+        url += `?limite=15&subcategoria=${subcategoria}`;
+      } else {
+        url += `?limite=15`;
+      }
+
+      api.get(url)
+        .then(response => {
+          this.featuredOffers = response.data.map(product => ({
+            id: product.SKU,
+            name: product.nombre,
+            description: product.descripcion,
+            image: product.imagen_url,
+            price: parseFloat(product.pvp),
+            category: product.categoria ? product.categoria.toLowerCase() : 'otros'
+          }));
+        })
+        .catch(error => {
+          console.error('Error fetching featured products:', error);
+        });
+    },
+    closeAuthPromptModal() {
+      this.showAuthPromptModal = false;
+    },
+    goToRegisterFromModal() {
+      this.showAuthPromptModal = false;
+      this.$router.push('/registro');
+    },
+    goToLoginFromModal() {
+      this.showAuthPromptModal = false;
+      this.$router.push('/login');
+    },
+    continueShoppingFromModal() {
+      this.showAuthPromptModal = false;
+    },
+    showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      const bgColor = type === 'error' ? 'bg-red-600' : 'bg-green-600';
+      notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all`;
+      notification.textContent = message;
+
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+          if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
     }
   }
 }
@@ -253,4 +320,3 @@ export default {
 
 <style scoped>
 </style>
-

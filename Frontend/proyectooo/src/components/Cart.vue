@@ -2,7 +2,6 @@
   <div class="min-h-screen bg-gray-50">
     <!-- Header -->
     <CartHeader 
-      :cartCount="totalItems"
       @search="handleSearch"
     />
     
@@ -63,8 +62,8 @@ import DiscountCode from './DiscountCode.vue';
 import OrderSummary from './OrderSummary.vue';
 import CartBenefits from './CartBenefits.vue';
 import CartFooter from './CartFooter.vue';
-import api from '@/utils/api'; // Importamos la instancia configurada de Axios
-import { mapGetters } from 'vuex'; // Importamos mapGetters de Vuex
+import api from '@/utils/api';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'CartPage',
@@ -77,26 +76,27 @@ export default {
     CartBenefits,
     CartFooter
   },
-  inject: ['cartItems', 'updateCart', 'proceedCheckout'], // Mantener por compatibilidad con la plantilla actual
+  inject: ['cartItems', 'updateCart', 'proceedCheckout'],
   data() {
     return {
       appliedDiscount: 0,
       selectedShipping: 'standard',
-      cart: null, // Para almacenar los datos del carrito del backend
+      cart: null,
     }
   },
   computed: {
-    ...mapGetters(['isAuthenticated']),
+    ...mapGetters(['isAuthenticated', 'cartItemCount']),
     currentCartItems() {
-      // Usar los detalles del carrito del backend si están disponibles, de lo contrario, array vacío
       return this.cart ? this.cart.detalles_carrito : [];
     },
     totalItems() {
       return this.currentCartItems.reduce((total, item) => total + item.cantidad, 0);
     },
     subtotal() {
-      // Usar el subtotal del backend si está disponible, de lo contrario, calcularlo
-      return this.cart && this.cart.subtotal_carrito !== null ? parseFloat(this.cart.subtotal_carrito) : this.currentCartItems.reduce((total, item) => total + (parseFloat(item.precio_unitario) * item.cantidad), 0);
+      // Usar subtotal_carrito del backend para el subtotal, con fallback a 0
+      return this.cart && this.cart.subtotal_carrito !== null
+        ? parseFloat(this.cart.subtotal_carrito)
+        : 0;
     },
     shipping() {
       return this.selectedShipping === 'express' ? 15.00 : 0;
@@ -108,7 +108,6 @@ export default {
       return this.cart && this.cart.iva_carrito !== null ? parseFloat(this.cart.iva_carrito) : 0;
     },
     total() {
-      // Usar el total del backend si está disponible
       return this.cart && this.cart.total_carrito !== null ? parseFloat(this.cart.total_carrito) : 0;
     }
   },
@@ -126,10 +125,13 @@ export default {
         const response = await api.get('/mi-carrito/obtener/');
         this.cart = response.data;
         console.log('Carrito cargado:', this.cart);
+        // Después de cargar el carrito, actualizamos el conteo en Vuex
+        this.$store.commit('SET_CART_ITEM_COUNT', this.cart.detalles_carrito.reduce((total, item) => total + item.cantidad, 0));
       } catch (error) {
         console.error('Error al cargar el carrito:', error);
         this.cart = null;
         this.showNotification('Error al cargar el carrito.', 'error');
+        this.$store.commit('SET_CART_ITEM_COUNT', 0); // Resetear conteo en caso de error
       }
     },
     async increaseQuantity(productSku) {
@@ -184,8 +186,6 @@ export default {
       }
     },
     updateCartItems() {
-      // Esta función ahora debería llamar a una API para actualizar el carrito en el backend
-      // Por ahora, solo recargaremos el carrito para reflejar cualquier cambio
       this.fetchCartItems();
       this.showNotification('Carrito actualizado correctamente');
     },
@@ -232,7 +232,8 @@ export default {
     handleNavigate(route) {
       if (route === 'home') {
         this.$router.push('/');
-      } else if (route === 'products') {
+      }
+      else if (route === 'products') {
         this.$router.push('/productos');
       }
       else if (route === 'offers') {

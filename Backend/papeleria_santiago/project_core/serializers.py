@@ -11,6 +11,8 @@ class ProductoSerializer(serializers.ModelSerializer):
 
     pvp = serializers.DecimalField(max_digits=10, decimal_places=2, source='precios.pvp', read_only=True)
     pvm = serializers.DecimalField(max_digits=10, decimal_places=2, source='precios.pvm', read_only=True)
+    descuento_publico = serializers.DecimalField(max_digits=5, decimal_places=2, source='precios.descuento_publico', read_only=True)
+    descuento_mayorista = serializers.DecimalField(max_digits=5, decimal_places=2, source='precios.descuento_mayorista', read_only=True)
 
     class Meta:
         model = Producto
@@ -18,7 +20,8 @@ class ProductoSerializer(serializers.ModelSerializer):
             'SKU', 'codigo_barras', 'nombre', 'descripcion',
             'marca', 'categoria', 'subcategoria', 'variante',
             'caracteristica1', 'caracteristica2', 'caracteristica3', 'caracteristica4', 'caracteristica5',
-            'imagen_url', 'imagen_url2', 'imagen_url3', 'imagen_url4', 'pvp', 'pvm'
+            'imagen_url', 'imagen_url2', 'imagen_url3', 'imagen_url4', 'pvp', 'pvm',
+            'descuento_publico', 'descuento_mayorista' # Nuevos campos
         ]
 
 
@@ -30,8 +33,8 @@ class DetalleCarritoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DetalleCarrito
-        fields = ['id', 'producto_sku', 'producto', 'cantidad', 'precio_unitario', 'subtotal_detalle_carrito', 'descuento_detalle_carrito', 'iva_detalle_carrito', 'total_detalle_carrito', 'carrito']
-        read_only_fields = ['precio_unitario', 'subtotal_detalle_carrito', 'total_detalle_carrito', 'carrito']
+        fields = ['id', 'producto_sku', 'producto', 'cantidad', 'precio_unitario', 'subtotal_antes_descuento', 'descuento_detalle_carrito', 'subtotal_detalle_carrito', 'iva_detalle_carrito', 'total_detalle_carrito', 'carrito']
+        read_only_fields = ['precio_unitario', 'subtotal_antes_descuento', 'descuento_detalle_carrito', 'subtotal_detalle_carrito',  'iva_detalle_carrito', 'total_detalle_carrito', 'carrito']
 
 class CarritoSerializer(serializers.ModelSerializer):
     detalles_carrito = DetalleCarritoSerializer(many=True, read_only=True) # Anidar detalles del carrito
