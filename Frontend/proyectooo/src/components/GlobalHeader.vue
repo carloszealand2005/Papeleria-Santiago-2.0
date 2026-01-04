@@ -38,7 +38,7 @@
             class="text-slate-700 hover:text-blue-600 font-medium transition-colors px-4 py-2"
             @click="goToLogin"
           >
-            <i class="fas fa-user mr-2"></i>Iniciar Sesión
+            <i class="fas fa-user mr-2"></i>{{ isAuthenticated ? 'Mi cuenta' : 'Iniciar Sesión' }}
           </button>
           <button 
             class="relative p-2 transition-colors"

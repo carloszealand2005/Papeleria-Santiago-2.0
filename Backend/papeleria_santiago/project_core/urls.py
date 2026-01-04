@@ -9,6 +9,7 @@ router.register(r'productos', views.ProductoViewSet, basename='producto')
 router.register(r'carritos', views.CarritoViewSet, basename='carrito') # Mantener si se necesitan rutas por ID de carrito
 router.register(r'mi-carrito', views.MiCarritoViewSet, basename='mi-carrito') # Nuevo ViewSet para el carrito del usuario
 router.register(r'mi-carrito-detalles', views.MiCarritoDetalleViewSet, basename='mi-carrito-detalle') # Nuevo ViewSet para los detalles del carrito del usuario
+router.register(r'mis-pedidos', views.MisPedidosViewSet, basename='mis-pedidos')
 router.register(r'favoritos', views.FavoritosClienteViewSet, basename='favorito')
 router.register(r'subcategorias', views.SubcategoriaViewSet, basename='subcategoria')
 

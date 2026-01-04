@@ -3,12 +3,16 @@ from django.http import HttpResponse, Http404
 from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
+from django.core import signing
+from django.urls import reverse
+from urllib.parse import quote
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.db.models import Q
 from .models import Comprobante, Pedido, Producto, Carrito, DetalleCarrito, Cliente, DetallePedido, Inventario, Subcategoria # Importamos DetallePedido, Inventario y Subcategoria
 from rest_framework import viewsets, filters, status, mixins, permissions, serializers # Importar filters, status, mixins, permissions y serializers
 from rest_framework.decorators import action # Importar action
 from django_filters.rest_framework import DjangoFilterBackend # Importar DjangoFilterBackend
-from .serializers import ProductoSerializer, CarritoSerializer, DetalleCarritoSerializer, FavoritosClienteSerializer, SubcategoriaSerializer # Importar el serializador
+from .serializers import ProductoSerializer, CarritoSerializer, DetalleCarritoSerializer, FavoritosClienteSerializer, SubcategoriaSerializer, PedidoSerializer # Importar el serializador
 from rest_framework.response import Response # Importar Response
 from .models import FavoritosCliente # Importar el modelo FavoritosCliente
 
@@ -19,7 +23,29 @@ from .models import FavoritosCliente # Importar el modelo FavoritosCliente
 #------------------
 
 # La factura se genera a partir del ID del pedido; caso de no existir factura retornar 404. 
+# La siguiente anotación permite quitar X-FRAME-OPTIONS de DENY para que se pueda mostrar en el frontend 
+@xframe_options_exempt
 def generar_factura_pdf(request, pedido_id):
+    # --- Seguridad (Opción B): URL firmada con expiración ---
+    # Nota: este endpoint NO requiere token/cookie porque suele usarse en <iframe>.
+    # Para privacidad, si no hay token válido o no corresponde al pedido_id, retornamos 404.
+    token_firma = request.GET.get('token')
+    if not token_firma:
+        raise Http404("No encontrado.")
+
+    # Token expira rápido para minimizar riesgo si alguien lo comparte/filtra.
+    # Ajustable: 5-15 minutos es un rango razonable para vista previa y descarga.
+    PDF_TOKEN_MAX_AGE_SECONDS = 10 * 60
+    signer = signing.TimestampSigner(salt='comprobante_pdf')
+
+    try:
+        unsigned_value = signer.unsign(token_firma, max_age=PDF_TOKEN_MAX_AGE_SECONDS)
+    except signing.BadSignature:
+        raise Http404("No encontrado.")
+
+    if str(unsigned_value) != str(pedido_id):
+        raise Http404("No encontrado.")
+
     # Obtener el objeto Pedido o retornar un 404 si no existe
     pedido = get_object_or_404(Pedido, id=pedido_id)
     
@@ -39,8 +65,13 @@ def generar_factura_pdf(request, pedido_id):
 
     # Crear el objeto HttpResponse con el tipo de contenido PDF
     response = HttpResponse(content_type='application/pdf')
-    # Configurar el encabezado para forzar la descarga del archivo
-    response['Content-Disposition'] = f'attachment; filename="factura_{comprobante.numero_factura}.pdf"'
+
+    # Configurar el encabezado para:
+    # - mostrar embebido (iframe) por defecto (inline)
+    # - forzar descarga si viene ?download=1
+    download = request.GET.get('download')
+    disposition = 'attachment' if str(download).lower() in ('1', 'true', 'yes') else 'inline'
+    response['Content-Disposition'] = f'{disposition}; filename="factura_{comprobante.numero_factura}.pdf"'
 
     # Generar el PDF usando xhtml2pdf
     pisa_status = pisa.CreatePDF(
@@ -355,7 +386,8 @@ class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Qu
                     carrito = Carrito.objects.create(cliente=cliente)
             return carrito
         except Cliente.DoesNotExist:
-            raise status.HTTP_404_NOT_FOUND("Perfil de cliente no encontrado para este usuario.")
+            # Nota: levantar un Http404 (no un status code) para que DRF lo convierta a respuesta válida.
+            raise Http404("Perfil de cliente no encontrado para este usuario.")
 
     @action(detail=False, methods=['get'], url_path='obtener') # Nueva acción para GET /api/mi-carrito/obtener/
     def retrieve_my_cart(self, request):
@@ -367,23 +399,12 @@ class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Qu
     def pagar(self, request):
         carrito = self.get_object() # Obtiene el carrito del usuario autenticado
 
-    @action(detail=False, methods=['get'], url_path='conteo')
-    def conteo(self, request):
-        """
-        Retorna el número total de ítems distintos en el carrito del usuario autenticado.
-        """
-        carrito = self.get_object() # Obtiene el carrito del usuario autenticado
-        # `detalles_carrito.count()` cuenta cuántos objetos DetalleCarrito hay.
-        # Cada DetalleCarrito representa un tipo de producto distinto en el carrito.
-        item_count = carrito.detalles_carrito.count()
-        return Response({'conteo_items_carrito': item_count}, status=status.HTTP_200_OK)
-
         # --- 1. Autorización (ya manejada por permission_classes = [permissions.IsAuthenticated]) ---
         # Asegurarse de que el carrito realmente pertenezca al usuario autenticado (doble chequeo)
         if not carrito.cliente or not carrito.cliente.user or carrito.cliente.user != request.user:
             return Response({'error': 'No tienes permiso para pagar este carrito.'}, status=status.HTTP_403_FORBIDDEN)
 
-        # --- 2. Validar Carrito --- 
+        # --- 2. Validar Carrito ---
         if not carrito.detalles_carrito.exists():
             return Response({'error': 'El carrito está vacío, no se puede realizar el pago.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -421,7 +442,7 @@ class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Qu
                 metodo_pago='Tarjeta de crédito',
                 estado_fiscal='Emitido',
             )
-            
+
             # --- 6. Borrar DetalleCarrito del carrito original ---
             carrito.detalles_carrito.all().delete()
             carrito.save() # Guarda el carrito para actualizar la fecha_actualizacion
@@ -430,6 +451,17 @@ class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Qu
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=['get'], url_path='conteo')
+    def conteo(self, request):
+        """
+        Retorna el número total de ítems distintos en el carrito del usuario autenticado.
+        """
+        carrito = self.get_object() # Obtiene el carrito del usuario autenticado
+        # `detalles_carrito.count()` cuenta cuántos objetos DetalleCarrito hay.
+        # Cada DetalleCarrito representa un tipo de producto distinto en el carrito.
+        item_count = carrito.detalles_carrito.count()
+        return Response({'conteo_items_carrito': item_count}, status=status.HTTP_200_OK)
 
 #------------------
 # ViewSet para los detalles del carrito del usuario autenticado (API REST)
@@ -552,6 +584,58 @@ class MiCarritoDetalleViewSet(
 
         self.perform_destroy(detalle_carrito)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+#-------------------
+# ViewSet para los pedidos del usuario autenticado (API REST)
+# Devuelve solo pedidos pertenecientes al usuario y permite generar links firmados para PDF
+#-------------------
+class MisPedidosViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
+):
+    serializer_class = PedidoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        try:
+            cliente = user.cliente_profile
+        except Cliente.DoesNotExist:
+            return Pedido.objects.none()
+
+        # Solo pedidos del usuario autenticado
+        return Pedido.objects.filter(cliente=cliente).order_by('-fecha_pedido', '-id')
+
+    @action(detail=True, methods=['get'], url_path='comprobante/link')
+    def comprobante_link(self, request, pk=None):
+        """
+        Retorna un URL firmado (temporal) para ver el PDF en iframe y otro para descargar.
+        Si el pedido no pertenece al usuario, se retorna 404 (por el queryset filtrado).
+        """
+        pedido = self.get_object()  # 404 si no existe o no pertenece al usuario
+
+        # Token de firma con expiración (debe coincidir con la validación en generar_factura_pdf)
+        PDF_TOKEN_MAX_AGE_SECONDS = 10 * 60
+        signer = signing.TimestampSigner(salt='comprobante_pdf')
+        token_firma = signer.sign(str(pedido.id))
+
+        base_path = reverse('generar_factura_pdf', kwargs={'pedido_id': pedido.id})
+        token_qs = f"token={quote(token_firma)}"
+
+        pdf_url = request.build_absolute_uri(f"{base_path}?{token_qs}")
+        pdf_url_download = request.build_absolute_uri(f"{base_path}?{token_qs}&download=1")
+
+        return Response(
+            {
+                'pedido_id': pedido.id,
+                'pdf_url': pdf_url,
+                'pdf_url_download': pdf_url_download,
+                'expires_in_seconds': PDF_TOKEN_MAX_AGE_SECONDS,
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 #-------------------

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import FavoritosCliente, Producto, Precio, Carrito, DetalleCarrito, Cliente, Subcategoria # Importa tus modelos
+from .models import FavoritosCliente, Producto, Precio, Carrito, DetalleCarrito, Cliente, Subcategoria, Pedido # Importa tus modelos
 
 #------------------
 # Serializador para el modelo Producto
@@ -72,3 +72,17 @@ class SubcategoriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subcategoria
         fields = ['id', 'nombre_subcategoria', 'descripcion_categoria', 'categoria']
+
+
+#------------------
+# Serializador para el modelo Pedido (para listar pedidos del usuario autenticado)
+#------------------
+class PedidoSerializer(serializers.ModelSerializer):
+    subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, source='subtotal_general_comprobante', read_only=True)
+    descuento = serializers.DecimalField(max_digits=10, decimal_places=2, source='descuento_general_comprobante', read_only=True)
+    iva = serializers.DecimalField(max_digits=10, decimal_places=2, source='iva_general_comprobante', read_only=True)
+    total = serializers.DecimalField(max_digits=10, decimal_places=2, source='total_general_comprobante', read_only=True)
+
+    class Meta:
+        model = Pedido
+        fields = ['id', 'fecha_pedido', 'estado_pedido', 'subtotal', 'descuento', 'iva', 'total']

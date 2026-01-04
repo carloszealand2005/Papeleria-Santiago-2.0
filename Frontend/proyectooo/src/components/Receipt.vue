@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-100">
     <!-- Botón para volver al inicio -->
-    <div class="max-w-4xl mx-auto px-4 pt-4">
+    <div class="max-w-7xl mx-auto px-4 pt-4">
       <button 
         @click="goToHome"
         class="text-blue-600 hover:text-blue-700 font-medium transition-colors cursor-pointer mb-4"
@@ -11,132 +11,148 @@
     </div>
     
     <!-- Receipt Container -->
-    <div class="max-w-4xl mx-auto py-8 px-4">
-      <!-- Receipt Card -->
-      <div class="bg-white shadow-lg">
-        <ReceiptHeader />
-        
-        <ReceiptDetails 
-          :invoiceData="invoiceData"
-          :customerData="customerData"
-        />
-        
-        <div class="p-8">
-          <ReceiptProducts :orderItems="orderItems" />
-          
-          <ReceiptTotals :totals="totals" />
-          
-          <ReceiptPaymentInfo 
-            :paymentInfo="paymentInfo"
-            :deliveryInfo="deliveryInfo"
-          />
+    <div class="max-w-7xl mx-auto py-8 px-4 space-y-4">
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="p-6 border-b">
+          <h1 class="text-2xl font-bold text-gray-900">Gracias por tu compra</h1>
+          <p class="text-gray-600 mt-1">
+            Tu pedido se ha concretado exitosamente.
+            <span v-if="pedidoId">Pedido #{{ pedidoId }}</span>
+          </p>
+          <p v-if="expiresInSeconds" class="text-sm text-gray-500 mt-2">
+            El enlace del PDF expira en {{ expiresInSeconds }} segundos. Si expira, puedes regenerarlo.
+          </p>
         </div>
-        
-        <ReceiptFooter />
+
+        <div class="p-6 space-y-4">
+          <div v-if="isLoading" class="p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg">
+            Cargando comprobante...
+          </div>
+          <div v-if="errorMessage" class="p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
+            {{ errorMessage }}
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <a
+              v-if="pdfUrlDownload"
+              :href="pdfUrlDownload"
+              class="inline-flex items-center justify-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
+            >
+              <i class="fas fa-download mr-2"></i>Descargar PDF
+            </a>
+            <button
+              v-if="pedidoId"
+              @click="regeneratePdfLink"
+              class="inline-flex items-center justify-center px-5 py-3 border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-lg transition-colors cursor-pointer"
+              :disabled="isLoading"
+              :class="{ 'opacity-60 cursor-not-allowed': isLoading }"
+            >
+              <i class="fas fa-sync-alt mr-2"></i>Regenerar enlace
+            </button>
+          </div>
+
+          <div v-if="pdfUrl" class="w-full bg-gray-50 border rounded-lg overflow-hidden">
+            <iframe
+              :src="pdfUrl"
+              title="Comprobante en PDF"
+              class="w-full"
+              style="height: 80vh;"
+            ></iframe>
+          </div>
+
+          <div v-else-if="!isLoading" class="text-gray-700">
+            No se encontró un enlace de comprobante para mostrar.
+          </div>
+        </div>
       </div>
-      
-      <!-- Action Buttons -->
-      <ReceiptActions 
-        @print="handlePrint"
-        @download-pdf="handleDownloadPDF"
-        @send-email="handleSendEmail"
-      />
     </div>
   </div>
 </template>
 
 <script>
-import ReceiptHeader from './ReceiptHeader.vue';
-import ReceiptDetails from './ReceiptDetails.vue';
-import ReceiptProducts from './ReceiptProducts.vue';
-import ReceiptTotals from './ReceiptTotals.vue';
-import ReceiptPaymentInfo from './ReceiptPaymentInfo.vue';
-import ReceiptFooter from './ReceiptFooter.vue';
-import ReceiptActions from './ReceiptActions.vue';
+import api from '@/utils/api';
 
 export default {
   name: 'ReceiptPage',
-  components: {
-    ReceiptHeader,
-    ReceiptDetails,
-    ReceiptProducts,
-    ReceiptTotals,
-    ReceiptPaymentInfo,
-    ReceiptFooter,
-    ReceiptActions
+  data() {
+    return {
+      pedidoId: '',
+      pdfUrl: '',
+      pdfUrlDownload: '',
+      // Solo para UX (el backend devuelve expires_in_seconds en el GET link)
+      expiresInSeconds: 0,
+      isLoading: false,
+      errorMessage: ''
+    };
   },
-  inject: ['receiptData'],
-  computed: {
-    invoiceData() {
-      return this.receiptData?.invoiceData || {
-        number: 'FAC-B-20251126',
-        date: new Date().toLocaleDateString('es-CO')
-      };
-    },
-    customerData() {
-      return this.receiptData?.customerData || {
-        name: 'Cliente',
-        id: '1.059.885.432',
-        email: 'cliente@email.com',
-        address: 'No especificada'
-      };
-    },
-    orderItems() {
-      return this.receiptData?.orderItems || [];
-    },
-    totals() {
-      return this.receiptData?.totals || {
-        subtotal: 0,
-        discount: 0,
-        tax: 0,
-        total: 0
-      };
-    },
-    paymentInfo() {
-      return this.receiptData?.paymentInfo || {
-        method: 'Tarjeta de Crédito',
-        status: 'Pagado',
-        reference: 'TXN-789456123'
-      };
-    },
-    deliveryInfo() {
-      return this.receiptData?.deliveryInfo || {
-        type: 'Domicilio',
-        date: new Date().toLocaleDateString('es-CO'),
-        address: 'No especificada'
-      };
+  created() {
+    this.hydrateFromSession();
+
+    // Si no tenemos pdfUrl pero sí pedidoId, intentamos regenerar el link
+    if (!this.pdfUrl && this.pedidoId) {
+      this.regeneratePdfLink();
     }
   },
   methods: {
     goToHome() {
       this.$router.push('/');
     },
-    handlePrint() {
-      // La lógica de impresión ya está en ReceiptActions
-      this.showNotification('Imprimiendo comprobante...');
-    },
-    handleDownloadPDF() {
-      this.showNotification('Descargando comprobante en PDF...');
-    },
-    handleSendEmail() {
-      this.showNotification('Comprobante enviado por email');
-    },
-    showNotification(message) {
-      // Crear una notificación temporal
-      const notification = document.createElement('div');
-      notification.className = 'fixed top-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all';
-      notification.textContent = message;
+    hydrateFromSession() {
+      try {
+        const pedidoId = sessionStorage.getItem('receipt_pedido_id') || '';
+        const pdfUrl = sessionStorage.getItem('receipt_pdf_url') || '';
+        const pdfUrlDownload = sessionStorage.getItem('receipt_pdf_url_download') || '';
+        const expiresAtMsStr = sessionStorage.getItem('receipt_pdf_expires_at_ms') || '';
 
-      document.body.appendChild(notification);
+        this.pedidoId = pedidoId;
+        this.pdfUrl = pdfUrl;
+        this.pdfUrlDownload = pdfUrlDownload;
 
-      setTimeout(() => {
-        notification.style.opacity = '0';
-        setTimeout(() => {
-          if (document.body.contains(notification)) {
-            document.body.removeChild(notification);
-          }
-        }, 300);
-      }, 3000);
+        // Convertimos expiresAt → expiresInSeconds aproximado para mostrar algo útil
+        const expiresAtMs = expiresAtMsStr ? parseInt(expiresAtMsStr, 10) : 0;
+        if (expiresAtMs) {
+          const diffMs = expiresAtMs - Date.now();
+          this.expiresInSeconds = diffMs > 0 ? Math.ceil(diffMs / 1000) : 0;
+        } else {
+          this.expiresInSeconds = 0;
+        }
+      } catch (e) {
+        console.error('Error hidratando datos de factura:', e);
+      }
+    },
+    async regeneratePdfLink() {
+      if (!this.pedidoId) return;
+      if (this.isLoading) return;
+
+      this.isLoading = true;
+      this.errorMessage = '';
+
+      try {
+        const linkRes = await api.get(`/mis-pedidos/${this.pedidoId}/comprobante/link/`);
+        const pdfUrl = linkRes?.data?.pdf_url || '';
+        const pdfUrlDownload = linkRes?.data?.pdf_url_download || '';
+        const expiresInSeconds = linkRes?.data?.expires_in_seconds || 0;
+
+        if (!pdfUrl || !pdfUrlDownload) {
+          throw new Error('No se recibieron enlaces del comprobante.');
+        }
+
+        this.pdfUrl = pdfUrl;
+        this.pdfUrlDownload = pdfUrlDownload;
+        this.expiresInSeconds = expiresInSeconds;
+
+        const now = Date.now();
+        const expiresAtMs = expiresInSeconds ? now + (expiresInSeconds * 1000) : 0;
+
+        sessionStorage.setItem('receipt_pdf_url', pdfUrl);
+        sessionStorage.setItem('receipt_pdf_url_download', pdfUrlDownload);
+        sessionStorage.setItem('receipt_pdf_expires_at_ms', String(expiresAtMs));
+      } catch (error) {
+        console.error('Error al regenerar el enlace del comprobante:', error);
+        this.errorMessage = 'No se pudo cargar el comprobante. Por favor intenta regenerar el enlace.';
+      } finally {
+        this.isLoading = false;
+      }
     }
   }
 }
@@ -149,7 +165,7 @@ export default {
     margin: 0;
     padding: 0;
   }
-  .max-w-4xl {
+  .max-w-7xl {
     max-width: 100%;
     margin: 0;
     padding: 0;

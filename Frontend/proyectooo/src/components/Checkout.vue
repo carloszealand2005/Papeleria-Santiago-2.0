@@ -22,6 +22,18 @@
         
         <!-- Payment Form -->
         <div class="space-y-6">
+          <div
+            v-if="isProcessingPayment"
+            class="p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg"
+          >
+            Procesando tu compra y generando el comprobante... Por favor espera.
+          </div>
+          <div
+            v-if="paymentError"
+            class="p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg"
+          >
+            {{ paymentError }}
+          </div>
           <!-- Billing Information -->
           <BillingInfo
             :billingInfo="billingInfo"
@@ -56,6 +68,8 @@
               @click="completeOrder"
               class="flex-1 px-6 py-3 text-white rounded-lg hover:bg-blue-700 transition-colors !rounded-button whitespace-nowrap cursor-pointer"
               style="background-color: #2563EB;"
+              :disabled="isProcessingPayment"
+              :class="{ 'opacity-60 cursor-not-allowed': isProcessingPayment }"
             >
               <i class="fas fa-check mr-2"></i>
               Finalizar Compra
@@ -88,11 +102,14 @@ export default {
     PaymentMethod,
     CheckoutFooter
   },
-  inject: ['completeOrderHandler'],
+  // Nota: Antes se usaba `completeOrderHandler` para construir una factura HTML.
+  // Ahora, la factura real viene del backend como PDF (embebido + descarga).
   data() {
     return {
       missingCheckoutData: false,
       cart: null,
+      isProcessingPayment: false,
+      paymentError: '',
       billingInfo: {
         fullName: '',
         phone: '',
@@ -181,26 +198,58 @@ export default {
     goBack() {
       this.$router.push('/carrito');
     },
-    completeOrder() {
-      if (this.validateForm()) {
-        const orderData = {
-          billingInfo: this.billingInfo,
-          shipping: this.selectedShipping,
-          shippingCost: this.shippingCost,
-          payment: this.selectedPayment,
-          cardInfo: this.selectedPayment === 'card' ? this.cardInfo : null,
-          items: this.orderItems,
-          totals: {
-            ...this.totals,
-            shipping: this.shippingCost,
-            total: this.totals.total + this.shippingCost
-          }
-        };
-        if (this.completeOrderHandler) {
-          this.completeOrderHandler(orderData);
+    async completeOrder() {
+      if (this.isProcessingPayment) return;
+      this.paymentError = '';
+
+      if (!this.validateForm()) return;
+      if (!this.isAuthenticated) {
+        this.paymentError = 'Debes iniciar sesión para finalizar la compra.';
+        this.$router.push('/login');
+        return;
+      }
+      if (!this.orderItems || this.orderItems.length === 0) {
+        this.paymentError = 'No hay productos en el carrito para pagar.';
+        return;
+      }
+
+      this.isProcessingPayment = true;
+
+      try {
+        // 1) Pagar el carrito (crea pedido + comprobante en backend)
+        const payRes = await api.post('/mi-carrito/pagar/');
+        const pedidoId = payRes?.data?.pedido_id;
+
+        if (!pedidoId) {
+          throw new Error('No se recibió pedido_id al pagar el carrito.');
         }
-        // Navegar a la factura después de completar la orden
+
+        // 2) Obtener links del comprobante (PDF embebible + descarga)
+        const linkRes = await api.get(`/mis-pedidos/${pedidoId}/comprobante/link/`);
+        const pdfUrl = linkRes?.data?.pdf_url || '';
+        const pdfUrlDownload = linkRes?.data?.pdf_url_download || '';
+        const expiresInSeconds = linkRes?.data?.expires_in_seconds || 0;
+
+        if (!pdfUrl || !pdfUrlDownload) {
+          throw new Error('No se recibieron enlaces del comprobante (pdf_url / pdf_url_download).');
+        }
+
+        // Persistimos datos para /factura (evita depender de query params largos)
+        const now = Date.now();
+        const expiresAtMs = expiresInSeconds ? now + (expiresInSeconds * 1000) : 0;
+
+        sessionStorage.setItem('receipt_pedido_id', String(pedidoId));
+        sessionStorage.setItem('receipt_pdf_url', pdfUrl);
+        sessionStorage.setItem('receipt_pdf_url_download', pdfUrlDownload);
+        sessionStorage.setItem('receipt_pdf_expires_at_ms', String(expiresAtMs));
+
+        // Navegar a factura una vez que el PDF ya está listo para embebido
         this.$router.push('/factura');
+      } catch (error) {
+        console.error('Error al finalizar la compra:', error);
+        this.paymentError = 'No se pudo finalizar la compra. Por favor intenta nuevamente.';
+      } finally {
+        this.isProcessingPayment = false;
       }
     },
     validateForm() {
