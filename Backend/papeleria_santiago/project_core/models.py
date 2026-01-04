@@ -86,6 +86,33 @@ class Precio(models.Model):
 
     descuento_publico = models.DecimalField(max_digits= 5, decimal_places=2, default=Decimal(0.00))
     descuento_mayorista = models.DecimalField(max_digits= 5, decimal_places=2, default=Decimal(0.00))
+    
+    @property
+    def precio_con_descuento_publico(self):
+        # Precio con descuento (sin IVA) = PVP * (1 - descuento_publico/100)
+        precio_con_descuento = self.pvp * (Decimal('1.00') - (self.descuento_publico / Decimal('100.00')))
+        return precio_con_descuento.quantize(Decimal('0.01'))
+
+    @property
+    def precio_con_descuento_mayorista(self):
+        # Precio con descuento (sin IVA) = PVM * (1 - descuento_mayorista/100)
+        precio_con_descuento = self.pvm * (Decimal('1.00') - (self.descuento_mayorista / Decimal('100.00')))
+        return precio_con_descuento.quantize(Decimal('0.01'))
+
+    @property
+    def precio_con_iva_publico(self):
+        # Precio con descuento E IVA = (precio_con_descuento_publico) * (1 + IVA/100)
+        precio_con_descuento = self.precio_con_descuento_publico
+        precio_final = precio_con_descuento * (Decimal('1.00') + (self.iva / Decimal('100.00')))
+        return precio_final.quantize(Decimal('0.01'))
+
+    @property
+    def precio_con_iva_mayorista(self):
+        # Precio con descuento E IVA = (precio_con_descuento_mayorista) * (1 + IVA/100)
+        precio_con_descuento = self.precio_con_descuento_mayorista
+        precio_final = precio_con_descuento * (Decimal('1.00') + (self.iva / Decimal('100.00')))
+        return precio_final.quantize(Decimal('0.01'))
+    
     def __str__(self):
         return f"Precio {self.pvp} para {self.producto.SKU} \n El precio al por mayor para este producto es: {self.pvm}. -> Descuento publico: {self.descuento_publico}% -> Descuento mayorista: {self.descuento_mayorista}%"
 
@@ -149,6 +176,8 @@ class FavoritosCliente(models.Model):
 
     fecha_creacion = models.DateField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('cliente', 'producto')
 
     def __str__(self):
         return f"<3 --> {self.cliente.nombre} - {self.producto.nombre} de marca {self.producto.marca}"

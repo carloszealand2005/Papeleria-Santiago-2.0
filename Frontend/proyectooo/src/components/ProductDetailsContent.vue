@@ -50,11 +50,21 @@
 
           <!-- Price -->
           <div class="flex items-center space-x-4">
-            <span class="text-4xl font-bold text-indigo-600">${{ currentProduct.price }}</span>
-            <span v-if="currentProduct.originalPrice" class="text-xl text-gray-500 line-through">${{ currentProduct.originalPrice }}</span>
-            <span v-if="currentProduct.discount" class="bg-red-100 text-red-800 text-sm font-medium px-2.5 py-0.5 rounded">
-              -{{ currentProduct.discount }}%
-            </span>
+            <template v-if="parseFloat(currentProduct.discount) >= 1.00">
+              <span class="text-lg text-gray-500 line-through opacity-75">${{ parseFloat(currentProduct.originalPrice).toFixed(2) }}</span>
+              <span class="text-4xl font-bold text-green-700">${{ parseFloat(currentProduct.salePrice).toFixed(2) }}</span>
+              <span class="text-base font-medium text-green-700">(-{{ parseFloat(currentProduct.discount).toFixed(0) }}%)</span>
+            </template>
+            <template v-else>
+              <span class="text-4xl font-bold" style="color: #1F2937;">${{ parseFloat(currentProduct.originalPrice).toFixed(2) }}</span>
+            </template>
+          </div>
+
+          <!-- IVA and Final Price -->
+          <div v-if="currentProduct.iva && currentProduct.precio_con_iva_publico">
+            <p class="text-sm text-gray-600 opacity-80 mt-2">
+              Este producto tiene {{ parseFloat(currentProduct.iva).toFixed(0) }}% de IVA. Precio final: ${{ parseFloat(currentProduct.precio_con_iva_publico).toFixed(2) }}
+            </p>
           </div>
 
           <!-- Rating and Reviews -->
@@ -205,6 +215,8 @@
 </template>
 
 <script>
+import api from '@/utils/api'; // Asegúrate de que la importación de api esté presente
+
 export default {
   name: 'ProductDetailsContent',
   props: {
@@ -215,6 +227,10 @@ export default {
     relatedProducts: {
       type: Array,
       default: () => []
+    },
+    isAuthenticated: {
+      type: Boolean,
+      required: true
     }
   },
   data() {
@@ -224,12 +240,33 @@ export default {
       showImageModal: false,
       showNotification: false,
       notificationMessage: '',
-      isInWishlist: false
+      isInWishlist: false // Estado inicial del botón de favoritos
     };
   },
   computed: {
     currentProduct() {
       return this.product || this.getDefaultProduct();
+    }
+  },
+  watch: {
+    // Observar cambios en el ID del producto para verificar el estado de favoritos
+    'currentProduct.id': {
+      immediate: true,
+      handler(newId) {
+        if (newId && this.isAuthenticated) {
+          this.checkFavoriteStatus(newId);
+        } else {
+          this.isInWishlist = false; // Resetear si no hay producto o no autenticado
+        }
+      }
+    },
+    // Observar cambios en la autenticación para actualizar el estado de favoritos
+    isAuthenticated(newStatus) {
+      if (newStatus && this.currentProduct.id) {
+        this.checkFavoriteStatus(this.currentProduct.id);
+      } else {
+        this.isInWishlist = false;
+      }
     }
   },
   methods: {
@@ -288,10 +325,46 @@ export default {
       this.$emit('add-to-cart', cartItem);
       this.showSuccessNotification('Producto agregado al carrito');
     },
-    toggleWishlist() {
-      this.isInWishlist = !this.isInWishlist;
-      const message = this.isInWishlist ? 'Agregado a favoritos' : 'Eliminado de favoritos';
-      this.showSuccessNotification(message);
+    async toggleWishlist() {
+      if (!this.isAuthenticated) {
+        this.$emit('prompt-login-for-favorites');
+        return;
+      }
+
+      const sku = this.currentProduct.id; // Asume que `id` es el SKU
+      if (!sku) {
+        console.error('SKU del producto no disponible para la acción de favoritos.');
+        this.showSuccessNotification('Error: SKU del producto no disponible.', 'error');
+        return;
+      }
+
+      try {
+        if (this.isInWishlist) {
+          // Si ya es favorito, lo eliminamos
+          await api.delete(`/favoritos/${sku}/`);
+          this.isInWishlist = false;
+          this.showSuccessNotification('Producto eliminado de favoritos.');
+        } else {
+          // Si no es favorito, lo agregamos
+          await api.post('/favoritos/', { producto_sku: sku });
+          this.isInWishlist = true;
+          this.showSuccessNotification('Producto añadido a favoritos.');
+        }
+      } catch (error) {
+        console.error('Error al actualizar el estado de favoritos:', error);
+        this.showSuccessNotification('Error al actualizar favoritos.', 'error');
+      }
+    },
+    async checkFavoriteStatus(sku) {
+      try {
+        const response = await api.get(`/favoritos/${sku}/is_favorite/`);
+        this.isInWishlist = response.data.is_favorite;
+      } catch (error) {
+        // Si hay un error (ej. 404 si el producto no existe en favoritos, o no autenticado)
+        // Asumimos que no es favorito o que la verificación falló.
+        this.isInWishlist = false;
+        console.error('Error al verificar el estado de favoritos:', error);
+      }
     },
     selectProduct(product) {
       this.$emit('select-product', product);
@@ -302,9 +375,16 @@ export default {
     goToProducts() {
       this.$router.push('/productos');
     },
-    showSuccessNotification(message) {
+    showSuccessNotification(message, type = 'success') {
       this.notificationMessage = message;
       this.showNotification = true;
+      // Controlar el color de la notificación
+      const notificationElement = document.querySelector('.fixed.top-4.right-4');
+      if (notificationElement) {
+        notificationElement.classList.remove('bg-green-500', 'bg-red-500');
+        notificationElement.classList.add(type === 'error' ? 'bg-red-500' : 'bg-green-500');
+      }
+
       setTimeout(() => {
         this.showNotification = false;
       }, 3000);
@@ -329,4 +409,3 @@ input[type="number"] {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>
-

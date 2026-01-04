@@ -10,6 +10,7 @@ import ProductDetails from '../components/ProductDetails.vue'
 import Cart from '../components/Cart.vue'
 import Checkout from '../components/Checkout.vue'
 import Receipt from '../components/Receipt.vue'
+import Favorites from '../components/Favorites.vue' // Importar el nuevo componente Favorites
 
 Vue.use(VueRouter)
 
@@ -64,6 +65,11 @@ const routes = [
     path: '/factura',
     name: 'Receipt',
     component: Receipt
+  },
+  {
+    path: '/favoritos',
+    name: 'Favorites',
+    component: Favorites
   }
 ]
 
@@ -74,4 +80,3 @@ const router = new VueRouter({
 })
 
 export default router
-

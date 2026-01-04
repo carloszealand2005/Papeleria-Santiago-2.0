@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50">
+    <GlobalHeader /> <!-- Nuevo: La barra superior global -->
     <!-- Botón de Logout Temporal -->
     <div v-if="isAuthenticated" class="fixed top-4 right-4 z-50">
       <button @click="logout" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-lg transition duration-200">
@@ -14,9 +15,13 @@
 import './assets/tailwind.css'
 import { mapGetters, mapActions } from 'vuex';
 import api from './utils/api';
+import GlobalHeader from './components/GlobalHeader.vue'; // Nuevo: Importar GlobalHeader
 
 export default {
   name: 'App',
+  components: {
+    GlobalHeader // Nuevo: Registrar GlobalHeader
+  },
   data() {
     return {
       selectedProduct: null,
@@ -87,21 +92,21 @@ export default {
           name: 'Oficina',
           description: 'Todo para tu espacio profesional',
           icon: 'fas fa-briefcase',
-          image: 'https://readdy.ai/api/search-image?query=modern%20office%20workspace%20with%20elegant%20stationery%20supplies%20notebooks%20and%20pens%20on%20wooden%20desk%20professional%20minimalist%20setup&width=400&height=250&seq=cat-office-01&orientation=landscape'
+          image: 'https://readdy.ai/api/search-image?query=modern%20office%20workspace%20con%20elegant%20stationery%20supplies%20notebooks%20and%20pens%20on%20wooden%20desk%20professional%20minimalist%20setup&width=400&height=250&seq=cat-office-01&orientation=landscape'
         },
         {
           id: 2,
           name: 'Escolar',
           description: 'Materiales para estudiantes',
           icon: 'fas fa-graduation-cap',
-          image: 'https://readdy.ai/api/search-image?query=colorful%20school%20supplies%20with%20notebooks%20pencils%20rulers%20and%20backpack%20on%20bright%20background%20student%20materials&width=400&height=250&seq=cat-school-01&orientation=landscape'
+          image: 'https://readdy.ai/api/search-image?query=colorful%20school%20supplies%20con%20notebooks%20pencils%20rulers%20and%20backpack%20on%20bright%20background%20student%20materials&width=400&height=250&seq=cat-school-01&orientation=landscape'
         },
         {
           id: 3,
           name: 'Arte y Diseño',
           description: 'Creatividad sin límites',
           icon: 'fas fa-palette',
-          image: 'https://readdy.ai/api/search-image?query=artistic%20supplies%20with%20professional%20colored%20pencils%20markers%20sketchbooks%20and%20paint%20tubes%20on%20creative%20workspace&width=400&height=250&seq=cat-art-01&orientation=landscape'
+          image: 'https://readdy.ai/api/search-image?query=artistic%20supplies%20con%20professional%20colored%20pencils%20markers%20sketchbooks%20and%20paint%20tubes%20on%20creative%20workspace&width=400&height=250&seq=cat-art-01&orientation=landscape'
         }
       ],
       subCategories: [
@@ -178,7 +183,6 @@ export default {
   },
   watch: {
     isAuthenticated(newVal) {
-      console.log('App.vue - isAuthenticated changed:', newVal); // Debugging
       if (newVal) {
         this.fetchCartItemCount();
       } else {
@@ -187,7 +191,6 @@ export default {
     }
   },
   created() {
-    console.log('App.vue - created hook, isAuthenticated:', this.isAuthenticated); // Debugging
     if (this.isAuthenticated) {
       this.fetchCartItemCount();
     }
@@ -196,12 +199,10 @@ export default {
     ...mapActions(['logout']), // Mapeamos la acción 'logout' de Vuex
     async fetchCartItemCount() {
       try {
-        console.log('App.vue - Fetching cart item count...'); // Debugging
         const response = await api.get('/mi-carrito/conteo/');
-        this.$store.commit('SET_CART_ITEM_COUNT', response.data.conteo_items_carrito); // Actualizamos el conteo en Vuex
-        console.log('App.vue - Cart item count fetched:', this.$store.getters.cartItemCount); // Debugging
+        this.$store.commit('SET_CART_ITEM_COUNT', response.data.conteo_items_carrito);
       } catch (error) {
-        console.error('App.vue - Error al obtener el conteo del carrito:', error); // Debugging
+        console.error('App.vue - Error al obtener el conteo del carrito:', error);
         this.$store.commit('SET_CART_ITEM_COUNT', 0);
       }
     },
@@ -210,30 +211,26 @@ export default {
       this.showNotification('Carrito actualizado');
       this.fetchCartItemCount(); // Actualizar el conteo después de una actualización
     },
-    handleAddToCart(product) {
-      const existingItem = this.cartItems.find(item => item.id === product.id);
-      
-      if (existingItem) {
-        const updatedItems = this.cartItems.map(item => 
-          item.id === product.id 
-            ? { ...item, quantity: item.quantity + (product.quantity || 1) }
-            : item
-        );
-        this.cartItems = updatedItems;
-      } else {
-        const newItem = {
-          id: product.id,
-          name: product.name,
-          description: product.description,
-          price: product.price || product.originalPrice || product.salePrice,
-          quantity: product.quantity || 1,
-          image: product.image || product.mainImage
-        };
-        this.cartItems = [...this.cartItems, newItem];
+    async handleAddToCart(product) {
+      if (!this.isAuthenticated) {
+        this.showNotification('Debes iniciar sesión para añadir productos al carrito.', 'error');
+        return;
       }
-      
-      this.showNotification(`${product.name} agregado al carrito`);
-      this.fetchCartItemCount(); // Actualizar el conteo después de añadir al carrito
+
+      const producto_sku = product.sku; // Usar product.sku que es el identificador del backend
+      const cantidad = product.quantity || 1; // Asume 1 si no se especifica
+
+      try {
+        await api.post(`/mi-carrito-detalles/`, {
+          producto_sku: producto_sku,
+          cantidad: cantidad
+        });
+        this.showNotification(`"${product.name}" añadido al carrito.`, 'success');
+        this.fetchCartItemCount(); // Actualizar el conteo después de añadir al carrito
+      } catch (error) {
+        console.error('Error al añadir producto al carrito:', error);
+        this.showNotification('Error al añadir producto al carrito.', 'error');
+      }
     },
     handleCheckout(data) {
       try {
@@ -378,9 +375,10 @@ export default {
       const deliveryDate = new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
       return deliveryDate.toLocaleDateString('es-CO');
     },
-    showNotification(message) {
+    showNotification(message, type = 'success') {
       const notification = document.createElement('div');
-      notification.className = 'fixed top-4 right-4 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all';
+      const bgColor = type === 'error' ? 'bg-red-600' : 'bg-green-600'; // Default to green for success
+      notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all`;
       notification.textContent = message;
       document.body.appendChild(notification);
       setTimeout(() => {

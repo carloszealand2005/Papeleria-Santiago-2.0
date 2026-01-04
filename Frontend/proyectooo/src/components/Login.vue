@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
-    <LoginHeader 
+    <!-- <LoginHeader 
       @navigate="handleNavigate"
       @show-account-info="handleShowAccountInfo"
-    />
+    /> -->
     
     <!-- Botón para volver al home -->
     <div class="max-w-7xl mx-auto px-4 pt-4">
@@ -30,14 +30,14 @@
 </template>
 
 <script>
-import LoginHeader from './LoginHeader.vue';
+// import LoginHeader from './LoginHeader.vue'; // Eliminado
 import LoginForm from './LoginForm.vue';
 import LoginFooter from './LoginFooter.vue';
 
 export default {
   name: 'LoginPage',
   components: {
-    LoginHeader,
+    // LoginHeader, // Eliminado
     LoginForm,
     LoginFooter
   },
@@ -89,4 +89,3 @@ export default {
 
 <style scoped>
 </style>
-

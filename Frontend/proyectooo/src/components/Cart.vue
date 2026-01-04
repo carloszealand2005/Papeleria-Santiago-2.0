@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Header -->
-    <CartHeader 
+    <!-- <CartHeader 
       @search="handleSearch"
-    />
+    /> -->
     
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import CartHeader from './CartHeader.vue';
+// import CartHeader from './CartHeader.vue'; // Eliminado
 import CartPageHeader from './CartPageHeader.vue';
 import CartItems from './CartItems.vue';
 import DiscountCode from './DiscountCode.vue';
@@ -68,7 +68,7 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'CartPage',
   components: {
-    CartHeader,
+    // CartHeader, // Eliminado
     CartPageHeader,
     CartItems,
     DiscountCode,

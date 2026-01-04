@@ -1,6 +1,6 @@
 <template>
-  <div class="mb-12">
-    <h2 class="text-2xl font-bold text-gray-900 mb-6">Ofertas Destacadas</h2>
+  <div class="mb-12" v-if="featuredOffers.length > 0">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ title }}</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <FeaturedOffer
         v-for="offer in featuredOffers"
@@ -25,6 +25,10 @@ export default {
     featuredOffers: {
       type: Array,
       required: true
+    },
+    title: {
+      type: String,
+      required: true
     }
   },
   methods: {
@@ -40,4 +44,3 @@ export default {
 
 <style scoped>
 </style>
-

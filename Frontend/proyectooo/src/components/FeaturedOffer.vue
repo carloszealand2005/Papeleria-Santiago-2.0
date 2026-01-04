@@ -24,10 +24,19 @@
       <p class="text-gray-600 text-sm mb-4">{{ offer.description }}</p>
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center space-x-2">
-          <span class="text-2xl font-bold" style="color: #2563EB;">${{ offer.salePrice }}</span>
-          <span class="text-lg text-gray-400 line-through">${{ offer.originalPrice }}</span>
+          <template v-if="parseFloat(offer.discount) >= 1.00">
+            <span class="text-lg text-gray-500 line-through opacity-75">${{ parseFloat(offer.originalPrice).toFixed(2) }}</span>
+          </template>
+          <template v-else>
+            <span class="text-2xl font-bold" style="color: #1F2937;">${{ parseFloat(offer.originalPrice).toFixed(2) }}</span>
+          </template>
         </div>
-        <span class="text-sm text-green-600 font-semibold">Ahorras ${{ offer.savings }}</span>
+        <div class="flex items-center space-x-2">
+          <template v-if="parseFloat(offer.discount) >= 1.00">
+            <span class="text-2xl font-bold text-green-700">${{ parseFloat(offer.salePrice).toFixed(2) }}</span>
+            <span class="text-sm font-medium text-green-700">(-{{ parseFloat(offer.discount).toFixed(0) }}%)</span>
+          </template>
+        </div>
       </div>
       <button 
         @click="addToCart"
@@ -63,4 +72,3 @@ export default {
 
 <style scoped>
 </style>
-

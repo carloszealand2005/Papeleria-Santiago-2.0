@@ -1,12 +1,12 @@
 <template>
   <div>
-    <Header 
+    <!-- <Header 
       @go-to-login="goToLogin"
       @go-to-cart="goToCart"
       @go-to-home="goToHome"
       @go-to-offers="goToOffers"
       @go-to-products="goToProducts"
-    />
+    /> -->
     <Hero />
     <Categorias 
       :mainCategories="mainCategories" 
@@ -25,19 +25,18 @@
 </template>
 
 <script>
-import Header from './Header.vue';
+// import Header from './Header.vue'; // Eliminado
 import Hero from './Hero.vue';
 import Categorias from './categorias.vue';
 import Novedades from './Novedades.vue';
 import WhyChooseUs from './WhyChooseUs.vue';
 import Newsletter from './Newsletter.vue';
 import Footer from './Footer.vue';
-// import { mapGetters } from 'vuex'; // Eliminado, ya no se usa
 
 export default {
   name: 'HomePage',
   components: {
-    Header,
+    // Header, // Eliminado
     Hero,
     Categorias,
     Novedades,
@@ -46,10 +45,6 @@ export default {
     Footer
   },
   inject: ['cartItems', 'mainCategories', 'subCategories', 'featuredProducts', 'addToCart', 'selectProduct'],
-  // Ya no necesitamos mapear cartItemCount aquí si no se usa directamente en Home.vue
-  // computed: {
-  //   ...mapGetters(['cartItemCount']),
-  // },
   methods: {
     goToLogin() {
       this.$router.push('/login');

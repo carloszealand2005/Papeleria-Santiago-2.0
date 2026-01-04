@@ -1,14 +1,16 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <ProductDetailsHeader
+    <!-- <ProductDetailsHeader
       @search="handleSearch"
-    />
+    /> -->
     
     <ProductDetailsContent
       :product="product"
       :related-products="relatedProducts"
+      :isAuthenticated="isAuthenticated"
       @add-to-cart="handleAddToCart"
       @select-product="handleSelectProduct"
+      @prompt-login-for-favorites="showAuthPromptModal = true"
     />
 
     <!-- Auth Prompt Modal -->
@@ -23,22 +25,22 @@
 </template>
 
 <script>
-import ProductDetailsHeader from './ProductDetailsHeader.vue';
+// import ProductDetailsHeader from './ProductDetailsHeader.vue'; // Eliminado
 import ProductDetailsContent from './ProductDetailsContent.vue';
-import AuthPromptModal from './AuthPromptModal.vue'; // Importamos el nuevo modal
+import AuthPromptModal from './AuthPromptModal.vue'; 
 import api from '@/utils/api';
 import { mapGetters } from 'vuex';
 
 export default {
   name: 'ProductDetailsPage',
   components: {
-    ProductDetailsHeader,
+    // ProductDetailsHeader, // Eliminado
     ProductDetailsContent,
-    AuthPromptModal // Registramos el nuevo modal
+    AuthPromptModal 
   },
   inject: ['addToCart', 'selectProduct'],
   computed: {
-    ...mapGetters(['isAuthenticated']),
+    ...mapGetters(['isAuthenticated', 'cartItemCount']),
   },
   data() {
     return {
@@ -77,7 +79,7 @@ export default {
           image: 'https://readdy.ai/api/search-image?query=Premium%20A4%20folder%20office%20organization%20supplies%20clean%20professional%20design%20white%20background%20product%20photography&width=300&height=300&seq=rel-prod-004&orientation=squarish'
         }
       ],
-      showAuthPromptModal: false, // Controla la visibilidad del modal
+      showAuthPromptModal: false, 
     };
   },
   created() {
@@ -108,9 +110,11 @@ export default {
               id: productData.SKU,
               name: productData.nombre,
               description: productData.descripcion,
-              price: parseFloat(productData.pvp),
               originalPrice: parseFloat(productData.pvp),
-              discount: 0,
+              salePrice: parseFloat(productData.precio_con_descuento_publico), 
+              discount: parseFloat(productData.descuento_publico),
+              iva: parseFloat(productData.iva),
+              precio_con_iva_publico: parseFloat(productData.precio_con_iva_publico),
               category: productData.categoria,
               mainImage: productData.imagen_url,
               gallery: [
@@ -138,25 +142,25 @@ export default {
           this.product = null;
         });
     },
-    handleAddToCart(cartItem) {
+    async handleAddToCart(cartItem) {
       if (!this.isAuthenticated) {
-        this.showAuthPromptModal = true; // Muestra el modal si no está autenticado
+        this.showAuthPromptModal = true;
         return;
       }
 
       const { id: producto_sku, quantity } = cartItem;
-      const cartId = 1;
 
-      api.post(`/carritos/${cartId}/detalles/`, {
-        producto_sku: producto_sku,
-        cantidad: quantity
-      })
-      .then(response => {
-        console.log('Producto añadido al carrito:', response.data);
-      })
-      .catch(error => {
+      try {
+        await api.post(`/mi-carrito-detalles/`, {
+          producto_sku: producto_sku,
+          cantidad: quantity
+        });
+        this.showNotification(`"${cartItem.name}" añadido al carrito.`, 'success');
+        this.$store.commit('SET_CART_ITEM_COUNT', this.cartItemCount + 1);
+      } catch (error) {
         console.error('Error al añadir producto al carrito:', error);
-      });
+        this.showNotification('Error al añadir producto al carrito.', 'error');
+      }
     },
     handleSelectProduct(product) {
       if (this.selectProduct) {
@@ -181,6 +185,23 @@ export default {
     continueShoppingFromModal() {
       this.showAuthPromptModal = false;
     },
+    showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      const bgColor = type === 'error' ? 'bg-red-600' : 'bg-green-600';
+      notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all`;
+      notification.textContent = message;
+
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+          if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
   }
 }
 </script>

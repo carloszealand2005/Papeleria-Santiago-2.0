@@ -144,6 +144,13 @@ http://127.0.0.1:8000/api/productos/?precio_max=50.00
 
 http://127.0.0.1:8000/api/productos/?precio_min=10.00&precio_max=50.00
 
+http://127.0.0.1:8000/api/productos/?descuento_min=20.50&limite=20
+
+
+http://127.0.0.1:8000/api/productos/?descuento_min=20.50&descuento_max=30&limite=20
+(Si solo se proporciona min, filtrará con descuento igual o superior
+Si solo se proporciona max, filtrará con descuento igual o inferior)
+
 -----
 DETALLES CARRITO:
 
@@ -203,6 +210,14 @@ RETURNS: {
     "email": "carldav3id1106@gmail.com",
     "message": "Inicio de sesión exitoso."
 }
+
+FAVORITOS:
+GET -> http://127.0.0.1:8000/api/favoritos/ (Devuelve los productos favoritos)
+
+POST -> http://127.0.0.1:8000/api/favoritos/ (AGREGA EL PRODUCTO A FAVORITOS. SI YA ESTABA, RETORNA UN MENSAJE SIN EXCEPCIÓN)
+BODY: { "producto_sku": "SKU_DEL_PRODUCTO" }
+
+DELETE -> http://127.0.0.1:8000/api/favoritos/{SKU_producto}/ (Elimina un producto, retorna 204. Si no existe, retorna 404)
 
 DRAFTS:
 pip install drf-nested-routers

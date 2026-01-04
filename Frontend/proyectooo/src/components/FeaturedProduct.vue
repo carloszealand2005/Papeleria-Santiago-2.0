@@ -6,8 +6,12 @@
         :alt="product.name"
         class="w-full h-48 object-cover object-top"
       >
-      <div class="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-        NUEVO
+      <div 
+        v-if="badgeText"
+        class="absolute top-4 left-4 text-white px-3 py-1 rounded-full text-sm font-bold"
+        :style="`background-color: ${badgeColor};`"
+      >
+        {{ badgeText }}
       </div>
     </div>
     <div class="p-6">
@@ -15,7 +19,14 @@
       <p class="text-gray-600 text-sm mb-4">{{ product.description }}</p>
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center space-x-2">
-          <span class="text-2xl font-bold" style="color: #1F2937;">${{ product.price }}</span>
+          <template v-if="parseFloat(product.discount) >= 1.00">
+            <span class="text-lg text-gray-500 line-through opacity-75">${{ parseFloat(product.originalPrice).toFixed(2) }}</span>
+            <span class="text-2xl font-bold text-green-700">${{ parseFloat(product.salePrice).toFixed(2) }}</span>
+            <span class="text-sm font-medium text-green-700">(-{{ parseFloat(product.discount).toFixed(0) }}%)</span>
+          </template>
+          <template v-else>
+            <span class="text-2xl font-bold" style="color: #1F2937;">${{ parseFloat(product.originalPrice).toFixed(2) }}</span>
+          </template>
         </div>
         <span class="text-sm text-blue-600 font-semibold">Disponible</span>
       </div>
@@ -24,7 +35,8 @@
         @mouseover="hoverButton = true"
         @mouseout="hoverButton = false"
         class="w-full text-white py-3 rounded-lg transition-colors !rounded-button whitespace-nowrap" 
-        :style="hoverButton ? 'background-color: #111827;' : 'background-color: #1F2937;'"
+        :style="hoverButton ? 'background-color: #111827;' : 'background-color: #1F2937;'
+"
       >
         <i class="fas fa-shopping-cart mr-2"></i>
         Agregar al Carrito
@@ -40,6 +52,14 @@ export default {
     product: {
       type: Object,
       required: true
+    },
+    badgeText: {
+      type: String,
+      default: ''
+    },
+    badgeColor: {
+      type: String,
+      default: '#2563EB' // Un azul por defecto
     }
   },
   data() {
@@ -60,4 +80,3 @@ export default {
 
 <style scoped>
 </style>
-

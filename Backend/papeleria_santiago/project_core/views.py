@@ -1,14 +1,16 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
-from .models import Comprobante, Pedido, Producto, Carrito, DetalleCarrito, Cliente, DetallePedido, Inventario # Importamos DetallePedido e Inventario
-from rest_framework import viewsets, filters, status, mixins, permissions # Importar filters, status, mixins y permissions
+from django.db.models import Q
+from .models import Comprobante, Pedido, Producto, Carrito, DetalleCarrito, Cliente, DetallePedido, Inventario, Subcategoria # Importamos DetallePedido, Inventario y Subcategoria
+from rest_framework import viewsets, filters, status, mixins, permissions, serializers # Importar filters, status, mixins, permissions y serializers
 from rest_framework.decorators import action # Importar action
 from django_filters.rest_framework import DjangoFilterBackend # Importar DjangoFilterBackend
-from .serializers import ProductoSerializer, CarritoSerializer, DetalleCarritoSerializer # Importar el serializador
+from .serializers import ProductoSerializer, CarritoSerializer, DetalleCarritoSerializer, FavoritosClienteSerializer, SubcategoriaSerializer # Importar el serializador
 from rest_framework.response import Response # Importar Response
+from .models import FavoritosCliente # Importar el modelo FavoritosCliente
 
 # Create your views here.
 
@@ -84,6 +86,48 @@ class ProductoViewSet(viewsets.ModelViewSet):
         if subcategoria_nombre:
             queryset = queryset.filter(subcategoria__nombre_subcategoria__iexact=subcategoria_nombre)
 
+        # Filtrar por descuento mínimo y por descuento máximo.
+        descuento_min = self.request.query_params.get('descuento_min')
+        descuento_max = self.request.query_params.get('descuento_max') 
+
+        if descuento_min and descuento_max:
+            try:
+                descuento_min = float(descuento_min)
+                descuento_max = float(descuento_max)
+                queryset = queryset.filter(
+                    (Q(precios__descuento_publico__gte=descuento_min) & Q(precios__descuento_publico__lte=descuento_max)) |
+                    (Q(precios__descuento_mayorista__gte=descuento_min) & Q(precios__descuento_mayorista__lte=descuento_max))
+                )
+            except ValueError:
+                pass
+        elif descuento_min:
+            try:
+                descuento_min = float(descuento_min)
+                queryset = queryset.filter(
+                    Q(precios__descuento_publico__gte=descuento_min) |
+                    Q(precios__descuento_mayorista__gte=descuento_min)
+                )
+            except ValueError:
+                pass # Ignorar si el valor no es un número válido
+        elif descuento_max:
+            try:
+                descuento_max = float(descuento_max)
+                queryset = queryset.filter(
+                    Q(precios__descuento_publico__lte=descuento_max) |
+                    Q(precios__descuento_mayorista__lte=descuento_max)
+                )
+            except ValueError:
+                pass
+
+        # Aplicar límite si se especifica
+        limite = self.request.query_params.get('limite')
+        if limite:
+            try:
+                limite = int(limite)
+                queryset = queryset[:limite]
+            except ValueError:
+                pass # Ignorar si el valor no es un número entero válido
+
         return queryset
     
     @action(detail=False, methods=['get'])
@@ -95,7 +139,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
         except ValueError:
             return Response({'error': 'El parámetro limite debe ser un número entero.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        productos_destacados = self.get_queryset()
+        productos_destacados = Producto.objects.all()
 
         # Aplicar filtro por subcategoría si se proporciona
         subcategoria_nombre = self.request.query_params.get('subcategoria')
@@ -508,4 +552,111 @@ class MiCarritoDetalleViewSet(
 
         self.perform_destroy(detalle_carrito)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+#-------------------
+# ViewSet para los favoritos del usuario autenticado (API REST)
+#-------------------
+class FavoritosClienteViewSet(
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
+    serializer_class = FavoritosClienteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'producto__SKU' # Para DELETE por SKU
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_authenticated:
+            return FavoritosCliente.objects.none()
+        try:
+            cliente = user.cliente_profile
+            queryset = FavoritosCliente.objects.filter(cliente=cliente)
+
+            subcategoria_nombre = self.request.query_params.get('subcategoria')
+            if subcategoria_nombre:
+                queryset = queryset.filter(producto__subcategoria__nombre_subcategoria__iexact=subcategoria_nombre)
+
+            return queryset
+        except Cliente.DoesNotExist:
+            return FavoritosCliente.objects.none()
+
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        try:
+            cliente = user.cliente_profile
+        except Cliente.DoesNotExist:
+            return Response({"error": "Perfil de cliente no encontrado para este usuario."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # El serializador ahora maneja la resolución del producto a través de SlugRelatedField
+        producto_instance = serializer.validated_data['producto'] # Obtener la instancia de Producto del validated_data
+        
+        # Verificar si el favorito ya existe
+        if FavoritosCliente.objects.filter(cliente=cliente, producto=producto_instance).exists():
+            return Response({'message': 'Este producto ya está en tus favoritos.'}, status=status.HTTP_200_OK)
+        
+        # Si no, guardarlo
+        serializer.save(cliente=cliente) # Pasar la instancia del cliente
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object() # Esto intentará recuperar el objeto basado en lookup_field
+        except Http404:
+            return Response({'error': 'Este producto no está en tus favoritos.'}, status=status.HTTP_404_NOT_FOUND)
+
+        user = self.request.user
+        try:
+            cliente = user.cliente_profile
+        except Cliente.DoesNotExist:
+            return Response({"error": "Perfil de cliente no encontrado para este usuario."}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Asegurarse de que el favorito a eliminar pertenece al usuario autenticado
+        if instance.cliente != cliente:
+            return Response({"error": "No tienes permiso para eliminar este favorito."}, status=status.HTTP_403_FORBIDDEN)
+            
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['get'], url_path='is_favorite')
+    def is_favorite(self, request, producto__SKU=None):
+        """ Verifica si un producto específico es favorito para el usuario autenticado. """
+        user = request.user
+        if not user.is_authenticated:
+            return Response({'is_favorite': False, 'error': 'Autenticación requerida.'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        try:
+            cliente = user.cliente_profile
+        except Cliente.DoesNotExist:
+            return Response({'is_favorite': False, 'error': 'Perfil de cliente no encontrado para este usuario.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # El pk en este caso será el SKU del producto
+        producto_sku = producto__SKU
+        if not producto_sku:
+            return Response({'is_favorite': False, 'error': 'SKU del producto es requerido.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        is_fav = FavoritosCliente.objects.filter(cliente=cliente, producto__SKU=producto_sku).exists()
+        return Response({'is_favorite': is_fav}, status=status.HTTP_200_OK)
+
+
+class SubcategoriaViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Subcategoria.objects.all()
+    serializer_class = SubcategoriaSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        limite = self.request.query_params.get('limite')
+        if limite:
+            try:
+                limite = int(limite)
+                queryset = queryset[:limite]
+            except ValueError:
+                pass
+        return queryset
 

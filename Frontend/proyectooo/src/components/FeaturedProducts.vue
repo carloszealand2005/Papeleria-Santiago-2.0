@@ -1,6 +1,6 @@
 <template>
-  <div class="mb-12">
-    <h2 class="text-2xl font-bold text-gray-900 mb-6">Productos Destacados</h2>
+  <div class="mb-12" v-if="featuredProducts.length > 0">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ title }}</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <FeaturedProduct
         v-for="product in featuredProducts"
@@ -8,6 +8,8 @@
         :product="product"
         @add-to-cart="handleAddToCart"
         @select-product="handleSelectProduct"
+        :badgeText="badgeText"
+        :badgeColor="badgeColor"
       />
     </div>
   </div>
@@ -25,6 +27,18 @@ export default {
     featuredProducts: {
       type: Array,
       required: true
+    },
+    title: {
+      type: String,
+      required: true
+    },
+    badgeText: {
+      type: String,
+      default: ''
+    },
+    badgeColor: {
+      type: String,
+      default: '#2563EB'
     }
   },
   methods: {
@@ -40,4 +54,3 @@ export default {
 
 <style scoped>
 </style>
-

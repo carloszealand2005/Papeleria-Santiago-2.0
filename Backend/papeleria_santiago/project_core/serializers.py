@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Producto, Precio, Carrito, DetalleCarrito, Cliente # Importa tus modelos
+from .models import FavoritosCliente, Producto, Precio, Carrito, DetalleCarrito, Cliente, Subcategoria # Importa tus modelos
 
 #------------------
 # Serializador para el modelo Producto
@@ -13,6 +13,11 @@ class ProductoSerializer(serializers.ModelSerializer):
     pvm = serializers.DecimalField(max_digits=10, decimal_places=2, source='precios.pvm', read_only=True)
     descuento_publico = serializers.DecimalField(max_digits=5, decimal_places=2, source='precios.descuento_publico', read_only=True)
     descuento_mayorista = serializers.DecimalField(max_digits=5, decimal_places=2, source='precios.descuento_mayorista', read_only=True)
+    precio_con_descuento_publico = serializers.DecimalField(max_digits=10, decimal_places=2, source='precios.precio_con_descuento_publico', read_only=True)
+    precio_con_descuento_mayorista = serializers.DecimalField(max_digits=10, decimal_places=2, source='precios.precio_con_descuento_mayorista', read_only=True)
+    precio_con_iva_publico = serializers.DecimalField(max_digits=10, decimal_places=2, source='precios.precio_con_iva_publico', read_only=True)
+    precio_con_iva_mayorista = serializers.DecimalField(max_digits=10, decimal_places=2, source='precios.precio_con_iva_mayorista', read_only=True)
+    iva = serializers.DecimalField(max_digits=4, decimal_places=2, source='precios.iva', read_only=True) # Incluir el porcentaje de IVA
 
     class Meta:
         model = Producto
@@ -21,7 +26,7 @@ class ProductoSerializer(serializers.ModelSerializer):
             'marca', 'categoria', 'subcategoria', 'variante',
             'caracteristica1', 'caracteristica2', 'caracteristica3', 'caracteristica4', 'caracteristica5',
             'imagen_url', 'imagen_url2', 'imagen_url3', 'imagen_url4', 'pvp', 'pvm',
-            'descuento_publico', 'descuento_mayorista' # Nuevos campos
+            'descuento_publico', 'descuento_mayorista', 'precio_con_descuento_publico', 'precio_con_descuento_mayorista', 'iva', 'precio_con_iva_publico', 'precio_con_iva_mayorista' # Nuevos campos
         ]
 
 
@@ -45,3 +50,25 @@ class CarritoSerializer(serializers.ModelSerializer):
         model = Carrito
         fields = ['id', 'cliente', 'cliente_nombre', 'cliente_tipo', 'fecha_creacion', 'fecha_actualizacion', 'estado_dinamico', 'subtotal_carrito', 'descuento_carrito', 'iva_carrito', 'total_carrito', 'detalles_carrito']
         read_only_fields = ['cliente', 'fecha_creacion', 'fecha_actualizacion', 'estado_dinamico', 'subtotal_carrito', 'descuento_carrito', 'iva_carrito', 'total_carrito']
+
+class FavoritosClienteSerializer(serializers.ModelSerializer):
+    producto_sku = serializers.SlugRelatedField(
+        source='producto',
+        slug_field='SKU',
+        queryset=Producto.objects.all(),
+        write_only=True,
+        required=True
+    )
+    producto_detail = ProductoSerializer(source='producto', read_only=True)
+
+    class Meta:
+        model = FavoritosCliente
+        fields = ['id', 'producto_sku', 'producto_detail', 'cliente', 'fecha_creacion']
+        read_only_fields = ['cliente', 'fecha_creacion', 'producto_detail']
+
+class SubcategoriaSerializer(serializers.ModelSerializer):
+    categoria = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Subcategoria
+        fields = ['id', 'nombre_subcategoria', 'descripcion_categoria', 'categoria']

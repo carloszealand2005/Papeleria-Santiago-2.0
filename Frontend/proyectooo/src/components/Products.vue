@@ -1,26 +1,23 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <ProductsHeader 
-      @search="handleSearch"
-    />
-    
     <!-- Hero Banner -->
     <ProductsHero />
     
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-6 py-8">
       <!-- Filter Section -->
-      <ProductsFilter
+      <CategoryFilterComponent
         :selectedCategory="selectedCategory"
         :sortBy="sortBy"
         :filterCategories="filterCategories"
         @category-changed="handleCategoryChange"
         @sort-changed="handleSortChange"
+        buttonColor="#1F2937"
       />
       
       <!-- Featured Products -->
       <FeaturedProducts
+        title="Productos Destacados"
         :featuredProducts="featuredProducts"
         @add-to-cart="handleAddToCart"
         @select-product="handleSelectProduct"
@@ -34,7 +31,7 @@
       />
       
       <!-- Newsletter Section -->
-      <ProductsNewsletter
+    <ProductsNewsletter
         :email="newsletterEmail"
         @update:email="newsletterEmail = $event"
         @subscribe="handleSubscribe"
@@ -44,63 +41,59 @@
     <!-- Security Footer -->
     <ProductsFooter />
     
-    <!-- Auth Prompt Modal -->
-    <AuthPromptModal 
-      :showModal="showAuthPromptModal"
-      @close="closeAuthPromptModal"
-      @go-to-register="goToRegisterFromModal"
-      @go-to-login="goToLoginFromModal"
-      @continue-shopping="continueShoppingFromModal"
-    />
-
   </div>
 </template>
 
 <script>
-import ProductsHeader from './ProductsHeader.vue';
 import ProductsHero from './ProductsHero.vue';
-import ProductsFilter from './ProductsFilter.vue';
+import CategoryFilterComponent from './CategoryFilterComponent.vue';
 import FeaturedProducts from './FeaturedProducts.vue';
 import AllProducts from './AllProducts.vue';
 import ProductsNewsletter from './ProductsNewsletter.vue';
 import ProductsFooter from './ProductsFooter.vue';
-import AuthPromptModal from './AuthPromptModal.vue';
 import { mapGetters } from 'vuex';
 import api from '@/utils/api';
 
 export default {
   name: 'ProductsPage',
   components: {
-    ProductsHeader,
     ProductsHero,
-    ProductsFilter,
+    CategoryFilterComponent,
     FeaturedProducts,
     AllProducts,
     ProductsNewsletter,
-    ProductsFooter,
-    AuthPromptModal
+    ProductsFooter
   },
-  inject: ['selectProduct'], // Eliminamos cartItemCount de inject
+  inject: ['addToCart', 'selectProduct'],
   data() {
     return {
       selectedCategory: 'all',
       sortBy: 'discount',
       newsletterEmail: '',
-      filterCategories: [
-        { id: 'all', name: 'Todos' },
-        { id: 'manualidades', name: 'Manualidades' },
-        { id: 'escritura', name: 'Escritura' },
-        { id: 'papeleria', name: 'Papelería' }
-      ],
-      featuredProducts: [],
-      products: [],
-      showAuthPromptModal: false,
+      filterCategories: [],
+      products: [], // Inicializar para asegurar reactividad
+      featuredProducts: [], // Inicializar para asegurar reactividad
     }
   },
   computed: {
-    ...mapGetters(['isAuthenticated', 'cartItemCount']), // Mapeamos cartItemCount desde Vuex
+    ...mapGetters(['isAuthenticated', 'cartItemCount']), 
     filteredProducts() {
-      let filtered = this.products;
+      let filtered = Array.isArray(this.products) ? [...this.products] : [];
+      
+      // Filtrar por término de búsqueda
+      if (this.searchQuery) {
+        const lowerCaseQuery = this.searchQuery.toLowerCase();
+        filtered = filtered.filter(product => 
+          product.name.toLowerCase().includes(lowerCaseQuery) ||
+          product.description.toLowerCase().includes(lowerCaseQuery) ||
+          (product.category && product.category.toLowerCase().includes(lowerCaseQuery))
+        );
+      }
+
+      // Filtrar por categoría
+      if (this.selectedCategory !== 'all') {
+        filtered = filtered.filter(product => product.category === this.selectedCategory);
+      }
       
       // Ordenar
       if (this.sortBy === 'discount') {
@@ -114,22 +107,55 @@ export default {
       return filtered;
     }
   },
+  watch: {
+    // Nuevo: Observar cambios en el parámetro de búsqueda de la URL
+    '$route.query.search': {
+      immediate: true, // Ejecutar inmediatamente al cargar el componente
+      handler(newSearchQuery) {
+        this.searchQuery = newSearchQuery || '';
+        // No es necesario llamar a fetchProducts o handleCategoryChange aquí,
+        // ya que el computed property filteredProducts reaccionará automáticamente.
+      }
+    }
+  },
   created() {
+    this.fetchCategories();
     this.fetchProducts();
     this.fetchFeaturedProducts(this.selectedCategory);
   },
   methods: {
+    async fetchCategories() {
+      try {
+        const response = await api.get('/subcategorias/');
+        const categoriesFromApi = response.data.map(cat => ({
+          id: cat.nombre_subcategoria.toLowerCase(),
+          name: cat.nombre_subcategoria,
+          description: cat.descripcion_categoria
+        }));
+        this.filterCategories = [{ id: 'all', name: 'Todos', description: 'Ver todos los productos' }, ...categoriesFromApi];
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    },
     fetchProducts() {
-      api.get('/productos/')
+      let url = '/productos/';
+      if (this.selectedCategory !== 'all') {
+        url += `?subcategoria=${this.selectedCategory}&limite=20`;
+      } else {
+        url += `?limite=20`;
+      }
+      api.get(url)
         .then(response => {
           this.products = response.data.map(product => ({
             id: product.SKU,
+            sku: product.SKU, // Añadir sku
             name: product.nombre,
             brand: product.marca,
+            description: product.descripcion, 
             image: product.imagen_url,
-            originalPrice: parseFloat(product.pvp),
-            salePrice: parseFloat(product.pvp),
-            discount: 0,
+            originalPrice: parseFloat(product.pvp || '0'), // Asegurar que sea numérico
+            salePrice: parseFloat(product.precio_con_descuento_publico || '0'), // Asegurar que sea numérico
+            discount: parseFloat(product.descuento_publico || '0'), // Asegurar que sea numérico
             category: product.categoria ? product.categoria.toLowerCase() : 'otros'
           }));
         })
@@ -139,27 +165,16 @@ export default {
     },
     handleCategoryChange(categoryId) {
       this.selectedCategory = categoryId;
+      this.fetchProducts(); // Vuelve a cargar todos los productos con el filtro de categoría
       this.fetchFeaturedProducts(categoryId);
     },
     handleSortChange(sortValue) {
       this.sortBy = sortValue;
     },
-    async handleAddToCart(product) {
-      if (!this.isAuthenticated) {
-        this.showAuthPromptModal = true;
-        return;
-      }
-      try {
-        await api.post('/mi-carrito-detalles/', {
-          producto_sku: product.id,
-          cantidad: 1
-        });
-        this.showNotification(`"${product.name}" añadido al carrito.`, 'success');
-        // Después de añadir al carrito, actualizamos el conteo en Vuex
-        this.$store.commit('SET_CART_ITEM_COUNT', this.cartItemCount + 1);
-      } catch (error) {
-        console.error('Error al añadir producto al carrito:', error);
-        this.showNotification('Error al añadir producto al carrito.', 'error');
+    handleAddToCart(product) {
+      // Utiliza la función addToCart inyectada desde App.vue
+      if (this.addToCart) {
+        this.addToCart(product);
       }
     },
     handleSelectProduct(product) {
@@ -168,67 +183,37 @@ export default {
       }
     },
     handleSearch(query) {
-      console.log('Searching for:', query);
       this.$emit('search', query);
     },
     handleSubscribe(email) {
-      console.log('Subscribing email:', email);
       this.$emit('subscribe-newsletter', email);
       this.newsletterEmail = '';
     },
     fetchFeaturedProducts(subcategoria = 'all') {
       let url = 'http://127.0.0.1:8000/api/productos/destacados/';
-      if (subcategoria !== 'all') {
-        url += `?limite=15&subcategoria=${subcategoria}`;
+      if (subcategoria && subcategoria !== 'all') {
+        url += `?limite=20&subcategoria=${subcategoria}`;
       } else {
-        url += `?limite=15`;
+        url += `?limite=20`;
       }
 
       api.get(url)
         .then(response => {
           this.featuredProducts = response.data.map(product => ({
             id: product.SKU,
+            sku: product.SKU, // Añadir sku
             name: product.nombre,
-            description: product.descripcion,
+            description: product.descripcion, 
             image: product.imagen_url,
-            price: parseFloat(product.pvp),
+            originalPrice: parseFloat(product.pvp || '0'), // Asegurar que sea numérico
+            salePrice: parseFloat(product.precio_con_descuento_publico || '0'), // Asegurar que sea numérico
+            discount: parseFloat(product.descuento_publico || '0'), // Asegurar que sea numérico
             category: product.categoria ? product.categoria.toLowerCase() : 'otros'
           }));
         })
         .catch(error => {
           console.error('Error fetching featured products:', error);
         });
-    },
-    closeAuthPromptModal() {
-      this.showAuthPromptModal = false;
-    },
-    goToRegisterFromModal() {
-      this.showAuthPromptModal = false;
-      this.$router.push('/registro');
-    },
-    goToLoginFromModal() {
-      this.showAuthPromptModal = false;
-      this.$router.push('/login');
-    },
-    continueShoppingFromModal() {
-      this.showAuthPromptModal = false;
-    },
-    showNotification(message, type = 'success') {
-      const notification = document.createElement('div');
-      const bgColor = type === 'error' ? 'bg-red-600' : 'bg-green-600';
-      notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all`;
-      notification.textContent = message;
-
-      document.body.appendChild(notification);
-
-      setTimeout(() => {
-        notification.style.opacity = '0';
-        setTimeout(() => {
-          if (document.body.contains(notification)) {
-            document.body.removeChild(notification);
-          }
-        }, 300);
-      }, 3000);
     }
   }
 }
