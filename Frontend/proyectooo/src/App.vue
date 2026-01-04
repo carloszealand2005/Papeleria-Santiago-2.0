@@ -172,7 +172,10 @@ export default {
       updateCart: this.handleCartUpdate,
       proceedCheckout: this.handleCheckout,
       completeOrderHandler: this.handleCompleteOrder,
-      selectProduct: this.handleSelectProduct
+      selectProduct: this.handleSelectProduct,
+      // Evita que GlobalHeader se rompa: si no hay AuthPromptModal por ahora,
+      // redirigimos a login como fallback.
+      showAuthModal: this.handleShowAuthModal
     };
   },
   computed: {
@@ -197,6 +200,9 @@ export default {
   },
   methods: {
     ...mapActions(['logout']), // Mapeamos la acción 'logout' de Vuex
+    handleShowAuthModal() {
+      this.$router.push('/login');
+    },
     async fetchCartItemCount() {
       try {
         const response = await api.get('/mi-carrito/conteo/');

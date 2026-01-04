@@ -3,31 +3,14 @@
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-8">
       <h2 class="text-xl font-semibold text-gray-900 mb-6">Resumen de Compra</h2>
       
-      <div class="space-y-4 mb-6">
-        <div class="flex justify-between">
-          <span class="text-gray-600">Subtotal</span>
-          <span class="font-medium">${{ subtotal.toFixed(2) }}</span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600">Envío</span>
-          <span class="font-medium">${{ shipping.toFixed(2) }}</span>
-        </div>
-        <!-- Campo para Total Descuento - siempre visible -->
-        <div class="flex justify-between text-green-600">
-          <span>Total Descuento</span>
-          <span>-${{ totalDiscount.toFixed(2) }}</span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600">Total IVA</span>
-          <span class="font-medium">${{ totalIva.toFixed(2) }}</span>
-        </div>
-        <div class="border-t border-gray-200 pt-4">
-          <div class="flex justify-between text-lg font-bold">
-            <span>Total</span>
-            <span class="text-teal-600">${{ total.toFixed(2) }}</span>
-          </div>
-        </div>
-      </div>
+      <OrderTotalsSummary
+        :subtotal="subtotal"
+        :shipping="shipping"
+        :totalDiscount="totalDiscount"
+        :totalIva="totalIva"
+        :total="total"
+        variant="cart"
+      />
       
       <!-- Shipping Options -->
       <div class="mb-6">
@@ -60,14 +43,16 @@
       
       <!-- Action Buttons -->
       <div class="space-y-3">
-        <button 
-          @click="$emit('update-cart')" 
+        <button
+          type="button"
+          @click.prevent="$emit('update-cart')"
           class="w-full py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium cursor-pointer !rounded-button whitespace-nowrap"
         >
           Actualizar Carrito
         </button>
-        <button 
-          @click="$emit('proceed-checkout')" 
+        <button
+          type="button"
+          @click.prevent="$emit('proceed-checkout')"
           class="w-full py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-medium cursor-pointer !rounded-button whitespace-nowrap"
         >
           <i class="fas fa-lock mr-2"></i>
@@ -92,8 +77,13 @@
 </template>
 
 <script>
+import OrderTotalsSummary from './OrderTotalsSummary.vue';
+
 export default {
   name: 'OrderSummary',
+  components: {
+    OrderTotalsSummary
+  },
   props: {
     subtotal: {
       type: Number,

@@ -1,13 +1,18 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <CheckoutHeader />
-    
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-6 py-8">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Order Summary -->
         <div class="lg:col-span-1">
+          <!-- Si no llegan datos de checkout (por ejemplo al recargar /checkout),
+               mostramos un aviso y dejamos al usuario en la página en vez de redirigirlo -->
+          <div
+            v-if="missingCheckoutData"
+            class="mb-4 p-4 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg"
+          >
+            No se encontraron datos del pedido para mostrar. Vuelve al carrito y presiona “Proceder al Pago” nuevamente.
+          </div>
           <CheckoutOrderSummary
             :orderItems="orderItems"
             :totals="totals"
@@ -66,43 +71,28 @@
 </template>
 
 <script>
-import CheckoutHeader from './CheckoutHeader.vue';
+import api from '@/utils/api';
 import CheckoutOrderSummary from './CheckoutOrderSummary.vue';
 import BillingInfo from './BillingInfo.vue';
 import CheckoutShippingOptions from './CheckoutShippingOptions.vue';
 import PaymentMethod from './PaymentMethod.vue';
 import CheckoutFooter from './CheckoutFooter.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'CheckoutPage',
   components: {
-    CheckoutHeader,
     CheckoutOrderSummary,
     BillingInfo,
     CheckoutShippingOptions,
     PaymentMethod,
     CheckoutFooter
   },
-  inject: ['checkoutOrderItems', 'checkoutTotals', 'completeOrderHandler'],
-  mounted() {
-    // Validar que haya datos de checkout antes de mostrar la página
-    this.$nextTick(() => {
-      try {
-        const hasOrderItems = (this.checkoutOrderItems && this.checkoutOrderItems.length > 0) ||
-                              (this.orderItems && this.orderItems.length > 0);
-        
-        if (!hasOrderItems) {
-          console.warn('No hay items en el checkout, redirigiendo al carrito');
-          this.$router.push('/carrito');
-        }
-      } catch (error) {
-        console.error('Error en mounted de Checkout:', error);
-        this.$router.push('/carrito');
-      }
-    });
-  },
+  inject: ['completeOrderHandler'],
   data() {
     return {
+      missingCheckoutData: false,
+      cart: null,
       billingInfo: {
         fullName: '',
         phone: '',
@@ -121,9 +111,10 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isAuthenticated']),
     orderItems() {
       try {
-        return this.checkoutOrderItems || [];
+        return this.cart && Array.isArray(this.cart.detalles_carrito) ? this.cart.detalles_carrito : [];
       } catch (error) {
         console.error('Error al obtener orderItems:', error);
         return [];
@@ -131,28 +122,48 @@ export default {
     },
     totals() {
       try {
-        return this.checkoutTotals || {
-          subtotal: 0,
-          tax: 0,
-          total: 0
+        // Totales consistentes con /carrito (backend)
+        return {
+          subtotal: this.cart ? parseFloat(this.cart.subtotal_carrito || 0) : 0,
+          totalDiscount: this.cart ? parseFloat(this.cart.descuento_carrito || 0) : 0,
+          totalIva: this.cart ? parseFloat(this.cart.iva_carrito || 0) : 0,
+          total: this.cart ? parseFloat(this.cart.total_carrito || 0) : 0
         };
       } catch (error) {
         console.error('Error al obtener totals:', error);
         return {
           subtotal: 0,
-          tax: 0,
+          totalDiscount: 0,
+          totalIva: 0,
           total: 0
         };
       }
     },
     shippingCost() {
-      if (this.selectedShipping === 'express') {
-        return 50.00;
-      }
+      // Por ahora, envío estático a $0 para mantener consistencia con /carrito
       return 0;
     }
   },
+  created() {
+    this.fetchCheckoutCart();
+  },
   methods: {
+    async fetchCheckoutCart() {
+      try {
+        if (!this.isAuthenticated) {
+          this.missingCheckoutData = true;
+          this.cart = null;
+          return;
+        }
+        const response = await api.get('/mi-carrito/obtener/');
+        this.cart = response.data;
+        this.missingCheckoutData = !this.orderItems || this.orderItems.length === 0;
+      } catch (error) {
+        console.error('Error al cargar el carrito para checkout:', error);
+        this.cart = null;
+        this.missingCheckoutData = true;
+      }
+    },
     handleBillingUpdate(info) {
       this.billingInfo = info;
     },

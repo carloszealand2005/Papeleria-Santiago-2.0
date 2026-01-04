@@ -150,6 +150,7 @@ http://127.0.0.1:8000/api/productos/?descuento_min=20.50&limite=20
 http://127.0.0.1:8000/api/productos/?descuento_min=20.50&descuento_max=30&limite=20
 (Si solo se proporciona min, filtrará con descuento igual o superior
 Si solo se proporciona max, filtrará con descuento igual o inferior)
+http://127.0.0.1:8000/api/productos/?descuento_min=20.50&descuento_max=30&limite=20&subcategoria=NOMBRE_SUBCATEGORIA
 
 -----
 DETALLES CARRITO:
@@ -188,6 +189,8 @@ GET -> /api/productos/destacados/?limite=30&subcategoria=manualidades
 
 
 
+
+
 AUTH: 
 POST -> http://127.0.0.1:8000/api/autenticacion/
 {"email": "cdsa@gmail.com", "username" = "username", "password": "password"}
@@ -214,10 +217,23 @@ RETURNS: {
 FAVORITOS:
 GET -> http://127.0.0.1:8000/api/favoritos/ (Devuelve los productos favoritos)
 
+GET -> http://127.0.0.1:8000/api/favoritos/?subcategoria=X 
+
+GET -> http://127.0.0.1:8000/api/favoritos/{SKU_producto}/is_favorite/ (Retorna true/false en base al sku si es favorito)
+RESULT: {"is_favorite": true} o {"is_favorite": false}.
+
 POST -> http://127.0.0.1:8000/api/favoritos/ (AGREGA EL PRODUCTO A FAVORITOS. SI YA ESTABA, RETORNA UN MENSAJE SIN EXCEPCIÓN)
 BODY: { "producto_sku": "SKU_DEL_PRODUCTO" }
 
 DELETE -> http://127.0.0.1:8000/api/favoritos/{SKU_producto}/ (Elimina un producto, retorna 204. Si no existe, retorna 404)
+
+
+------
+EXTRAS:
+
+http://127.0.0.1:8000/api/subcategorias
+http://127.0.0.1:8000/api/subcategorias?limite=X
+
 
 DRAFTS:
 pip install drf-nested-routers
