@@ -7,12 +7,13 @@ from django.core import signing
 from django.urls import reverse
 from urllib.parse import quote
 from django.views.decorators.clickjacking import xframe_options_exempt
-from django.db.models import Q
+from django.db.models import Q, F
 from .models import Comprobante, Pedido, Producto, Carrito, DetalleCarrito, Cliente, DetallePedido, Inventario, Subcategoria # Importamos DetallePedido, Inventario y Subcategoria
 from rest_framework import viewsets, filters, status, mixins, permissions, serializers # Importar filters, status, mixins, permissions y serializers
+from rest_framework import generics
 from rest_framework.decorators import action # Importar action
 from django_filters.rest_framework import DjangoFilterBackend # Importar DjangoFilterBackend
-from .serializers import ProductoSerializer, CarritoSerializer, DetalleCarritoSerializer, FavoritosClienteSerializer, SubcategoriaSerializer, PedidoSerializer # Importar el serializador
+from .serializers import ProductoSerializer, CarritoSerializer, DetalleCarritoSerializer, FavoritosClienteSerializer, SubcategoriaSerializer, PedidoSerializer, ClientePerfilSerializer # Importar el serializador
 from rest_framework.response import Response # Importar Response
 from .models import FavoritosCliente # Importar el modelo FavoritosCliente
 
@@ -91,14 +92,45 @@ def generar_factura_pdf(request, pedido_id):
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter] # Añadir backends de filtro y búsqueda
+    filter_backends = [DjangoFilterBackend] # Añadir backends de filtro y búsqueda
     filterset_fields = ['categoria', 'marca', 'SKU'] # Filtrar por categoría, marca y SKU
-    search_fields = ['nombre', 'descripcion', 'SKU', 'codigo_barras'] # Campos para búsqueda de texto
+    search_fields = ['nombre', 'marca'] # Campos para búsqueda de texto
     ordering_fields = ['SKU', 'nombre', 'pvp', 'pvm'] # Campos para ordenar resultados
 
     # Para filtrar por rango de precio, podemos sobrescribir el método get_queryset
     def get_queryset(self):
         queryset = super().get_queryset()
+
+        # Anotar precios (desde el OneToOne `precios`) para:
+        # - permitir ordering=pvp / ordering=pvm aunque no sean campos físicos en Producto
+        # - mantener compatibilidad con el frontend
+        queryset = queryset.annotate(
+            pvp=F('precios__pvp'),
+            pvm=F('precios__pvm'),
+        )
+
+        # Búsqueda custom (equivalente a SearchFilter, con tolerancia simple a plurales):
+        # Ej: "cuadernos" también prueba "cuaderno" (quitando 's' / 'es')
+        search = self.request.query_params.get('search')
+        if search:
+            terms = [t.strip() for t in str(search).split() if t.strip()]
+            for term in terms:
+                term_lower = term.lower()
+                variantes = {term_lower}
+
+                # Heurística simple de singularización (ES):
+                # - "cuadernos" -> "cuaderno"
+                # - "lápices"   -> "lápic" (ojo: no perfecto, pero ayuda en varios casos)
+                if len(term_lower) > 3 and term_lower.endswith('es'):
+                    variantes.add(term_lower[:-2])
+                if len(term_lower) > 3 and term_lower.endswith('s'):
+                    variantes.add(term_lower[:-1])
+
+                term_q = Q()
+                for v in variantes:
+                    term_q |= Q(nombre__icontains=v) | Q(marca__icontains=v)
+
+                queryset = queryset.filter(term_q)
 
         precio_min = self.request.query_params.get('precio_min')
         precio_max = self.request.query_params.get('precio_max')
@@ -150,8 +182,46 @@ class ProductoViewSet(viewsets.ModelViewSet):
             except ValueError:
                 pass
 
-        # Aplicar límite si se especifica
-        limite = self.request.query_params.get('limite')
+        # Ordering “custom” para el frontend (aliases):
+        # - ordering=total_vendidos  -> más vendidos primero
+        # - ordering=descuento       -> mayor descuento_publico primero
+        # - ordering=alphabet        -> nombre A-Z
+        #
+        # Nota: lo hacemos aquí (y NO vía OrderingFilter) porque OrderingFilter:
+        # - no soporta aliases personalizados
+        # - y ordering_fields no permite definir el sentido default (ej. desc por defecto)
+        ordering = self.request.query_params.get('ordering')
+        if ordering:
+            ordering = str(ordering).strip()
+            is_desc = ordering.startswith('-')
+            key = ordering[1:] if is_desc else ordering
+
+            # Aliases del frontend
+            if key == 'total_vendidos':
+                # default: DESC (más vendidos primero)
+                queryset = queryset.order_by('total_vendidos' if is_desc else '-total_vendidos')
+            elif key == 'descuento':
+                # default: DESC (mayor descuento_publico primero)
+                queryset = queryset.order_by('precios__descuento_publico' if is_desc else '-precios__descuento_publico')
+            elif key == 'alphabet':
+                # default: ASC (A-Z)
+                queryset = queryset.order_by('-nombre' if is_desc else 'nombre')
+
+            # Campos directos (compatibilidad con DRF OrderingFilter anterior)
+            elif key in ('SKU', 'nombre', 'pvp', 'pvm'):
+                queryset = queryset.order_by(f"-{key}" if is_desc else key)
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        """
+        Soporta ?limite=X sin romper búsqueda/filtros/ordering.
+        (Importante: no se puede re-ordenar un queryset ya "cortado" con [:X].)
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Aplicar límite al FINAL (después de filter_backends)
+        limite = request.query_params.get('limite')
         if limite:
             try:
                 limite = int(limite)
@@ -159,7 +229,13 @@ class ProductoViewSet(viewsets.ModelViewSet):
             except ValueError:
                 pass # Ignorar si el valor no es un número entero válido
 
-        return queryset
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
     def destacados(self, request):
@@ -637,6 +713,47 @@ class MisPedidosViewSet(
             status=status.HTTP_200_OK
         )
 
+
+#-------------------
+# ViewSet para el perfil del usuario autenticado (API REST)
+# Devuelve los datos del modelo Cliente asociado al token
+#-------------------
+class MiPerfilViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = ClientePerfilSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+        try:
+            return user.cliente_profile
+        except Cliente.DoesNotExist:
+            raise Http404("Perfil de cliente no encontrado para este usuario.")
+
+    def list(self, request, *args, **kwargs):
+        """
+        Retorna el perfil (Cliente) del usuario autenticado.
+        Nota: usamos endpoint de colección /api/mi-perfil/ (sin pk) por conveniencia de frontend.
+        """
+        cliente = self.get_object()
+        serializer = self.get_serializer(cliente)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+#-------------------
+# Endpoint para el perfil del usuario autenticado (GET + PATCH) sin pk
+# Nota: usamos una vista explícita porque el DefaultRouter no soporta PATCH en la ruta de colección.
+#-------------------
+class MiPerfilAPIView(generics.RetrieveUpdateAPIView):
+    serializer_class = ClientePerfilSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['get', 'patch', 'put', 'options', 'head']
+
+    def get_object(self):
+        user = self.request.user
+        try:
+            return user.cliente_profile
+        except Cliente.DoesNotExist:
+            raise Http404("Perfil de cliente no encontrado para este usuario.")
 
 #-------------------
 # ViewSet para los favoritos del usuario autenticado (API REST)

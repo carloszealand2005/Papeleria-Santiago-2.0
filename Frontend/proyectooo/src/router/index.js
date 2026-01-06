@@ -5,12 +5,14 @@ import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 import PasswordRecovery from '../components/PasswordRecovery.vue'
 import Products from '../components/Products.vue'
+import ProductsSearch from '../components/ProductsSearch.vue'
 import Offers from '../components/Offers.vue'
 import ProductDetails from '../components/ProductDetails.vue'
 import Cart from '../components/Cart.vue'
 import Checkout from '../components/Checkout.vue'
 import Receipt from '../components/Receipt.vue'
 import Favorites from '../components/Favorites.vue' // Importar el nuevo componente Favorites
+import MyAccount from '../components/MyAccount.vue'
 
 Vue.use(VueRouter)
 
@@ -39,6 +41,11 @@ const routes = [
     path: '/productos',
     name: 'Products',
     component: Products
+  },
+  {
+    path: '/productos/search',
+    name: 'ProductsSearch',
+    component: ProductsSearch
   },
   {
     path: '/ofertas',
@@ -70,6 +77,11 @@ const routes = [
     path: '/favoritos',
     name: 'Favorites',
     component: Favorites
+  },
+  {
+    path: '/mi-cuenta',
+    name: 'MyAccount',
+    component: MyAccount
   }
 ]
 

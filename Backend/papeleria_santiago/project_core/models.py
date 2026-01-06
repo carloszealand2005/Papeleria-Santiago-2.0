@@ -143,6 +143,7 @@ class Cliente(models.Model):
     cedula = models.CharField(max_length=20, blank=True, null=True)
     telefono = models.CharField(max_length=30, blank=True, null=True)
     email = models.CharField(max_length=100, blank=True, null=True)
+    ciudad = models.CharField(max_length=100, blank=True, null=True)
     direccion = models.TextField(blank=True, null=True)
 
     PERSONA = 'Persona'

@@ -15,6 +15,7 @@ router.register(r'subcategorias', views.SubcategoriaViewSet, basename='subcatego
 
 urlpatterns = [
     path('pedidos/<int:pedido_id>/comprobante/pdf/', views.generar_factura_pdf, name='generar_factura_pdf'),
+    path('api/mi-perfil/', views.MiPerfilAPIView.as_view(), name='mi_perfil'),
     path('api/autenticacion/registro/', RegistroView.as_view(), name='registro'),
     path('api/autenticacion/login/', LoginView.as_view(), name='login'),
     path('api/', include(router.urls)),

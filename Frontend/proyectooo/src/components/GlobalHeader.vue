@@ -76,7 +76,7 @@ export default {
   methods: {
     handleSearch() {
       if (this.searchQuery.trim()) {
-        this.$router.push({ path: '/productos', query: { search: this.searchQuery } });
+        this.$router.push({ path: '/productos/search', query: { producto: this.searchQuery } });
       }
     },
     goToCart() {
@@ -87,6 +87,10 @@ export default {
       this.$router.push('/carrito');
     },
     goToLogin() {
+      if (this.isAuthenticated) {
+        this.$router.push('/mi-cuenta');
+        return;
+      }
       this.$router.push('/login');
     },
     goToHome() {

@@ -115,8 +115,7 @@ ventas
 stock
 5000Lcarlos
 
-FACTURA:
-http://127.0.0.1:8000/pedidos/<int:pedido_id>/comprobante/pdf/
+
 
 
 ERRORES COMUNES AL INSTALAR:
@@ -128,7 +127,11 @@ URL_ENDPOINTS @views.py
 
 
 /api/productos/
-
+http://127.0.0.1:8000/api/productos/?search=goma&ordering=total_vendidos
+http://127.0.0.1:8000/api/productos/?search=goma&ordering=descuento
+http://127.0.0.1:8000/api/productos/?search=goma&ordering=alphabet
+http://127.0.0.1:8000/api/productos/?search=goma&ordering=total_vendidos&precio_min=10.00&precio_max=50.00
+http://127.0.0.1:8000/api/productos/?search=goma&ordering=total_vendidos&precio_min=10.00&precio_max=50.00?limite=20
 http://127.0.0.1:8000/api/productos/?search=goma (search in nombre, marca, descripción)
 http://127.0.0.1:8000/api/productos/?categoria=oficina 
 http://127.0.0.1:8000/api/productos/?subcategoria=oficina 
@@ -214,6 +217,21 @@ RETURNS: {
     "message": "Inicio de sesión exitoso."
 }
 
+-----
+USUARIO (Requiere token de autenticación): 
+GET -> http://127.0.0.1:8000/api/mi-perfil/ (Devuelve los datos del usuario)
+
+PATCH ->  http://127.0.0.1:8000/api/mi-perfil/ (Actualiza campos editables)
+CAMPOS EDITABLES DE PATCH SON: cedula, telefono, email, ciudad, direccion
+EJEMPLO BODY RAW JSON: 
+{
+  "telefono": "0999999999",
+  "ciudad": "Loja",
+  "direccion": "Av. ... #123"
+}
+
+
+
 FAVORITOS:
 GET -> http://127.0.0.1:8000/api/favoritos/ (Devuelve los productos favoritos)
 
@@ -227,6 +245,26 @@ BODY: { "producto_sku": "SKU_DEL_PRODUCTO" }
 
 DELETE -> http://127.0.0.1:8000/api/favoritos/{SKU_producto}/ (Elimina un producto, retorna 204. Si no existe, retorna 404)
 
+---------
+FACTURACIÓN:
+
+REQUIEREN TOKEN DE AUTENTICACIÓN: 
+GET -> http://127.0.0.1:8000/api/mis-pedidos/ (Retorna los pedidos completados del usuario)
+
+
+ESTA PETICIÓN SE LA USA CUANDO EL CLIENTE HACE CLICK A UN PEDIDO PASADO PARA VER SU FACTURA.
+GET ->  http://127.0.0.1:8000/api/mis-pedidos/<id>/comprobante/link/ (Genera link de PDF de la factura que ya está en la base de datos)
+OUTPUT:
+{
+    "pedido_id": 2,
+    "pdf_url": "http://127.0.0.1:8000/pedidos/2/comprobante/pdf/?token=2%3A1vcVga%3A8SCarZnlsdb5FNAsPDeNJ1f2W7dtteorr3u4i5lvOMc",
+    "pdf_url_download": "http://127.0.0.1:8000/pedidos/2/comprobante/pdf/?token=2%3A1vcVga%3A8SCarZnlsdb5FNAsPDeNJ1f2W7dtteorr3u4i5lvOMc&download=1",
+    "expires_in_seconds": 600
+}
+
+LAS SIGUIENTES PETICIONES SE GENERAN EN BASE A LA ANTERIOR PETICIÓN. 'pdf_url' y "pdf_url_download"
+GET -> http://127.0.0.1:8000/pedidos/<id>/comprobante/pdf/?token=.. (PDF EMBEDIDO)
+GET -> http://127.0.0.1:8000/pedidos/<id>/comprobante/pdf/?token=...&download=1 (PDF DOWNLOAD)
 
 ------
 EXTRAS:

@@ -163,6 +163,7 @@ export default {
   },
   created() {
     this.fetchCheckoutCart();
+    this.autofillBillingFromProfile();
   },
   methods: {
     async fetchCheckoutCart() {
@@ -179,6 +180,32 @@ export default {
         console.error('Error al cargar el carrito para checkout:', error);
         this.cart = null;
         this.missingCheckoutData = true;
+      }
+    },
+    async autofillBillingFromProfile() {
+      try {
+        if (!this.isAuthenticated) return;
+
+        const res = await api.get('/mi-perfil/');
+        const profile = res?.data || {};
+
+        // Autocompletar solo si el usuario aún no escribió en el campo
+        if (!this.billingInfo.fullName) {
+          this.billingInfo.fullName = profile.nombre ?? '';
+        }
+        if (!this.billingInfo.phone) {
+          this.billingInfo.phone = profile.telefono ?? '';
+        }
+        if (!this.billingInfo.address) {
+          this.billingInfo.address = profile.direccion ?? '';
+        }
+        if (!this.billingInfo.city) {
+          this.billingInfo.city = profile.ciudad ?? '';
+        }
+        // zipCode queda vacío (dirección postal)
+      } catch (error) {
+        // No bloqueamos el checkout por esto; solo dejamos campos vacíos si falla.
+        console.error('Error autocompletando datos de facturación desde /mi-perfil/:', error);
       }
     },
     handleBillingUpdate(info) {
@@ -277,6 +304,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 input[type="number"] {
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 </style>

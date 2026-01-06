@@ -1,19 +1,13 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <GlobalHeader /> <!-- Nuevo: La barra superior global -->
-    <!-- Botón de Logout Temporal -->
-    <div v-if="isAuthenticated" class="fixed top-4 right-4 z-50">
-      <button @click="logout" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-lg transition duration-200">
-        Cerrar Sesión
-      </button>
-    </div>
     <router-view />
   </div>
 </template>
 
 <script>
 import './assets/tailwind.css'
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 import api from './utils/api';
 import GlobalHeader from './components/GlobalHeader.vue'; // Nuevo: Importar GlobalHeader
 
@@ -199,7 +193,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['logout']), // Mapeamos la acción 'logout' de Vuex
     handleShowAuthModal() {
       this.$router.push('/login');
     },

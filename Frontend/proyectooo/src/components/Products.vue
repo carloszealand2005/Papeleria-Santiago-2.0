@@ -203,6 +203,7 @@ export default {
             id: product.SKU,
             sku: product.SKU, // Añadir sku
             name: product.nombre,
+            brand: product.marca,
             description: product.descripcion, 
             image: product.imagen_url,
             originalPrice: parseFloat(product.pvp || '0'), // Asegurar que sea numérico

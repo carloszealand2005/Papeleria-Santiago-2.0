@@ -86,3 +86,23 @@ class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pedido
         fields = ['id', 'fecha_pedido', 'estado_pedido', 'subtotal', 'descuento', 'iva', 'total']
+
+
+#------------------
+# Serializador para el perfil del usuario (modelo Cliente)
+# Nota: no expone el modelo User (dato interno)
+#------------------
+class ClientePerfilSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cliente
+        fields = [
+            'id',
+            'nombre',
+            'cedula',
+            'telefono',
+            'email',
+            'ciudad',
+            'direccion',
+            'tipo_cliente',
+        ]
+        read_only_fields = ['id', 'nombre', 'tipo_cliente']

@@ -15,7 +15,8 @@
       </div>
     </div>
     <div class="p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-2 cursor-pointer hover:text-blue-600" @click="viewProduct">{{ product.name }}</h3>
+      <h3 class="text-lg font-semibold text-gray-900 mb-1 cursor-pointer hover:text-blue-600" @click="viewProduct">{{ product.name }}</h3>
+      <p v-if="product.brand" class="text-sm text-gray-500 mb-2">{{ product.brand }}</p>
       <p class="text-gray-600 text-sm mb-4">{{ product.description }}</p>
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center space-x-2">
