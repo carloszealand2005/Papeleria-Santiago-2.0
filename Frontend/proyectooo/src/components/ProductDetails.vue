@@ -6,7 +6,6 @@
     
     <ProductDetailsContent
       :product="product"
-      :related-products="relatedProducts"
       :isAuthenticated="isAuthenticated"
       @add-to-cart="handleAddToCart"
       @select-product="handleSelectProduct"
@@ -45,40 +44,6 @@ export default {
   data() {
     return {
       product: null,
-      relatedProducts: [
-        {
-          id: 2,
-          name: 'Set Bolígrafos Gel',
-          category: 'Escritura',
-          price: 18.50,
-          rating: 5,
-          image: 'https://readdy.ai/api/search-image?query=Set%20of%20gel%20pens%20colorful%20writing%20instruments%20stationery%20office%20supplies%20clean%20white%20background%20product%20photography&width=300&height=300&seq=rel-prod-001&orientation=squarish'
-        },
-        {
-          id: 3,
-          name: 'Organizador Escritorio',
-          category: 'Organización',
-          price: 45.00,
-          rating: 4,
-          image: 'https://readdy.ai/api/search-image?query=Desktop%20organizer%20office%20supplies%20holder%20clean%20modern%20design%20white%20background%20product%20photography&width=300&height=300&seq=rel-prod-002&orientation=squarish'
-        },
-        {
-          id: 4,
-          name: 'Kit Marcadores Arte',
-          category: 'Arte y Diseño',
-          price: 89.99,
-          rating: 5,
-          image: 'https://readdy.ai/api/search-image?query=Art%20markers%20set%20colorful%20drawing%20supplies%20creative%20tools%20clean%20white%20background%20product%20photography&width=300&height=300&seq=rel-prod-003&orientation=squarish'
-        },
-        {
-          id: 5,
-          name: 'Carpeta Premium A4',
-          category: 'Organización',
-          price: 32.50,
-          rating: 4,
-          image: 'https://readdy.ai/api/search-image?query=Premium%20A4%20folder%20office%20organization%20supplies%20clean%20professional%20design%20white%20background%20product%20photography&width=300&height=300&seq=rel-prod-004&orientation=squarish'
-        }
-      ],
       showAuthPromptModal: false, 
     };
   },

@@ -153,37 +153,6 @@
       </div>
     </div>
 
-    <!-- Related Products -->
-    <div class="mt-12">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6">Productos Relacionados</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div
-          v-for="product in relatedProducts"
-          :key="product.id"
-          class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden cursor-pointer"
-          @click="selectProduct(product)"
-        >
-          <div class="aspect-square overflow-hidden">
-            <img
-              :src="product.image"
-              :alt="product.name"
-              class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300"
-            />
-          </div>
-          <div class="p-4">
-            <h3 class="font-medium text-gray-900 mb-1">{{ product.name }}</h3>
-            <p class="text-sm text-gray-500 mb-2">{{ product.category }}</p>
-            <div class="flex items-center justify-between">
-              <span class="text-lg font-bold text-indigo-600">${{ product.price }}</span>
-              <div class="flex text-yellow-400 text-sm">
-                <i v-for="star in 5" :key="star" :class="star <= product.rating ? 'fas fa-star' : 'far fa-star'"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Image Modal -->
     <div v-if="showImageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50" @click="closeImageModal">
       <div class="max-w-4xl max-h-full p-4 relative">
@@ -223,10 +192,6 @@ export default {
     product: {
       type: Object,
       required: true
-    },
-    relatedProducts: {
-      type: Array,
-      default: () => []
     },
     isAuthenticated: {
       type: Boolean,
@@ -366,9 +331,6 @@ export default {
         console.error('Error al verificar el estado de favoritos:', error);
       }
     },
-    selectProduct(product) {
-      this.$emit('select-product', product);
-    },
     goToHome() {
       this.$router.push('/');
     },
@@ -401,6 +363,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 input[type="number"] {
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 

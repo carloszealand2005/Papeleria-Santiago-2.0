@@ -16,6 +16,36 @@ import MyAccount from '../components/MyAccount.vue'
 
 Vue.use(VueRouter)
 
+// Evitar warnings/errores por navegación redundante (Vue Router 3)
+// Solo ignoramos NavigationDuplicated; otros errores siguen siendo visibles.
+const isNavigationDuplicated = (err) => {
+  return (
+    err &&
+    (err.name === 'NavigationDuplicated' ||
+      err._name === 'NavigationDuplicated' ||
+      (typeof err.message === 'string' && err.message.includes('Avoided redundant navigation')))
+  );
+};
+
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location, onResolve, onReject) {
+  // Soporta firma callback y Promise
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject);
+  return originalPush.call(this, location).catch((err) => {
+    if (isNavigationDuplicated(err)) return this.currentRoute;
+    return Promise.reject(err);
+  });
+};
+
+const originalReplace = VueRouter.prototype.replace;
+VueRouter.prototype.replace = function replace(location, onResolve, onReject) {
+  if (onResolve || onReject) return originalReplace.call(this, location, onResolve, onReject);
+  return originalReplace.call(this, location).catch((err) => {
+    if (isNavigationDuplicated(err)) return this.currentRoute;
+    return Promise.reject(err);
+  });
+};
+
 const routes = [
   {
     path: '/',
