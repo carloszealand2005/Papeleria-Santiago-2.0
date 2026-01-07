@@ -128,6 +128,7 @@ export default {
           id: item.producto_detail.SKU, // Se mantiene 'id' por compatibilidad con FeaturedProduct
           sku: item.producto_detail.SKU, // Añadimos 'sku' para el handleAddToCart global
           name: item.producto_detail.nombre,
+          brand: item.producto_detail.marca,
           description: item.producto_detail.descripcion,
           image: item.producto_detail.imagen_url,
           originalPrice: parseFloat(item.producto_detail.pvp),

@@ -67,8 +67,9 @@ export default {
     selectCategory(category) {
       console.log('Categoría seleccionada:', category.name);
       this.$emit('select-category', category);
-      // Navegar a productos cuando se selecciona una categoría
-      this.$router.push('/productos');
+      // Navegar a búsqueda como si fuera un término buscado (ej: /productos/search?producto=cuadernos)
+      const producto = String(category?.name || '').trim().toLowerCase();
+      this.$router.push({ path: '/productos/search', query: { producto } });
     }
   }
 };
