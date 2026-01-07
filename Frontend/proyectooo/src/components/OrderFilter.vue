@@ -90,7 +90,7 @@ export default {
     },
     maxLimit: {
       type: Number,
-      default: 200
+      default: 30
     },
     step: {
       type: Number,

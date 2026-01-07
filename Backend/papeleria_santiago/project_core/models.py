@@ -25,6 +25,7 @@ class Categoria(models.Model):
 class Subcategoria(models.Model):
     nombre_subcategoria = models.CharField(max_length=50) # Fixed typo: charField -> CharField
     descripcion_categoria = models.TextField(blank=True, null=True)
+    foto_categoria_url = models.URLField(blank=True, null=True) # URL de imagen para mostrar en frontend
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     
     def __str__(self):

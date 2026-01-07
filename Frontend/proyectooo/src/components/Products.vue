@@ -23,13 +23,6 @@
         @select-product="handleSelectProduct"
       />
       
-      <!-- All Products Grid -->
-      <AllProducts
-        :filteredProducts="filteredProducts"
-        @add-to-cart="handleAddToCart"
-        @select-product="handleSelectProduct"
-      />
-      
       <!-- Newsletter Section -->
     <ProductsNewsletter
         :email="newsletterEmail"
@@ -48,7 +41,6 @@
 import ProductsHero from './ProductsHero.vue';
 import CategoryFilterComponent from './CategoryFilterComponent.vue';
 import FeaturedProducts from './FeaturedProducts.vue';
-import AllProducts from './AllProducts.vue';
 import ProductsNewsletter from './ProductsNewsletter.vue';
 import ProductsFooter from './ProductsFooter.vue';
 import { mapGetters } from 'vuex';
@@ -60,7 +52,6 @@ export default {
     ProductsHero,
     CategoryFilterComponent,
     FeaturedProducts,
-    AllProducts,
     ProductsNewsletter,
     ProductsFooter
   },
@@ -73,6 +64,8 @@ export default {
       filterCategories: [],
       products: [], // Inicializar para asegurar reactividad
       featuredProducts: [], // Inicializar para asegurar reactividad
+      // Si la navegación viene desde Home con ?subcategoria=Papeleria, la aplicamos cuando carguen las categorías
+      pendingSubcategoriaFromRoute: '',
     }
   },
   computed: {
@@ -117,9 +110,37 @@ export default {
         // ya que el computed property filteredProducts reaccionará automáticamente.
       }
     }
+    ,
+    // Nuevo: permitir preseleccionar la subcategoría desde la URL (ej: /productos?subcategoria=Papeleria)
+    '$route.query.subcategoria': {
+      immediate: true,
+      handler(newSubcategoria) {
+        const value = String(newSubcategoria || '').trim();
+        if (!value) return;
+
+        // Si todavía no cargamos las categorías, lo guardamos para aplicarlo luego
+        if (!Array.isArray(this.filterCategories) || this.filterCategories.length === 0) {
+          this.pendingSubcategoriaFromRoute = value;
+          return;
+        }
+
+        this.applySubcategoriaFromRoute(value);
+      }
+    },
   },
-  created() {
-    this.fetchCategories();
+  async created() {
+    // Cargar categorías primero para poder mapear nombre -> id del filtro
+    await this.fetchCategories();
+
+    // Si venimos con ?subcategoria=..., aplicarlo antes de pedir productos
+    const subcategoria = String(this.$route?.query?.subcategoria || '').trim();
+    if (subcategoria) {
+      this.applySubcategoriaFromRoute(subcategoria);
+    } else if (this.pendingSubcategoriaFromRoute) {
+      this.applySubcategoriaFromRoute(this.pendingSubcategoriaFromRoute);
+      this.pendingSubcategoriaFromRoute = '';
+    }
+
     this.fetchProducts();
     this.fetchFeaturedProducts(this.selectedCategory);
   },
@@ -133,9 +154,32 @@ export default {
           description: cat.descripcion_categoria
         }));
         this.filterCategories = [{ id: 'all', name: 'Todos', description: 'Ver todos los productos' }, ...categoriesFromApi];
+
+        // Si ya tenemos una subcategoría pendiente desde la URL, aplicarla ahora
+        if (this.pendingSubcategoriaFromRoute) {
+          this.applySubcategoriaFromRoute(this.pendingSubcategoriaFromRoute);
+          this.pendingSubcategoriaFromRoute = '';
+        }
       } catch (error) {
         console.error('Error fetching categories:', error);
       }
+    },
+    applySubcategoriaFromRoute(subcategoriaNombre) {
+      const q = String(subcategoriaNombre || '').trim().toLowerCase();
+      if (!q) return;
+
+      const match = (this.filterCategories || []).find(c => {
+        if (!c) return false;
+        const byName = String(c.name || '').trim().toLowerCase() === q;
+        const byId = String(c.id || '').trim().toLowerCase() === q;
+        return byName || byId;
+      });
+
+      this.selectedCategory = match ? match.id : 'all';
+
+      // Al cambiar vía URL, recargamos el contenido para reflejar el filtro seleccionado
+      this.fetchProducts();
+      this.fetchFeaturedProducts(this.selectedCategory);
     },
     fetchProducts() {
       let url = '/productos/';
@@ -189,17 +233,26 @@ export default {
       this.$emit('subscribe-newsletter', email);
       this.newsletterEmail = '';
     },
-    fetchFeaturedProducts(subcategoria = 'all') {
-      let url = 'http://127.0.0.1:8000/api/productos/destacados/';
-      if (subcategoria && subcategoria !== 'all') {
-        url += `?limite=20&subcategoria=${subcategoria}`;
-      } else {
-        url += `?limite=20`;
+    fetchFeaturedProducts(selectedCategoryId = 'all') {
+      const params = {
+        ordering: 'total_vendidos',
+        limite: 20,
+      };
+
+      // Para 'subcategoria' usamos el nombre del filtro (viene del backend).
+      // Nota: selectedCategoryId normalmente es el id del filtro (en minúsculas).
+      if (selectedCategoryId && selectedCategoryId !== 'all') {
+        const selected = (this.filterCategories || []).find(c => c.id === selectedCategoryId);
+        const subcategoriaNombre = selected && selected.name ? selected.name : selectedCategoryId;
+        params.subcategoria = subcategoriaNombre;
       }
 
-      api.get(url)
+      api.get('/productos/', { params })
         .then(response => {
-          this.featuredProducts = response.data.map(product => ({
+          const raw = response && response.data;
+          const list = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.results) ? raw.results : []);
+
+          this.featuredProducts = list.map(product => ({
             id: product.SKU,
             sku: product.SKU, // Añadir sku
             name: product.nombre,

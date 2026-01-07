@@ -234,6 +234,50 @@ class ProductoViewSet(viewsets.ModelViewSet):
 
         return queryset
 
+    def list(self, request, *args, **kwargs):
+        """
+        Soporta ?limite=X sin romper búsqueda/filtros/ordering.
+        (Importante: no se puede re-ordenar un queryset ya "cortado" con [:X].)
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Aplicar límite al FINAL (después de filter_backends)
+        limite = request.query_params.get('limite')
+        if limite:
+            try:
+                limite = int(limite)
+                queryset = queryset[:limite]
+            except ValueError:
+                pass # Ignorar si el valor no es un número entero válido
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def destacados(self, request):
+        """ Retorna una lista de los productos más vendidos (destacados). """
+        limite = self.request.query_params.get('limite', 50) # Permitir un límite configurable, por defecto 50
+        try:
+            limite = int(limite)
+        except ValueError:
+            return Response({'error': 'El parámetro limite debe ser un número entero.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        productos_destacados = Producto.objects.all()
+
+        # Aplicar filtro por subcategoría si se proporciona
+        subcategoria_nombre = self.request.query_params.get('subcategoria')
+        if subcategoria_nombre:
+            productos_destacados = productos_destacados.filter(subcategoria__nombre_subcategoria__iexact=subcategoria_nombre)
+
+        productos_destacados = productos_destacados.order_by('-total_vendidos')[:limite]
+        serializer = self.get_serializer(productos_destacados, many=True)
+        return Response(serializer.data)
+
 
 # -------------------
 # AUTH - Registro en 2 pasos (OTP por email)
@@ -416,50 +460,6 @@ class ResendOtpAPIView(APIView):
             {'message': 'Se envió un nuevo código de verificación.', 'email': email},
             status=status.HTTP_200_OK
         )
-
-    def list(self, request, *args, **kwargs):
-        """
-        Soporta ?limite=X sin romper búsqueda/filtros/ordering.
-        (Importante: no se puede re-ordenar un queryset ya "cortado" con [:X].)
-        """
-        queryset = self.filter_queryset(self.get_queryset())
-
-        # Aplicar límite al FINAL (después de filter_backends)
-        limite = request.query_params.get('limite')
-        if limite:
-            try:
-                limite = int(limite)
-                queryset = queryset[:limite]
-            except ValueError:
-                pass # Ignorar si el valor no es un número entero válido
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-    
-    @action(detail=False, methods=['get'])
-    def destacados(self, request):
-        """ Retorna una lista de los productos más vendidos (destacados). """
-        limite = self.request.query_params.get('limite', 50) # Permitir un límite configurable, por defecto 50
-        try:
-            limite = int(limite)
-        except ValueError:
-            return Response({'error': 'El parámetro limite debe ser un número entero.'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        productos_destacados = Producto.objects.all()
-
-        # Aplicar filtro por subcategoría si se proporciona
-        subcategoria_nombre = self.request.query_params.get('subcategoria')
-        if subcategoria_nombre:
-            productos_destacados = productos_destacados.filter(subcategoria__nombre_subcategoria__iexact=subcategoria_nombre)
-
-        productos_destacados = productos_destacados.order_by('-total_vendidos')[:limite]
-        serializer = self.get_serializer(productos_destacados, many=True)
-        return Response(serializer.data)
 
 
 #------------------

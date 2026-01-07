@@ -54,7 +54,7 @@ export default {
     return {
       sortBy: 'relevance',
       products: [],
-      priceRange: { min: 0.30, max: 200 },
+      priceRange: { min: 0.30, max: 30 },
       isPriceFilterApplied: false,
       searchQuery: '',
     }

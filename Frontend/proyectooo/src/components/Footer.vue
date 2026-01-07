@@ -4,7 +4,7 @@
       <div class="grid grid-cols-4 gap-12">
         <div class="col-span-2">
           <img 
-            src="https://static.readdy.ai/image/a6354382ff0904464d2c460063bc60ba/a517923db6583f4c953e5c11089dec01.jpeg" 
+            src="@/assets/papeleria_santiago_logo.png" 
             alt="Santiago Papelería" 
             class="h-16 w-auto mb-6"
           >
