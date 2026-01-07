@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import FavoritosCliente, Producto, Precio, Carrito, DetalleCarrito, Cliente, Subcategoria, Pedido # Importa tus modelos
+from django.contrib.auth.models import User
 
 #------------------
 # Serializador para el modelo Producto
@@ -106,3 +107,33 @@ class ClientePerfilSerializer(serializers.ModelSerializer):
             'tipo_cliente',
         ]
         read_only_fields = ['id', 'nombre', 'tipo_cliente']
+
+
+# ------------------
+# OTP - Registro en 2 pasos
+# ------------------
+class InitRegisterSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    first_name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    password = serializers.CharField(required=True, write_only=True)
+    celular = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    ciudad = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Este correo electrónico ya está registrado.")
+        return value
+
+
+class VerifyOtpSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    otp = serializers.CharField(required=True, min_length=6, max_length=6)
+
+    def validate_otp(self, value):
+        if not str(value).isdigit():
+            raise serializers.ValidationError("El código debe ser numérico.")
+        return value
+
+
+class ResendOtpSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)

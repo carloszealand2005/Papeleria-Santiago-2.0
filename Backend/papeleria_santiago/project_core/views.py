@@ -4,18 +4,39 @@ from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
 from django.core import signing
+from django.core.mail import send_mail
 from django.urls import reverse
 from urllib.parse import quote
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.db.models import Q, F
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+from django.utils.text import slugify
+from django.db import transaction
+import secrets
 from .models import Comprobante, Pedido, Producto, Carrito, DetalleCarrito, Cliente, DetallePedido, Inventario, Subcategoria # Importamos DetallePedido, Inventario y Subcategoria
+from .models import PreRegistroUser
 from rest_framework import viewsets, filters, status, mixins, permissions, serializers # Importar filters, status, mixins, permissions y serializers
 from rest_framework import generics
 from rest_framework.decorators import action # Importar action
 from django_filters.rest_framework import DjangoFilterBackend # Importar DjangoFilterBackend
-from .serializers import ProductoSerializer, CarritoSerializer, DetalleCarritoSerializer, FavoritosClienteSerializer, SubcategoriaSerializer, PedidoSerializer, ClientePerfilSerializer # Importar el serializador
+from .serializers import (
+    ProductoSerializer,
+    CarritoSerializer,
+    DetalleCarritoSerializer,
+    FavoritosClienteSerializer,
+    SubcategoriaSerializer,
+    PedidoSerializer,
+    ClientePerfilSerializer,
+    InitRegisterSerializer,
+    VerifyOtpSerializer,
+    ResendOtpSerializer,
+) # Importar el serializador
 from rest_framework.response import Response # Importar Response
 from .models import FavoritosCliente # Importar el modelo FavoritosCliente
+from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 
 # Create your views here.
 
@@ -212,6 +233,189 @@ class ProductoViewSet(viewsets.ModelViewSet):
                 queryset = queryset.order_by(f"-{key}" if is_desc else key)
 
         return queryset
+
+
+# -------------------
+# AUTH - Registro en 2 pasos (OTP por email)
+# -------------------
+def _generate_otp_code():
+    return str(secrets.randbelow(10**6)).zfill(6)
+
+
+def _generate_unique_username(email, first_name=None):
+    # Username debe ser único en Django User.
+    base = slugify((first_name or '').strip()) or slugify(email.split('@')[0])
+    base = (base or 'user')[:120]
+
+    candidate = base
+    i = 0
+    while User.objects.filter(username=candidate).exists():
+        i += 1
+        suffix = str(secrets.randbelow(10**6)).zfill(6)
+        candidate = f"{base}-{suffix}"[:150]
+        if i > 10:
+            # fallback súper conservador
+            candidate = f"user-{suffix}"
+            break
+    return candidate
+
+
+def _send_otp_email(to_email, otp_code):
+    subject = "Tu código de verificación - Papelería Santiago"
+    message = f"Tu código de verificación es: {otp_code}\n\nSi no solicitaste este registro, ignora este correo."
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or settings.EMAIL_HOST_USER
+    sent = send_mail(subject, message, from_email, [to_email], fail_silently=False)
+    return sent
+
+
+class InitRegisterAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = InitRegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data['email']
+        first_name = serializer.validated_data.get('first_name') or ''
+        password = serializer.validated_data['password']
+        celular = serializer.validated_data.get('celular') or ''
+        ciudad = serializer.validated_data.get('ciudad') or ''
+
+        # Seguridad: no permitir iniciar registro si ya existe usuario real (doble check)
+        if User.objects.filter(email=email).exists():
+            return Response({'error': 'Este correo ya está registrado.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        otp_code = _generate_otp_code()
+        hashed_password = make_password(password)
+
+        prereg, created = PreRegistroUser.objects.update_or_create(
+            email=email,
+            defaults={
+                'first_name': first_name,
+                'password': hashed_password,
+                'celular': celular,
+                'ciudad': ciudad,
+                'otp_code': otp_code,
+                'intentos': 0,
+            }
+        )
+
+        try:
+            _send_otp_email(email, otp_code)
+        except Exception:
+            # Si el envío falla, mantenemos el preregistro, pero avisamos
+            return Response(
+                {'error': 'No se pudo enviar el correo de verificación. Revisa la configuración SMTP.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        return Response(
+            {'message': 'Código enviado al correo. Verifica tu bandeja de entrada.', 'email': prereg.email},
+            status=status.HTTP_200_OK
+        )
+
+
+class VerifyOtpAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = VerifyOtpSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data['email']
+        otp = serializer.validated_data['otp']
+
+        prereg = PreRegistroUser.objects.filter(email=email).first()
+        if not prereg:
+            return Response({'error': 'No existe un pre-registro para este correo.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if prereg.intentos >= 3:
+            prereg.delete()
+            return Response({'error': 'Bloqueado por seguridad.'}, status=status.HTTP_403_FORBIDDEN)
+
+        if str(prereg.otp_code) != str(otp):
+            prereg.intentos = (prereg.intentos or 0) + 1
+            prereg.save(update_fields=['intentos', 'password', 'otp_code', 'first_name', 'celular', 'ciudad'])
+
+            if prereg.intentos >= 3:
+                prereg.delete()
+                return Response({'error': 'Bloqueado por seguridad.'}, status=status.HTTP_403_FORBIDDEN)
+
+            remaining = 3 - prereg.intentos
+            return Response(
+                {'error': f'Código incorrecto. Te quedan {remaining} intento(s).'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # OTP correcto: crear usuario real + perfil Cliente + carrito + token
+        with transaction.atomic():
+            if User.objects.filter(email=email).exists():
+                prereg.delete()
+                return Response({'error': 'Este correo ya está registrado.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            username = _generate_unique_username(email, prereg.first_name)
+            user = User.objects.create(
+                username=username,
+                email=email,
+                first_name=prereg.first_name or '',
+                password=prereg.password,  # ya está hasheada
+            )
+
+            cliente = Cliente.objects.create(
+                user=user,
+                nombre=(prereg.first_name or username),
+                email=email,
+                telefono=prereg.celular or '',
+                ciudad=prereg.ciudad or '',
+                tipo_cliente='Persona'
+            )
+
+            Carrito.objects.create(cliente=cliente)
+
+            token, _ = Token.objects.get_or_create(user=user)
+
+            prereg.delete()
+
+        return Response(
+            {
+                'message': 'Cuenta verificada exitosamente.',
+                'token': token.key,
+                'username': user.username,
+                'email': user.email,
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+class ResendOtpAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = ResendOtpSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data['email']
+        prereg = PreRegistroUser.objects.filter(email=email).first()
+        if not prereg:
+            return Response({'error': 'No existe un pre-registro para este correo.'}, status=status.HTTP_404_NOT_FOUND)
+
+        otp_code = _generate_otp_code()
+        prereg.otp_code = otp_code
+        prereg.intentos = 0
+        prereg.save(update_fields=['otp_code', 'intentos', 'password', 'first_name', 'celular', 'ciudad'])
+
+        try:
+            _send_otp_email(email, otp_code)
+        except Exception:
+            return Response(
+                {'error': 'No se pudo reenviar el correo de verificación. Revisa la configuración SMTP.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        return Response(
+            {'message': 'Se envió un nuevo código de verificación.', 'email': email},
+            status=status.HTTP_200_OK
+        )
 
     def list(self, request, *args, **kwargs):
         """

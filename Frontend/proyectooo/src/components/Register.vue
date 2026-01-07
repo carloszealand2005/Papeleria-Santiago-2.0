@@ -45,7 +45,12 @@ export default {
     },
     handleRegisterSuccess(data) {
       console.log('Registro exitoso:', data);
-      this.$router.push('/'); // Redirigimos a la pantalla principal
+      const email = data?.email || '';
+      if (email) {
+        // Guardamos email temporal para el paso de verificación
+        localStorage.setItem('pending-verification-email', email);
+      }
+      this.$router.push('/verificacion'); // Paso 2: verificación OTP
     },
     handleGoToLogin() {
       this.$router.push('/login');

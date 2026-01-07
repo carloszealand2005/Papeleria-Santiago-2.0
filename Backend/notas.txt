@@ -127,12 +127,7 @@ URL_ENDPOINTS @views.py
 
 
 /api/productos/
-http://127.0.0.1:8000/api/productos/?search=goma&ordering=total_vendidos
-http://127.0.0.1:8000/api/productos/?search=goma&ordering=descuento
-http://127.0.0.1:8000/api/productos/?search=goma&ordering=alphabet
-http://127.0.0.1:8000/api/productos/?search=goma&ordering=total_vendidos&precio_min=10.00&precio_max=50.00
-http://127.0.0.1:8000/api/productos/?search=goma&ordering=total_vendidos&precio_min=10.00&precio_max=50.00?limite=20
-http://127.0.0.1:8000/api/productos/?search=goma (search in nombre, marca, descripción)
+http://127.0.0.1:8000/api/productos/?search=goma (search in nombre, marca)
 http://127.0.0.1:8000/api/productos/?categoria=oficina 
 http://127.0.0.1:8000/api/productos/?subcategoria=oficina 
 http://127.0.0.1:8000/api/productos/?marca=pelikan
@@ -155,6 +150,22 @@ http://127.0.0.1:8000/api/productos/?descuento_min=20.50&descuento_max=30&limite
 Si solo se proporciona max, filtrará con descuento igual o inferior)
 http://127.0.0.1:8000/api/productos/?descuento_min=20.50&descuento_max=30&limite=20&subcategoria=NOMBRE_SUBCATEGORIA
 
+
+LAS SIGUIENTES PETICIONES GET SE USAN EN LA PÁGINA DE BÚSQUEDA DE PRODUCTOS:
+Más vendidos + búsqueda
+http://127.0.0.1:8000/api/productos/?search=goma&ordering=total_vendidos
+
+Mayor descuento público + búsqueda
+http://127.0.0.1:8000/api/productos/?search=goma&ordering=descuento
+
+Alfabético A–Z + búsqueda
+http://127.0.0.1:8000/api/productos/?search=goma&ordering=alphabet
+
+Más vendidos + búsqueda + rango de precio
+http://127.0.0.1:8000/api/productos/?search=goma&ordering=total_vendidos&precio_min=10.00&precio_max=50.00
+
+Más vendidos + búsqueda + rango de precio + límite 
+http://127.0.0.1:8000/api/productos/?search=goma&ordering=total_vendidos&precio_min=10.00&precio_max=50.00&limite=20
 -----
 DETALLES CARRITO:
 

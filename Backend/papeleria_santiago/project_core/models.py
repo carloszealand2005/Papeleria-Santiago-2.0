@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Sum
 from django.contrib.auth.models import User # Necesario para vincular con Cliente
+from django.contrib.auth.hashers import make_password
 from decimal import Decimal # Necesario para cálculos precisos
 
 
@@ -159,6 +160,29 @@ class Cliente(models.Model):
     def __str__(self):
         return f"{self.nombre} - {self.email}. \n Este cliente es una {self.tipo_cliente}."
 
+
+# ----------------
+# Pre-registro (staging) para verificación OTP por email (2 pasos)
+class PreRegistroUser(models.Model):
+    email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=150, blank=True, null=True)
+    # NUNCA guardar en texto plano. Se guarda el hash (make_password).
+    password = models.CharField(max_length=128)
+    celular = models.CharField(max_length=30, blank=True, null=True)
+    ciudad = models.CharField(max_length=100, blank=True, null=True)
+    otp_code = models.CharField(max_length=6)
+    intentos = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        # Si accidentalmente llega un password sin hashear, lo hasheamos.
+        # (No re-hashear si ya parece hash de Django.)
+        if self.password and not str(self.password).startswith('pbkdf2_'):
+            self.password = make_password(self.password)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"PreRegistroUser<{self.email}>"
 
 #----------------
 #Tabla favoritos cliente: 

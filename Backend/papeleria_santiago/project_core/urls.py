@@ -18,5 +18,9 @@ urlpatterns = [
     path('api/mi-perfil/', views.MiPerfilAPIView.as_view(), name='mi_perfil'),
     path('api/autenticacion/registro/', RegistroView.as_view(), name='registro'),
     path('api/autenticacion/login/', LoginView.as_view(), name='login'),
+    # Registro en 2 pasos (OTP email)
+    path('api/auth/init-register/', views.InitRegisterAPIView.as_view(), name='init_register'),
+    path('api/auth/verify-otp/', views.VerifyOtpAPIView.as_view(), name='verify_otp'),
+    path('api/auth/resend-otp/', views.ResendOtpAPIView.as_view(), name='resend_otp'),
     path('api/', include(router.urls)),
 ]

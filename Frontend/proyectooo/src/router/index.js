@@ -13,6 +13,7 @@ import Checkout from '../components/Checkout.vue'
 import Receipt from '../components/Receipt.vue'
 import Favorites from '../components/Favorites.vue' // Importar el nuevo componente Favorites
 import MyAccount from '../components/MyAccount.vue'
+import VerificationCode from '../components/VerificationCode.vue'
 
 Vue.use(VueRouter)
 
@@ -112,6 +113,11 @@ const routes = [
     path: '/mi-cuenta',
     name: 'MyAccount',
     component: MyAccount
+  },
+  {
+    path: '/verificacion',
+    name: 'VerificationCode',
+    component: VerificationCode
   }
 ]
 
