@@ -52,6 +52,7 @@
             :cardInfo="cardInfo"
             @payment-changed="handlePaymentChanged"
             @update:card-info="handleCardUpdate"
+            @card-validation-changed="handleCardValidationChanged"
           />
           
           <!-- Action Buttons -->
@@ -68,8 +69,8 @@
               @click="completeOrder"
               class="flex-1 px-6 py-3 text-white rounded-lg hover:bg-blue-700 transition-colors !rounded-button whitespace-nowrap cursor-pointer"
               style="background-color: #2563EB;"
-              :disabled="isProcessingPayment"
-              :class="{ 'opacity-60 cursor-not-allowed': isProcessingPayment }"
+              :disabled="isProcessingPayment || (selectedPayment === 'card' && !cardValidation.isValid)"
+              :class="{ 'opacity-60 cursor-not-allowed': isProcessingPayment || (selectedPayment === 'card' && !cardValidation.isValid) }"
             >
               <i class="fas fa-check mr-2"></i>
               Finalizar Compra
@@ -124,7 +125,12 @@ export default {
         expiry: '',
         cvv: '',
         holderName: ''
-      }
+      },
+      cardValidation: {
+        isValid: false,
+        brand: null,
+        errors: {}
+      },
     }
   },
   computed: {
@@ -222,6 +228,9 @@ export default {
     handleCardUpdate(cardInfo) {
       this.cardInfo = cardInfo;
     },
+    handleCardValidationChanged(payload) {
+      this.cardValidation = payload || { isValid: false, brand: null, errors: {} };
+    },
     goBack() {
       this.$router.push('/carrito');
     },
@@ -281,12 +290,12 @@ export default {
     },
     validateForm() {
       if (!this.billingInfo.fullName || !this.billingInfo.address || !this.billingInfo.city) {
-        alert('Por favor completa todos los campos de facturación.');
+        this.paymentError = 'Por favor completa todos los campos de facturación.';
         return false;
       }
       if (this.selectedPayment === 'card') {
-        if (!this.cardInfo.number || !this.cardInfo.expiry || !this.cardInfo.cvv || !this.cardInfo.holderName) {
-          alert('Por favor completa todos los datos de la tarjeta.');
+        if (!this.cardValidation.isValid) {
+          this.paymentError = 'Revisa los datos de la tarjeta.';
           return false;
         }
       }

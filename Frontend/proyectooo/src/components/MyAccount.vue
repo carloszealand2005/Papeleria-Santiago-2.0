@@ -106,7 +106,16 @@
                       :type="field.type || 'text'"
                       class="w-full sm:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       :placeholder="field.placeholder"
+                      :inputmode="field.key === 'cedula' ? 'numeric' : undefined"
+                      :pattern="field.key === 'cedula' ? '\\\\d*' : undefined"
+                      :maxlength="field.key === 'cedula' ? 10 : undefined"
+                      @keydown="handleCedulaKeydown($event, field.key)"
+                      @paste="handleCedulaPaste($event, field.key)"
+                      @input="handleDraftInput(field.key)"
                     />
+                    <div v-if="fieldErrors[field.key]" class="text-red-500 text-xs mt-1">
+                      {{ fieldErrors[field.key] }}
+                    </div>
                     <div v-if="fieldHelp[field.key]" class="text-xs text-gray-500 mt-1">
                       {{ fieldHelp[field.key] }}
                     </div>
@@ -126,8 +135,8 @@
                     <button
                       class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
                       @click="saveField(field.key)"
-                      :disabled="saving[field.key]"
-                      :class="{ 'opacity-60 cursor-not-allowed': saving[field.key] }"
+                      :disabled="saving[field.key] || hasFieldError(field.key)"
+                      :class="{ 'opacity-60 cursor-not-allowed': saving[field.key] || hasFieldError(field.key) }"
                     >
                       <i class="fas fa-save mr-2"></i>Guardar
                     </button>
@@ -300,6 +309,7 @@
 <script>
 import api from '@/utils/api';
 import { mapGetters, mapActions } from 'vuex';
+import { getProfileFieldError, onlyDigits as onlyDigitsProfile } from '@/utils/profileValidators';
 
 export default {
   name: 'MyAccountPage',
@@ -337,19 +347,20 @@ export default {
         direccion: '',
       },
       editableFields: [
-        { key: 'cedula', label: 'Cédula', placeholder: 'Ej: 1.234.567.890' },
+        { key: 'cedula', label: 'Cédula', placeholder: 'Ej: 1710020030' },
         { key: 'telefono', label: 'Teléfono', placeholder: 'Ej: 3001234567' },
         { key: 'email', label: 'Email', type: 'email', placeholder: 'Ej: cliente@email.com' },
         { key: 'ciudad', label: 'Ciudad', placeholder: 'Ej: Medellín' },
         { key: 'direccion', label: 'Dirección', placeholder: 'Ej: Calle 10 # 20-30' },
       ],
       fieldHelp: {
-        cedula: 'Solo números (puedes incluir puntos si lo prefieres).',
+        cedula: 'Solo números.',
         telefono: 'Incluye indicativo si aplica.',
       },
       editing: {},
       draft: {},
       saving: {},
+      fieldErrors: {},
       isProfileLoading: false,
       profileError: '',
 
@@ -490,18 +501,101 @@ export default {
     startEdit(key) {
       this.$set(this.editing, key, true);
       this.$set(this.draft, key, this.profile[key] || '');
+      // Inicializa el error del campo al entrar en modo edición
+      this.$set(this.fieldErrors, key, '');
+      this.validateDraftField(key);
     },
     cancelEdit(key) {
       this.$set(this.editing, key, false);
       this.$set(this.draft, key, this.profile[key] || '');
+      this.$set(this.fieldErrors, key, '');
+    },
+    normalizeDraftValue(key, value) {
+      // Normalización mínima para enviar al backend (mantiene la UI libre de "magia")
+      if (key === 'cedula' || key === 'telefono') return onlyDigitsProfile(value);
+      if (key === 'email') return String(value ?? '').trim();
+      return value;
+    },
+    validateDraftField(key) {
+      const rawValue = this.draft?.[key];
+      const error = getProfileFieldError(key, rawValue);
+      this.$set(this.fieldErrors, key, error);
+      return !error;
+    },
+    hasFieldError(key) {
+      return Boolean(this.fieldErrors?.[key]);
+    },
+    handleDraftInput(key) {
+      // Reglas "estrictas" pedidas:
+      // - Teléfono: solo números
+      // - Cédula: solo números y máximo 10 dígitos
+      if (key === 'cedula') {
+        const cleaned = String(this.draft?.[key] ?? '').replace(/[^0-9]/g, '').slice(0, 10);
+        this.$set(this.draft, key, cleaned);
+      }
+      if (key === 'telefono') {
+        const cleaned = onlyDigitsProfile(this.draft?.[key]);
+        this.$set(this.draft, key, cleaned);
+      }
+      if (key === 'email') {
+        // No recortamos espacios internos, solo trim general
+        this.$set(this.draft, key, String(this.draft?.[key] ?? '').trim());
+      }
+      this.validateDraftField(key);
+    },
+    handleCedulaKeydown(event, key) {
+      if (key !== 'cedula') return;
+
+      // Permitir teclas de control/navegación
+      const allowedKeys = new Set([
+        'Backspace',
+        'Delete',
+        'Tab',
+        'ArrowLeft',
+        'ArrowRight',
+        'ArrowUp',
+        'ArrowDown',
+        'Home',
+        'End',
+      ]);
+      if (allowedKeys.has(event.key)) return;
+
+      // Permitir atajos comunes (copiar/pegar/cortar/seleccionar todo/deshacer/rehacer)
+      if (event.ctrlKey || event.metaKey) {
+        const k = String(event.key || '').toLowerCase();
+        if (['a', 'c', 'v', 'x', 'z', 'y'].includes(k)) return;
+      }
+
+      // Bloquear cualquier tecla que no sea un dígito
+      if (!/^\d$/.test(event.key)) {
+        event.preventDefault();
+      }
+    },
+    handleCedulaPaste(event, key) {
+      if (key !== 'cedula') return;
+      event.preventDefault();
+
+      const text = event.clipboardData?.getData('text') ?? '';
+      const pastedDigits = String(text).replace(/[^0-9]/g, '');
+
+      const current = String(this.draft?.cedula ?? '');
+      const merged = `${current}${pastedDigits}`.replace(/[^0-9]/g, '').slice(0, 10);
+      this.$set(this.draft, 'cedula', merged);
+
+      this.validateDraftField('cedula');
     },
     async saveField(key) {
+      // Validación estricta antes de permitir "Guardar"
+      const isValid = this.validateDraftField(key);
+      if (!isValid) return;
+
       this.$set(this.saving, key, true);
       try {
         // PATCH por campo: enviamos solo la llave editada
-        await api.patch('/mi-perfil/', { [key]: this.draft[key] });
+        const normalized = this.normalizeDraftValue(key, this.draft[key]);
+        await api.patch('/mi-perfil/', { [key]: normalized });
 
-        this.$set(this.profile, key, this.draft[key]);
+        this.$set(this.profile, key, normalized);
         this.$set(this.editing, key, false);
       } catch (e) {
         console.error('Error guardando campo de perfil:', e);

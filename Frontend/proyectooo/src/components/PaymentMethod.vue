@@ -60,6 +60,7 @@
       v-if="selectedPayment === 'card'"
       :cardInfo="cardInfo"
       @update:card-info="$emit('update:card-info', $event)"
+      @validation-changed="$emit('card-validation-changed', $event)"
     />
   </div>
 </template>
