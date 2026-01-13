@@ -13,10 +13,12 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.utils.text import slugify
+from django.utils import timezone
 from django.db import transaction
+from datetime import timedelta
 import secrets
 from .models import Comprobante, Pedido, Producto, Carrito, DetalleCarrito, Cliente, DetallePedido, Inventario, Subcategoria # Importamos DetallePedido, Inventario y Subcategoria
-from .models import PreRegistroUser
+from .models import PreRegistroUser, PasswordResetOtp
 from rest_framework import viewsets, filters, status, mixins, permissions, serializers # Importar filters, status, mixins, permissions y serializers
 from rest_framework import generics
 from rest_framework.decorators import action # Importar action
@@ -32,6 +34,8 @@ from .serializers import (
     InitRegisterSerializer,
     VerifyOtpSerializer,
     ResendOtpSerializer,
+    SolicitarRecuperacionSerializer,
+    ConfirmarRecuperacionSerializer,
 ) # Importar el serializador
 from rest_framework.response import Response # Importar Response
 from .models import FavoritosCliente # Importar el modelo FavoritosCliente
@@ -312,6 +316,17 @@ def _send_otp_email(to_email, otp_code):
     return sent
 
 
+def _send_password_reset_otp_email(to_email, otp_code):
+    subject = "Tu código para recuperar contraseña - Papelería Santiago"
+    message = (
+        f"Tu código de verificación para recuperar tu contraseña es: {otp_code}\n\n"
+        f"Si no solicitaste este cambio, ignora este correo."
+    )
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or settings.EMAIL_HOST_USER
+    sent = send_mail(subject, message, from_email, [to_email], fail_silently=False)
+    return sent
+
+
 class InitRegisterAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -460,6 +475,126 @@ class ResendOtpAPIView(APIView):
             {'message': 'Se envió un nuevo código de verificación.', 'email': email},
             status=status.HTTP_200_OK
         )
+
+
+# -------------------
+# Recuperación de contraseña (OTP por email, 2 pasos)
+# -------------------
+PASSWORD_RESET_OTP_TTL_SECONDS = 10 * 60  # 10 minutos
+PASSWORD_RESET_MAX_RESENDS = 3            # máximo 3 reenvíos (no incluye el envío inicial)
+PASSWORD_RESET_BLOCK_MINUTES = 15         # bloqueo temporal si excede reenvíos
+
+
+class SolicitarRecuperacionAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = SolicitarRecuperacionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data['email']
+
+        # Respuesta genérica por seguridad (NO filtrar existencia de email)
+        generic_message = "Si el correo existe, se ha enviado un código de verificación."
+
+        user = User.objects.filter(email=email).first()
+        if not user:
+            # Importante: NO generar ni enviar OTP si el correo no existe
+            return Response({'message': generic_message}, status=status.HTTP_200_OK)
+
+        now = timezone.now()
+
+        # Si existe OTP previo, evaluar expiración y bloqueo
+        existing = PasswordResetOtp.objects.filter(email=email).first()
+        if existing:
+            # Bloqueo temporal por exceso de reenvíos
+            if existing.blocked_until and now < existing.blocked_until:
+                return Response({'message': generic_message}, status=status.HTTP_200_OK)
+
+            # Expiración basada en último envío (sent_at) o created_at como fallback
+            last_sent_at = existing.sent_at or existing.created_at
+            if last_sent_at and (now - last_sent_at).total_seconds() > PASSWORD_RESET_OTP_TTL_SECONDS:
+                existing.delete()
+                existing = None
+
+        otp_code = _generate_otp_code()
+
+        if not existing:
+            # Primer envío: contador inicia en 0
+            PasswordResetOtp.objects.update_or_create(
+                email=email,
+                defaults={
+                    'otp_code': otp_code,
+                    'resend_count': 0,
+                    'sent_at': now,
+                    'blocked_until': None,
+                }
+            )
+        else:
+            # Reenvío: máximo 3 reenvíos
+            if (existing.resend_count or 0) >= PASSWORD_RESET_MAX_RESENDS:
+                existing.blocked_until = now + timedelta(minutes=PASSWORD_RESET_BLOCK_MINUTES)
+                existing.save(update_fields=['blocked_until'])
+                return Response({'message': generic_message}, status=status.HTTP_200_OK)
+
+            existing.otp_code = otp_code
+            existing.resend_count = (existing.resend_count or 0) + 1
+            existing.sent_at = now
+            existing.blocked_until = None
+            existing.save(update_fields=['otp_code', 'resend_count', 'sent_at', 'blocked_until'])
+
+        try:
+            _send_password_reset_otp_email(email, otp_code)
+        except Exception:
+            return Response(
+                {'error': 'No se pudo enviar el correo de recuperación. Revisa la configuración SMTP.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        return Response({'message': generic_message}, status=status.HTTP_200_OK)
+
+
+class ConfirmarRecuperacionAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = ConfirmarRecuperacionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data['email']
+        otp_code = serializer.validated_data['otp_code']
+        new_password = serializer.validated_data['new_password']
+        confirm_password = serializer.validated_data['confirm_password']
+
+        if new_password != confirm_password:
+            return Response({'error': 'Las contraseñas no coinciden.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        otp_obj = PasswordResetOtp.objects.filter(email=email).first()
+        if not otp_obj:
+            return Response({'error': 'Código inválido o expirado.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        now = timezone.now()
+        last_sent_at = otp_obj.sent_at or otp_obj.created_at
+        if last_sent_at and (now - last_sent_at).total_seconds() > PASSWORD_RESET_OTP_TTL_SECONDS:
+            otp_obj.delete()
+            return Response({'error': 'Código inválido o expirado.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Coincidencia exacta del OTP (prioridad de seguridad)
+        if str(otp_obj.otp_code) != str(otp_code):
+            return Response({'error': 'Código inválido o expirado.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.filter(email=email).first()
+        if not user:
+            # Caso raro: usuario eliminado tras generar OTP
+            otp_obj.delete()
+            return Response({'error': 'Código inválido o expirado.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        with transaction.atomic():
+            user.set_password(new_password)
+            user.save(update_fields=['password'])
+            otp_obj.delete()
+
+        return Response({'message': 'Contraseña actualizada exitosamente.'}, status=status.HTTP_200_OK)
 
 
 #------------------

@@ -137,3 +137,23 @@ class VerifyOtpSerializer(serializers.Serializer):
 
 class ResendOtpSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
+
+
+# ------------------
+# OTP - Recuperación de contraseña (2 pasos)
+# ------------------
+class SolicitarRecuperacionSerializer(serializers.Serializer):
+    # Importante: NO validar existencia del correo aquí (para no filtrar).
+    email = serializers.EmailField(required=True)
+
+
+class ConfirmarRecuperacionSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    otp_code = serializers.CharField(required=True, min_length=6, max_length=6)
+    new_password = serializers.CharField(required=True, write_only=True)
+    confirm_password = serializers.CharField(required=True, write_only=True)
+
+    def validate_otp_code(self, value):
+        if not str(value).isdigit():
+            raise serializers.ValidationError("El código debe ser numérico.")
+        return value

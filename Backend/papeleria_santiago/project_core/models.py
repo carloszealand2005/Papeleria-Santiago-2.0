@@ -185,6 +185,24 @@ class PreRegistroUser(models.Model):
     def __str__(self):
         return f"PreRegistroUser<{self.email}>"
 
+# ----------------
+# OTP - Recuperación de contraseña (6 dígitos por email)
+#
+# Notas de seguridad:
+# - No se revela si un email existe o no en el endpoint de solicitud (eso se maneja en la vista).
+# - Se guarda el OTP en DB y se invalida al usarse.
+# - Se controla el reenvío con contador y bloqueo temporal.
+class PasswordResetOtp(models.Model):
+    email = models.EmailField(unique=True)
+    otp_code = models.CharField(max_length=6)
+    resend_count = models.IntegerField(default=0)  # número de reenvíos (no incluye el envío inicial)
+    sent_at = models.DateTimeField(blank=True, null=True)  # último envío/generación del OTP
+    blocked_until = models.DateTimeField(blank=True, null=True)  # bloqueo temporal por reenvíos
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"PasswordResetOtp<{self.email}>"
+
 #----------------
 #Tabla favoritos cliente: 
 
