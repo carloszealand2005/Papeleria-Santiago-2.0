@@ -177,6 +177,19 @@ Value: Token <USER_TOKEN>
 GET -> http://127.0.0.1:8000/api/mi-carrito/obtener/ (Obtener el carrito los detalles del carrito del usuario)
 
 POST -> http://127.0.0.1:8000/api/mi-carrito/pagar/ (Terminar el pedido del carrito, generando factura)
+{
+  "ciudad_envio": "Loja",
+  "direccion_envio": "Av. X y Calle Y",
+  "numero_casa_envio": "N12-34",
+  "codigo_postal_envio": "110150",
+  "cedula_envio": "1101234567",
+  "telefono_envio": "0999999999",
+  "referencia_envio": "Casa color azul, junto al parque",
+  "metodo_pago": "Tarjeta",
+  "costo_envio": 3.00
+}
+
+
 
 POST -> http://127.0.0.1:8000/api/mi-carrito-detalles/ (para añadir o actualizar un producto)
 BODY: {"producto_sku": "110530", "cantidad": 100} (IT UPDATES, NOT SUMS)

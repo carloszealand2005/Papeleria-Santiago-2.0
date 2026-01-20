@@ -382,9 +382,13 @@
                       class="text-xs font-semibold px-2 py-1 rounded-full"
                       :class="order.status === 'Pagado'
                         ? 'bg-green-100 text-green-700'
-                        : (order.status === 'En revisión' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700')"
+                        : (order.status === 'Cancelado'
+                          ? 'bg-red-100 text-red-700'
+                          : ((order.status === 'En revisión' || order.status === 'Pendiente') ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700'))"
                     >
-                      {{ order.status === 'En revisión' ? 'Validando Pago' : order.status }}
+                      {{ (order.status === 'En revisión' || order.status === 'Pendiente')
+                        ? 'Validando Pago'
+                        : (order.status === 'Cancelado' ? 'Rechazado' : order.status) }}
                     </span>
                   </div>
 
@@ -472,10 +476,180 @@
                   </div>
 
                   <div
-                    v-if="selectedOrder && selectedOrder.status === 'En revisión'"
+                    v-if="selectedOrder && selectedOrder.status === 'Cancelado'"
+                    class="p-4 bg-red-50 border border-red-200 text-red-900 rounded-lg mt-4"
+                  >
+                    <div class="font-semibold">Tu comprobante fue rechazado.</div>
+                    <div class="text-sm text-red-900 mt-1">
+                      <template v-if="selectedOrder.motivo_cancelacion">
+                        Motivo: <span class="font-medium">{{ selectedOrder.motivo_cancelacion }}</span>
+                      </template>
+                      <template v-else>
+                        Si crees que fue un error, puedes reenviar el comprobante para revisión.
+                      </template>
+                    </div>
+
+                    <div
+                      v-if="selectedOrder.metodo_pago === 'Transferencia bancaria'"
+                      class="mt-4 bg-white rounded-lg border border-red-200 p-4"
+                    >
+                      <div class="text-sm font-semibold text-gray-900">Reenviar comprobante (Transferencia bancaria)</div>
+                      <div class="mt-2 space-y-1 text-sm text-gray-700">
+                        <div><span class="font-semibold">Banco:</span> Banco de Loja</div>
+                        <div><span class="font-semibold">N. Cuenta:</span> 2902563522</div>
+                        <div><span class="font-semibold">Tipo de cuenta:</span> Cuenta de ahorros</div>
+                        <div><span class="font-semibold">Nombre:</span> Aarón Robles</div>
+                      </div>
+
+                      <div class="mt-4">
+                        <label for="resubmit-transfer-proof" class="block text-sm font-medium text-gray-700 mb-2">
+                          Subir comprobante (solo imágenes)
+                        </label>
+                        <input
+                          id="resubmit-transfer-proof"
+                          type="file"
+                          accept="image/*"
+                          class="block w-full text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-50 file:text-blue-700
+                            hover:file:bg-blue-100"
+                          @change="handleResubmitTransferProof"
+                        />
+                        <div v-if="resubmitTransferProofPreviewUrl" class="mt-3">
+                          <div class="text-xs text-gray-500 mb-2">Vista previa</div>
+                          <img
+                            :src="resubmitTransferProofPreviewUrl"
+                            alt="Vista previa del comprobante"
+                            class="w-full max-w-md rounded-lg border border-gray-200 object-contain bg-gray-50"
+                            style="max-height: 240px;"
+                          />
+                        </div>
+                        <p v-if="resubmitTransferProofFile" class="mt-2 text-sm text-gray-600">
+                          Archivo seleccionado: {{ resubmitTransferProofFile.name }}
+                        </p>
+                        <p v-if="resubmitTransferProofError" class="mt-1 text-xs text-red-600">
+                          {{ resubmitTransferProofError }}
+                        </p>
+
+                        <div class="mt-4 flex flex-col sm:flex-row gap-3">
+                          <button
+                            type="button"
+                            class="inline-flex items-center justify-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
+                            :disabled="isResubmittingTransferProof || !resubmitTransferProofFile || resubmitTransferProofError"
+                            :class="{ 'opacity-60 cursor-not-allowed': isResubmittingTransferProof || !resubmitTransferProofFile || resubmitTransferProofError }"
+                            @click="submitResubmittedTransferProof"
+                          >
+                            <i v-if="isResubmittingTransferProof" class="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
+                            <i v-else class="fas fa-upload mr-2" aria-hidden="true"></i>
+                            Reenviar comprobante
+                          </button>
+                          <button
+                            type="button"
+                            class="inline-flex items-center justify-center px-5 py-3 border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-lg transition-colors cursor-pointer"
+                            :disabled="isResubmittingTransferProof"
+                            :class="{ 'opacity-60 cursor-not-allowed': isResubmittingTransferProof }"
+                            @click="refreshOrders"
+                          >
+                            <i class="fas fa-sync-alt mr-2" aria-hidden="true"></i>
+                            Actualizar estado
+                          </button>
+                        </div>
+
+                        <div class="text-xs text-gray-500 mt-2">
+                          Nota: revisaremos el comprobante y te notificaremos por correo cuando cambie el estado del pedido.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    v-else-if="selectedOrder && (selectedOrder.status === 'En revisión' || selectedOrder.status === 'Pendiente')"
                     class="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-lg mt-4"
                   >
-                    Factura no disponible (En revisión). Estamos validando tu pago por transferencia.
+                    Tu pedido está pendiente de verificación. Estamos validando tu pago y, cuando se confirme, podrás ver y descargar tu factura aquí.
+                    Te notificaremos por correo electrónico una vez esté listo.
+
+                    <div
+                      v-if="selectedOrder.metodo_pago === 'Transferencia bancaria'"
+                      class="mt-4 bg-white rounded-lg border border-amber-200 p-4"
+                    >
+                      <div class="text-sm font-semibold text-gray-900">Reenviar comprobante (Transferencia bancaria)</div>
+                      <div class="text-xs text-gray-600 mt-1">
+                        Si necesitas reenviar una foto más clara, puedes subir un nuevo comprobante aquí.
+                      </div>
+
+                      <div class="mt-3 space-y-1 text-sm text-gray-700">
+                        <div><span class="font-semibold">Banco:</span> Banco de Loja</div>
+                        <div><span class="font-semibold">N. Cuenta:</span> 2902563522</div>
+                        <div><span class="font-semibold">Tipo de cuenta:</span> Cuenta de ahorros</div>
+                        <div><span class="font-semibold">Nombre:</span> Aarón Robles</div>
+                      </div>
+
+                      <div class="mt-4">
+                        <label for="resubmit-transfer-proof" class="block text-sm font-medium text-gray-700 mb-2">
+                          Subir comprobante (solo imágenes)
+                        </label>
+                        <input
+                          id="resubmit-transfer-proof"
+                          type="file"
+                          accept="image/*"
+                          class="block w-full text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-50 file:text-blue-700
+                            hover:file:bg-blue-100"
+                          @change="handleResubmitTransferProof"
+                        />
+
+                        <div v-if="resubmitTransferProofPreviewUrl" class="mt-3">
+                          <div class="text-xs text-gray-500 mb-2">Vista previa</div>
+                          <img
+                            :src="resubmitTransferProofPreviewUrl"
+                            alt="Vista previa del comprobante"
+                            class="w-full max-w-md rounded-lg border border-gray-200 object-contain bg-gray-50"
+                            style="max-height: 240px;"
+                          />
+                        </div>
+
+                        <p v-if="resubmitTransferProofFile" class="mt-2 text-sm text-gray-600">
+                          Archivo seleccionado: {{ resubmitTransferProofFile.name }}
+                        </p>
+                        <p v-if="resubmitTransferProofError" class="mt-1 text-xs text-red-600">
+                          {{ resubmitTransferProofError }}
+                        </p>
+
+                        <div class="mt-4 flex flex-col sm:flex-row gap-3">
+                          <button
+                            type="button"
+                            class="inline-flex items-center justify-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
+                            :disabled="isResubmittingTransferProof || !resubmitTransferProofFile || resubmitTransferProofError"
+                            :class="{ 'opacity-60 cursor-not-allowed': isResubmittingTransferProof || !resubmitTransferProofFile || resubmitTransferProofError }"
+                            @click="submitResubmittedTransferProof"
+                          >
+                            <i v-if="isResubmittingTransferProof" class="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
+                            <i v-else class="fas fa-upload mr-2" aria-hidden="true"></i>
+                            Reenviar comprobante
+                          </button>
+                          <button
+                            type="button"
+                            class="inline-flex items-center justify-center px-5 py-3 border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-lg transition-colors cursor-pointer"
+                            :disabled="isResubmittingTransferProof"
+                            :class="{ 'opacity-60 cursor-not-allowed': isResubmittingTransferProof }"
+                            @click="refreshOrders"
+                          >
+                            <i class="fas fa-sync-alt mr-2" aria-hidden="true"></i>
+                            Actualizar estado
+                          </button>
+                        </div>
+
+                        <div class="text-xs text-gray-500 mt-2">
+                          Nota: revisaremos el comprobante y te notificaremos por correo cuando cambie el estado del pedido.
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div v-else-if="selectedOrderPdfUrl" class="w-full bg-gray-50 border rounded-lg overflow-hidden mt-4">
@@ -488,11 +662,12 @@
                   </div>
 
                   <div v-else-if="!isInvoiceLoading" class="text-gray-700 mt-4">
-                    Aún no hay un enlace de PDF disponible para este pedido.
-                    <div class="text-sm text-gray-500 mt-1">
-                      Cuando conectemos el listado real, aquí se pedirá el link usando
-                      <code class="bg-gray-100 px-1 rounded">/api/mis-pedidos/&lt;id&gt;/comprobante/link/</code>.
-                    </div>
+                    <template v-if="selectedOrder && selectedOrder.status !== 'Pagado'">
+                      La factura aún no está disponible para este pedido. Cuando el pago se confirme, aparecerá aquí.
+                    </template>
+                    <template v-else>
+                      No pudimos cargar la factura en este momento. Intenta presionar “Actualizar link” o vuelve a intentarlo más tarde.
+                    </template>
                   </div>
                 </div>
               </div>
@@ -529,6 +704,15 @@ export default {
       const raw = String(this.profile.tipo_cliente || '').toLowerCase();
       if (raw.includes('empresa') || raw.includes('mayorista')) return 'Mayorista';
       return 'Natural';
+    },
+    canResubmitTransferProof() {
+      const status = this.selectedOrder?.status;
+      const metodo = this.selectedOrder?.metodo_pago;
+      return (
+        Boolean(this.selectedOrder?.id) &&
+        metodo === 'Transferencia bancaria' &&
+        (status === 'Cancelado' || status === 'Pendiente' || status === 'En revisión')
+      );
     },
   },
   data() {
@@ -580,6 +764,11 @@ export default {
       selectedOrderPdfUrlDownload: '',
       isInvoiceLoading: false,
       invoiceError: '',
+      // Re-subir comprobante (solo para Transferencia bancaria cuando está Cancelado/Rechazado)
+      resubmitTransferProofFile: null,
+      resubmitTransferProofError: '',
+      isResubmittingTransferProof: false,
+      resubmitTransferProofPreviewUrl: '',
 
       // Entregas (tracking)
       pendingDeliveries: [],
@@ -664,6 +853,14 @@ export default {
       this.selectedOrderPdfUrlDownload = '';
       this.isInvoiceLoading = false;
       this.invoiceError = '';
+      this.resubmitTransferProofFile = null;
+      this.resubmitTransferProofError = '';
+      this.isResubmittingTransferProof = false;
+      // Liberar URL de preview si existía
+      if (this.resubmitTransferProofPreviewUrl) {
+        try { URL.revokeObjectURL(this.resubmitTransferProofPreviewUrl); } catch (e) { /* noop */ }
+      }
+      this.resubmitTransferProofPreviewUrl = '';
 
       this.pendingDeliveries = [];
       this.completedDeliveries = [];
@@ -785,6 +982,7 @@ export default {
           status: o.estado_pedido || '',
           metodo_pago: o.metodo_pago || 'Tarjeta',
           comprobante_transferencia_url: o.comprobante_transferencia_url || '',
+          motivo_cancelacion: o.motivo_cancelacion || '',
           subtotal: Number.parseFloat(o.subtotal ?? 0) || 0,
           discount: Number.parseFloat(o.descuento ?? 0) || 0,
           iva: Number.parseFloat(o.iva ?? 0) || 0,
@@ -946,9 +1144,88 @@ export default {
       this.selectedOrderPdfUrl = '';
       this.selectedOrderPdfUrlDownload = '';
       this.invoiceError = '';
+      // Reset del formulario de re-subida al cambiar de pedido
+      this.resubmitTransferProofFile = null;
+      this.resubmitTransferProofError = '';
+      if (this.resubmitTransferProofPreviewUrl) {
+        try { URL.revokeObjectURL(this.resubmitTransferProofPreviewUrl); } catch (e) { /* noop */ }
+      }
+      this.resubmitTransferProofPreviewUrl = '';
 
       // Cargar el comprobante del pedido seleccionado
       await this.regenerateSelectedOrderPdf();
+    },
+    handleResubmitTransferProof(event) {
+      const file = event?.target?.files?.[0];
+      this.resubmitTransferProofError = '';
+
+      if (!file) {
+        this.resubmitTransferProofFile = null;
+        if (this.resubmitTransferProofPreviewUrl) {
+          try { URL.revokeObjectURL(this.resubmitTransferProofPreviewUrl); } catch (e) { /* noop */ }
+        }
+        this.resubmitTransferProofPreviewUrl = '';
+        return;
+      }
+
+      if (!file.type || !String(file.type).startsWith('image/')) {
+        this.resubmitTransferProofFile = null;
+        this.resubmitTransferProofError = 'Solo se permiten archivos de imagen.';
+        if (this.resubmitTransferProofPreviewUrl) {
+          try { URL.revokeObjectURL(this.resubmitTransferProofPreviewUrl); } catch (e) { /* noop */ }
+        }
+        this.resubmitTransferProofPreviewUrl = '';
+        return;
+      }
+
+      this.resubmitTransferProofFile = file;
+      if (this.resubmitTransferProofPreviewUrl) {
+        try { URL.revokeObjectURL(this.resubmitTransferProofPreviewUrl); } catch (e) { /* noop */ }
+      }
+      this.resubmitTransferProofPreviewUrl = URL.createObjectURL(file);
+    },
+    async submitResubmittedTransferProof() {
+      if (!this.selectedOrder?.id) return;
+      if (this.isResubmittingTransferProof) return;
+      if (!this.resubmitTransferProofFile || this.resubmitTransferProofError) return;
+      if (!this.isAuthenticated) {
+        this.showToast('Debes iniciar sesión para reenviar el comprobante.', 'error');
+        return;
+      }
+
+      this.isResubmittingTransferProof = true;
+      try {
+        const form = new FormData();
+        // Campo oficial: comprobante_transferencia (backend también acepta comprobante/archivo por compatibilidad)
+        form.append('comprobante_transferencia', this.resubmitTransferProofFile);
+        form.append('comprobante', this.resubmitTransferProofFile);
+        form.append('archivo', this.resubmitTransferProofFile);
+
+        // Nota: NO seteamos manualmente Content-Type para que Axios agregue boundary correctamente.
+        await api.post(`/mis-pedidos/${this.selectedOrder.id}/comprobante-transferencia/`, form);
+
+        this.resubmitTransferProofFile = null;
+        this.resubmitTransferProofError = '';
+        if (this.resubmitTransferProofPreviewUrl) {
+          try { URL.revokeObjectURL(this.resubmitTransferProofPreviewUrl); } catch (e) { /* noop */ }
+        }
+        this.resubmitTransferProofPreviewUrl = '';
+        this.showToast('Comprobante enviado. Lo revisaremos y te notificaremos por correo.', 'success');
+
+        // Refresca listado y panel para reflejar el nuevo estado (ej: vuelve a "Pendiente/En revisión")
+        await this.refreshOrders();
+      } catch (e) {
+        console.error('Error re-subiendo comprobante de transferencia:', e);
+        this.showToast('No se pudo reenviar el comprobante. Por favor intenta nuevamente.', 'error');
+      } finally {
+        this.isResubmittingTransferProof = false;
+      }
+    },
+    resubmitPanelBorderClass() {
+      const status = this.selectedOrder?.status;
+      if (status === 'Cancelado') return 'border-red-200';
+      if (status === 'Pendiente' || status === 'En revisión') return 'border-amber-200';
+      return 'border-gray-200';
     },
     async regenerateSelectedOrderPdf() {
       if (!this.selectedOrder?.id) return;
@@ -957,7 +1234,10 @@ export default {
         return;
       }
       if (this.selectedOrder?.status !== 'Pagado') {
-        this.invoiceError = 'Factura no disponible (En revisión).';
+        // No es un error: la factura se genera cuando el pago esté confirmado.
+        this.selectedOrderPdfUrl = '';
+        this.selectedOrderPdfUrlDownload = '';
+        this.invoiceError = '';
         return;
       }
       if (this.isInvoiceLoading) return;

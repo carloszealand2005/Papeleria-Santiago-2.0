@@ -75,13 +75,13 @@ def enviar_correo_aprobacion_empresa(sender, instance, created, **kwargs):
 
 # ------------------
 # Automatización post-aprobación de transferencias:
-# cuando Pedido pasa de "En revisión" -> "Pagado", crear Comprobante + Transportista.
+# cuando Pedido pasa de "Pendiente" -> "Pagado" (y es transferencia), crear Comprobante + Transportista.
 # ------------------
 
 @receiver(pre_save, sender=Pedido)
 def _pedido_capture_estado_previo(sender, instance, **kwargs):
     """
-    Guardamos el estado previo para detectar transiciones (ej: En revisión -> Pagado).
+    Guardamos el estado previo para detectar transiciones (ej: Pendiente -> Pagado).
     """
     if not instance.pk:
         instance._estado_pedido_anterior = None
@@ -96,7 +96,7 @@ def _pedido_capture_estado_previo(sender, instance, **kwargs):
 def crear_factura_y_envio_al_aprobar_transferencia(sender, instance, created, **kwargs):
     """
     Si un admin aprueba el pago manualmente cambiando el estado del pedido:
-    - SOLO cuando pasa de 'En revisión' a 'Pagado'
+    - SOLO cuando pasa de 'Pendiente' a 'Pagado' (para transferencias)
     - y SOLO si aún no existe Comprobante/Transportista
 
     Esto evita romper el flujo de tarjeta (que ya crea comprobante/envío en checkout).
@@ -106,7 +106,11 @@ def crear_factura_y_envio_al_aprobar_transferencia(sender, instance, created, **
             return
 
         estado_anterior = getattr(instance, '_estado_pedido_anterior', None)
-        if estado_anterior != 'En revisión':
+        # Solo aplica a transferencias (tarjeta ya crea comprobante/envío en checkout).
+        if instance.metodo_pago != 'Transferencia bancaria':
+            return
+
+        if estado_anterior != 'Pendiente':
             return
         if instance.estado_pedido != 'Pagado':
             return

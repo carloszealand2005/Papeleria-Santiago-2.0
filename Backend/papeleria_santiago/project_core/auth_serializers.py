@@ -62,7 +62,7 @@ class LoginSerializer(serializers.Serializer):
             # Nota: para superusuarios/staff dejamos pasar.
             if not (user.is_superuser or user.is_staff):
                 if not user.is_active:
-                    raise serializers.ValidationError("Tu cuenta no está activa. Si es una empresa, puede estar en revisión.")
+                    raise serializers.ValidationError("Tu cuenta no está activa. Si es una empresa, puede estar pendiente.")
 
                 try:
                     cliente = user.cliente_profile
@@ -70,7 +70,7 @@ class LoginSerializer(serializers.Serializer):
                     cliente = None
 
                 if cliente and getattr(cliente, 'estado_cuenta', None) and cliente.estado_cuenta != Cliente.ACTIVO:
-                    raise serializers.ValidationError("Tu cuenta no está activa. Si es una empresa, puede estar en revisión.")
+                    raise serializers.ValidationError("Tu cuenta no está activa. Si es una empresa, puede estar pendiente.")
             data['user'] = user
         else:
             raise serializers.ValidationError("Credenciales inválidas.")

@@ -810,7 +810,8 @@ class CarritoViewSet(viewsets.ModelViewSet):
                 # --- 3. Crear Pedido ---
                 pedido = Pedido.objects.create(
                     cliente=carrito.cliente,
-                    estado_pedido=('En revisión' if is_transfer else 'Pagado'),
+                    # Transferencia: el pedido queda Pendiente hasta aprobación manual (luego pasa a Pagado).
+                    estado_pedido=('Pendiente' if is_transfer else 'Pagado'),
                     ciudad_envio=ciudad_envio,
                     direccion_envio=direccion_envio,
                     numero_casa_envio=numero_casa_envio,
@@ -872,7 +873,7 @@ class CarritoViewSet(viewsets.ModelViewSet):
             # TODO: DEVOLVER UNA RESPUESTA DETALLADA DEL PEDIDO CREADO EXITOSAMENTE
             if is_transfer:
                 return Response(
-                    {'message': 'Pedido creado. Pago en revisión (transferencia).', 'pedido_id': pedido.id},
+                    {'message': 'Pedido creado. Pago pendiente (transferencia).', 'pedido_id': pedido.id},
                     status=status.HTTP_201_CREATED
                 )
             return Response({'message': 'Carrito pagado y pedido creado exitosamente.', 'pedido_id': pedido.id}, status=status.HTTP_201_CREATED)
@@ -1080,7 +1081,8 @@ class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Qu
                 # --- 3. Crear Pedido ---
                 pedido = Pedido.objects.create(
                     cliente=carrito.cliente,
-                    estado_pedido=('En revisión' if is_transfer else 'Pagado'),
+                    # Transferencia: el pedido queda Pendiente hasta aprobación manual (luego pasa a Pagado).
+                    estado_pedido=('Pendiente' if is_transfer else 'Pagado'),
                     ciudad_envio=ciudad_envio,
                     direccion_envio=direccion_envio,
                     numero_casa_envio=numero_casa_envio,
@@ -1139,7 +1141,7 @@ class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Qu
 
             if is_transfer:
                 return Response(
-                    {'message': 'Pedido creado. Pago en revisión (transferencia).', 'pedido_id': pedido.id},
+                    {'message': 'Pedido creado. Pago pendiente (transferencia).', 'pedido_id': pedido.id},
                     status=status.HTTP_201_CREATED
                 )
             return Response({'message': 'Carrito pagado y pedido creado exitosamente.', 'pedido_id': pedido.id}, status=status.HTTP_201_CREATED)
@@ -1335,6 +1337,7 @@ class MisPedidosViewSet(
 ):
     serializer_class = PedidoSerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [FormParser, MultiPartParser, JSONParser]
 
     def get_queryset(self):
         user = self.request.user
@@ -1351,7 +1354,7 @@ class MisPedidosViewSet(
         # - entrega=entregados  -> solo Entregado
         entrega = (self.request.query_params.get('entrega') or '').strip().lower()
         if entrega == 'en_proceso':
-            # Solo pedidos que YA tienen envío creado (excluye transferencias en revisión)
+            # Solo pedidos que YA tienen envío creado (excluye transferencias pendientes sin envío)
             qs = qs.filter(transportista__isnull=False).exclude(transportista__estado_entrega='Entregado')
         elif entrega == 'entregados':
             qs = qs.filter(transportista__estado_entrega='Entregado')
@@ -1391,6 +1394,60 @@ class MisPedidosViewSet(
             },
             status=status.HTTP_200_OK
         )
+
+    @action(detail=True, methods=['post'], url_path='comprobante-transferencia')
+    def re_subir_comprobante_transferencia(self, request, pk=None):
+        """
+        Permite al cliente re-subir SOLO la imagen del comprobante de transferencia,
+        pero únicamente si:
+        - el pedido pertenece al usuario autenticado (por get_object/queryset)
+        - metodo_pago == 'Transferencia bancaria'
+        - estado_pedido == 'Cancelado' (por comprobante inválido u otro motivo)
+
+        Al re-subir:
+        - estado_pedido -> 'Pendiente'
+        - motivo_cancelacion -> NULL (se limpia)
+        """
+        pedido = self.get_object()
+
+        if pedido.metodo_pago != 'Transferencia bancaria':
+            return Response(
+                {'error': 'Este pedido no es de Transferencia bancaria.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if pedido.estado_pedido != 'Cancelado':
+            return Response(
+                {'error': 'Solo se puede re-subir el comprobante si el pedido está Cancelado.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        comprobante_file = (
+            request.FILES.get('comprobante_transferencia')
+            or request.FILES.get('comprobante')
+            or request.FILES.get('archivo')
+        )
+        if not comprobante_file:
+            return Response(
+                {'error': 'Debes subir una imagen en el campo comprobante_transferencia.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Validación simple MVP: solo imágenes
+        content_type = getattr(comprobante_file, 'content_type', '') or ''
+        if not content_type.startswith('image/'):
+            return Response(
+                {'error': 'El archivo debe ser una imagen (image/*).'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        pedido.comprobante_transferencia = comprobante_file
+        pedido.estado_pedido = 'Pendiente'
+        pedido.motivo_cancelacion = None
+        pedido.save(update_fields=['comprobante_transferencia', 'estado_pedido', 'motivo_cancelacion'])
+
+        serializer = self.get_serializer(pedido)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 #-------------------

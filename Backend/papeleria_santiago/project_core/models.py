@@ -428,8 +428,6 @@ class Pedido(models.Model):
 
     ESTADO_PEDIDO_CHOICES = [
         ('Pendiente', 'Pendiente'),
-        # Pago por transferencia: pedido creado pero esperando validación manual.
-        ('En revisión', 'En revisión'),
         ('Pagado', 'Pagado'),
         ('Cancelado', 'Cancelado'),
     ]
@@ -472,6 +470,10 @@ class Pedido(models.Model):
         blank=True,
         null=True,
     )
+
+    # Motivo de cancelación (MVP): si un admin rechaza el comprobante o hay algún problema de pago,
+    # puede guardar un texto para que el frontend se lo muestre al usuario.
+    motivo_cancelacion = models.TextField(blank=True, null=True)
 
     @property
     def subtotal_general_comprobante(self):

@@ -166,6 +166,7 @@ class PedidoSerializer(serializers.ModelSerializer):
     metodo_pago = serializers.CharField(read_only=True)
     costo_envio = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     comprobante_transferencia_url = serializers.SerializerMethodField()
+    motivo_cancelacion = serializers.CharField(read_only=True, allow_blank=True, allow_null=True)
 
     class Meta:
         model = Pedido
@@ -177,6 +178,7 @@ class PedidoSerializer(serializers.ModelSerializer):
             'cedula_envio', 'telefono_envio', 'referencia_envio', 'metodo_pago',
             'costo_envio',
             'comprobante_transferencia_url',
+            'motivo_cancelacion',
         ]
 
     def get_estado_entrega(self, obj):
