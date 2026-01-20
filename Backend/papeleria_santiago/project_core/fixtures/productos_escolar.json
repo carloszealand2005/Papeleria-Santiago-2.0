@@ -1,0 +1,2302 @@
+[
+  {
+    "model": "project_core.producto",
+    "pk": "ESC001",
+    "fields": {
+      "codigo_barras": "789260120001",
+      "nombre": "Cuaderno Espiral 100 Hojas 001",
+      "descripcion": "Cuaderno Espiral 100 Hojas 001 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC001.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 4,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 61,
+    "fields": {
+      "producto": "ESC001",
+      "pvp": "1.20",
+      "pvm": "1.1160",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 61,
+    "fields": {
+      "producto": "ESC001",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC002",
+    "fields": {
+      "codigo_barras": "789260120002",
+      "nombre": "Lápiz HB #2 002",
+      "descripcion": "Lápiz HB #2 002 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC002.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 352,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 62,
+    "fields": {
+      "producto": "ESC002",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 62,
+    "fields": {
+      "producto": "ESC002",
+      "stock": 4,
+      "ubicacion_bodega": "Bodega 2, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC003",
+    "fields": {
+      "codigo_barras": "789260120003",
+      "nombre": "Borrador Blanco 003",
+      "descripcion": "Borrador Blanco 003 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC003.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 248,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 63,
+    "fields": {
+      "producto": "ESC003",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 63,
+    "fields": {
+      "producto": "ESC003",
+      "stock": 896,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC004",
+    "fields": {
+      "codigo_barras": "789260120004",
+      "nombre": "Sacapuntas Doble 004",
+      "descripcion": "Sacapuntas Doble 004 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC004.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 113,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 64,
+    "fields": {
+      "producto": "ESC004",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 64,
+    "fields": {
+      "producto": "ESC004",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 2, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC005",
+    "fields": {
+      "codigo_barras": "789260120005",
+      "nombre": "Regla 30cm 005",
+      "descripcion": "Regla 30cm 005 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC005.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 215,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 65,
+    "fields": {
+      "producto": "ESC005",
+      "pvp": "0.87",
+      "pvm": "0.8091",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 65,
+    "fields": {
+      "producto": "ESC005",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC006",
+    "fields": {
+      "codigo_barras": "789260120006",
+      "nombre": "Tijeras Escolares Punta Roma 006",
+      "descripcion": "Tijeras Escolares Punta Roma 006 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC006.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 345,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 66,
+    "fields": {
+      "producto": "ESC006",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 66,
+    "fields": {
+      "producto": "ESC006",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC007",
+    "fields": {
+      "codigo_barras": "789260120007",
+      "nombre": "Pegamento Líquido 200ml 007",
+      "descripcion": "Pegamento Líquido 200ml 007 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC007.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 325,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 67,
+    "fields": {
+      "producto": "ESC007",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 67,
+    "fields": {
+      "producto": "ESC007",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC008",
+    "fields": {
+      "codigo_barras": "789260120008",
+      "nombre": "Cartulina A4 (Pack) 008",
+      "descripcion": "Cartulina A4 (Pack) 008 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC008.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 373,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 68,
+    "fields": {
+      "producto": "ESC008",
+      "pvp": "14.26",
+      "pvm": "13.2618",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 68,
+    "fields": {
+      "producto": "ESC008",
+      "stock": 574,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC009",
+    "fields": {
+      "codigo_barras": "789260120009",
+      "nombre": "Colores 12 unidades 009",
+      "descripcion": "Colores 12 unidades 009 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC009.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 589,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 69,
+    "fields": {
+      "producto": "ESC009",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 69,
+    "fields": {
+      "producto": "ESC009",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 2, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC010",
+    "fields": {
+      "codigo_barras": "789260120010",
+      "nombre": "Marcadores Lavables (Pack) 010",
+      "descripcion": "Marcadores Lavables (Pack) 010 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC010.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 170,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 70,
+    "fields": {
+      "producto": "ESC010",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 70,
+    "fields": {
+      "producto": "ESC010",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC011",
+    "fields": {
+      "codigo_barras": "789260120011",
+      "nombre": "Cuaderno Espiral 100 Hojas 011",
+      "descripcion": "Cuaderno Espiral 100 Hojas 011 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC011.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 328,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 71,
+    "fields": {
+      "producto": "ESC011",
+      "pvp": "0.48",
+      "pvm": "0.4464",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 71,
+    "fields": {
+      "producto": "ESC011",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC012",
+    "fields": {
+      "codigo_barras": "789260120012",
+      "nombre": "Lápiz HB #2 012",
+      "descripcion": "Lápiz HB #2 012 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC012.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 101,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 72,
+    "fields": {
+      "producto": "ESC012",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 72,
+    "fields": {
+      "producto": "ESC012",
+      "stock": 4,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC013",
+    "fields": {
+      "codigo_barras": "789260120013",
+      "nombre": "Borrador Blanco 013",
+      "descripcion": "Borrador Blanco 013 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC013.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 59,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 73,
+    "fields": {
+      "producto": "ESC013",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 73,
+    "fields": {
+      "producto": "ESC013",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 2, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC014",
+    "fields": {
+      "codigo_barras": "789260120014",
+      "nombre": "Sacapuntas Doble 014",
+      "descripcion": "Sacapuntas Doble 014 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC014.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 459,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 74,
+    "fields": {
+      "producto": "ESC014",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 74,
+    "fields": {
+      "producto": "ESC014",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 2, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC015",
+    "fields": {
+      "codigo_barras": "789260120015",
+      "nombre": "Regla 30cm 015",
+      "descripcion": "Regla 30cm 015 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC015.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 488,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 75,
+    "fields": {
+      "producto": "ESC015",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 75,
+    "fields": {
+      "producto": "ESC015",
+      "stock": 180,
+      "ubicacion_bodega": "Bodega 2, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC016",
+    "fields": {
+      "codigo_barras": "789260120016",
+      "nombre": "Tijeras Escolares Punta Roma 016",
+      "descripcion": "Tijeras Escolares Punta Roma 016 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC016.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 318,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 76,
+    "fields": {
+      "producto": "ESC016",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 76,
+    "fields": {
+      "producto": "ESC016",
+      "stock": 574,
+      "ubicacion_bodega": "Bodega 2, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC017",
+    "fields": {
+      "codigo_barras": "789260120017",
+      "nombre": "Pegamento Líquido 200ml 017",
+      "descripcion": "Pegamento Líquido 200ml 017 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC017.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 379,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 77,
+    "fields": {
+      "producto": "ESC017",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 77,
+    "fields": {
+      "producto": "ESC017",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC018",
+    "fields": {
+      "codigo_barras": "789260120018",
+      "nombre": "Cartulina A4 (Pack) 018",
+      "descripcion": "Cartulina A4 (Pack) 018 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC018.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 66,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 78,
+    "fields": {
+      "producto": "ESC018",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 78,
+    "fields": {
+      "producto": "ESC018",
+      "stock": 22,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC019",
+    "fields": {
+      "codigo_barras": "789260120019",
+      "nombre": "Colores 12 unidades 019",
+      "descripcion": "Colores 12 unidades 019 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC019.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 556,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 79,
+    "fields": {
+      "producto": "ESC019",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 79,
+    "fields": {
+      "producto": "ESC019",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 2, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC020",
+    "fields": {
+      "codigo_barras": "789260120020",
+      "nombre": "Marcadores Lavables (Pack) 020",
+      "descripcion": "Marcadores Lavables (Pack) 020 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC020.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 506,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 80,
+    "fields": {
+      "producto": "ESC020",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 80,
+    "fields": {
+      "producto": "ESC020",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC021",
+    "fields": {
+      "codigo_barras": "789260120021",
+      "nombre": "Cuaderno Espiral 100 Hojas 021",
+      "descripcion": "Cuaderno Espiral 100 Hojas 021 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC021.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 496,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 81,
+    "fields": {
+      "producto": "ESC021",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 81,
+    "fields": {
+      "producto": "ESC021",
+      "stock": 1,
+      "ubicacion_bodega": "Bodega 2, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC022",
+    "fields": {
+      "codigo_barras": "789260120022",
+      "nombre": "Lápiz HB #2 022",
+      "descripcion": "Lápiz HB #2 022 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC022.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 320,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 82,
+    "fields": {
+      "producto": "ESC022",
+      "pvp": "0.48",
+      "pvm": "0.4464",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 82,
+    "fields": {
+      "producto": "ESC022",
+      "stock": 112,
+      "ubicacion_bodega": "Bodega 2, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC023",
+    "fields": {
+      "codigo_barras": "789260120023",
+      "nombre": "Borrador Blanco 023",
+      "descripcion": "Borrador Blanco 023 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC023.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 515,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 83,
+    "fields": {
+      "producto": "ESC023",
+      "pvp": "25.30",
+      "pvm": "23.5290",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 83,
+    "fields": {
+      "producto": "ESC023",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 2, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC024",
+    "fields": {
+      "codigo_barras": "789260120024",
+      "nombre": "Sacapuntas Doble 024",
+      "descripcion": "Sacapuntas Doble 024 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC024.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 600,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 84,
+    "fields": {
+      "producto": "ESC024",
+      "pvp": "14.26",
+      "pvm": "13.2618",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 84,
+    "fields": {
+      "producto": "ESC024",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 2, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC025",
+    "fields": {
+      "codigo_barras": "789260120025",
+      "nombre": "Regla 30cm 025",
+      "descripcion": "Regla 30cm 025 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC025.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 553,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 85,
+    "fields": {
+      "producto": "ESC025",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 85,
+    "fields": {
+      "producto": "ESC025",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC026",
+    "fields": {
+      "codigo_barras": "789260120026",
+      "nombre": "Tijeras Escolares Punta Roma 026",
+      "descripcion": "Tijeras Escolares Punta Roma 026 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC026.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 414,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 86,
+    "fields": {
+      "producto": "ESC026",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 86,
+    "fields": {
+      "producto": "ESC026",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC027",
+    "fields": {
+      "codigo_barras": "789260120027",
+      "nombre": "Pegamento Líquido 200ml 027",
+      "descripcion": "Pegamento Líquido 200ml 027 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC027.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 180,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 87,
+    "fields": {
+      "producto": "ESC027",
+      "pvp": "1.00",
+      "pvm": "0.9300",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 87,
+    "fields": {
+      "producto": "ESC027",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC028",
+    "fields": {
+      "codigo_barras": "789260120028",
+      "nombre": "Cartulina A4 (Pack) 028",
+      "descripcion": "Cartulina A4 (Pack) 028 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC028.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 555,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 88,
+    "fields": {
+      "producto": "ESC028",
+      "pvp": "0.87",
+      "pvm": "0.8091",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 88,
+    "fields": {
+      "producto": "ESC028",
+      "stock": 4,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC029",
+    "fields": {
+      "codigo_barras": "789260120029",
+      "nombre": "Colores 12 unidades 029",
+      "descripcion": "Colores 12 unidades 029 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC029.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 465,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 89,
+    "fields": {
+      "producto": "ESC029",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 89,
+    "fields": {
+      "producto": "ESC029",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC030",
+    "fields": {
+      "codigo_barras": "789260120030",
+      "nombre": "Marcadores Lavables (Pack) 030",
+      "descripcion": "Marcadores Lavables (Pack) 030 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC030.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 253,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 90,
+    "fields": {
+      "producto": "ESC030",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 90,
+    "fields": {
+      "producto": "ESC030",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC031",
+    "fields": {
+      "codigo_barras": "789260120031",
+      "nombre": "Cuaderno Espiral 100 Hojas 031",
+      "descripcion": "Cuaderno Espiral 100 Hojas 031 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC031.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 274,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 91,
+    "fields": {
+      "producto": "ESC031",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 91,
+    "fields": {
+      "producto": "ESC031",
+      "stock": 574,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC032",
+    "fields": {
+      "codigo_barras": "789260120032",
+      "nombre": "Lápiz HB #2 032",
+      "descripcion": "Lápiz HB #2 032 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC032.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 235,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 92,
+    "fields": {
+      "producto": "ESC032",
+      "pvp": "8.90",
+      "pvm": "8.2770",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 92,
+    "fields": {
+      "producto": "ESC032",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 2, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC033",
+    "fields": {
+      "codigo_barras": "789260120033",
+      "nombre": "Borrador Blanco 033",
+      "descripcion": "Borrador Blanco 033 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC033.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 103,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 93,
+    "fields": {
+      "producto": "ESC033",
+      "pvp": "0.87",
+      "pvm": "0.8091",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 93,
+    "fields": {
+      "producto": "ESC033",
+      "stock": 896,
+      "ubicacion_bodega": "Bodega 2, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC034",
+    "fields": {
+      "codigo_barras": "789260120034",
+      "nombre": "Sacapuntas Doble 034",
+      "descripcion": "Sacapuntas Doble 034 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC034.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 562,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 94,
+    "fields": {
+      "producto": "ESC034",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 94,
+    "fields": {
+      "producto": "ESC034",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC035",
+    "fields": {
+      "codigo_barras": "789260120035",
+      "nombre": "Regla 30cm 035",
+      "descripcion": "Regla 30cm 035 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC035.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 66,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 95,
+    "fields": {
+      "producto": "ESC035",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 95,
+    "fields": {
+      "producto": "ESC035",
+      "stock": 1,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC036",
+    "fields": {
+      "codigo_barras": "789260120036",
+      "nombre": "Tijeras Escolares Punta Roma 036",
+      "descripcion": "Tijeras Escolares Punta Roma 036 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC036.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 250,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 96,
+    "fields": {
+      "producto": "ESC036",
+      "pvp": "25.30",
+      "pvm": "23.5290",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 96,
+    "fields": {
+      "producto": "ESC036",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 2, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC037",
+    "fields": {
+      "codigo_barras": "789260120037",
+      "nombre": "Pegamento Líquido 200ml 037",
+      "descripcion": "Pegamento Líquido 200ml 037 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC037.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 493,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 97,
+    "fields": {
+      "producto": "ESC037",
+      "pvp": "1.00",
+      "pvm": "0.9300",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 97,
+    "fields": {
+      "producto": "ESC037",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC038",
+    "fields": {
+      "codigo_barras": "789260120038",
+      "nombre": "Cartulina A4 (Pack) 038",
+      "descripcion": "Cartulina A4 (Pack) 038 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC038.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 523,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 98,
+    "fields": {
+      "producto": "ESC038",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 98,
+    "fields": {
+      "producto": "ESC038",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 2, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC039",
+    "fields": {
+      "codigo_barras": "789260120039",
+      "nombre": "Colores 12 unidades 039",
+      "descripcion": "Colores 12 unidades 039 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC039.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 530,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 99,
+    "fields": {
+      "producto": "ESC039",
+      "pvp": "14.26",
+      "pvm": "13.2618",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 99,
+    "fields": {
+      "producto": "ESC039",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 2, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC040",
+    "fields": {
+      "codigo_barras": "789260120040",
+      "nombre": "Marcadores Lavables (Pack) 040",
+      "descripcion": "Marcadores Lavables (Pack) 040 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC040.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 31,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 100,
+    "fields": {
+      "producto": "ESC040",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 100,
+    "fields": {
+      "producto": "ESC040",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC041",
+    "fields": {
+      "codigo_barras": "789260120041",
+      "nombre": "Cuaderno Espiral 100 Hojas 041",
+      "descripcion": "Cuaderno Espiral 100 Hojas 041 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC041.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 241,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 101,
+    "fields": {
+      "producto": "ESC041",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 101,
+    "fields": {
+      "producto": "ESC041",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC042",
+    "fields": {
+      "codigo_barras": "789260120042",
+      "nombre": "Lápiz HB #2 042",
+      "descripcion": "Lápiz HB #2 042 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC042.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 10,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 102,
+    "fields": {
+      "producto": "ESC042",
+      "pvp": "8.90",
+      "pvm": "8.2770",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 102,
+    "fields": {
+      "producto": "ESC042",
+      "stock": 1200,
+      "ubicacion_bodega": "Bodega 2, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC043",
+    "fields": {
+      "codigo_barras": "789260120043",
+      "nombre": "Borrador Blanco 043",
+      "descripcion": "Borrador Blanco 043 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC043.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 316,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 103,
+    "fields": {
+      "producto": "ESC043",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 103,
+    "fields": {
+      "producto": "ESC043",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 2, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC044",
+    "fields": {
+      "codigo_barras": "789260120044",
+      "nombre": "Sacapuntas Doble 044",
+      "descripcion": "Sacapuntas Doble 044 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC044.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 411,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 104,
+    "fields": {
+      "producto": "ESC044",
+      "pvp": "17.70",
+      "pvm": "16.4610",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 104,
+    "fields": {
+      "producto": "ESC044",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC045",
+    "fields": {
+      "codigo_barras": "789260120045",
+      "nombre": "Regla 30cm 045",
+      "descripcion": "Regla 30cm 045 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC045.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 243,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 105,
+    "fields": {
+      "producto": "ESC045",
+      "pvp": "14.26",
+      "pvm": "13.2618",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 105,
+    "fields": {
+      "producto": "ESC045",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC046",
+    "fields": {
+      "codigo_barras": "789260120046",
+      "nombre": "Tijeras Escolares Punta Roma 046",
+      "descripcion": "Tijeras Escolares Punta Roma 046 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC046.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 318,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 106,
+    "fields": {
+      "producto": "ESC046",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 106,
+    "fields": {
+      "producto": "ESC046",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 2, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC047",
+    "fields": {
+      "codigo_barras": "789260120047",
+      "nombre": "Pegamento Líquido 200ml 047",
+      "descripcion": "Pegamento Líquido 200ml 047 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC047.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 28,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 107,
+    "fields": {
+      "producto": "ESC047",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 107,
+    "fields": {
+      "producto": "ESC047",
+      "stock": 72,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC048",
+    "fields": {
+      "codigo_barras": "789260120048",
+      "nombre": "Cartulina A4 (Pack) 048",
+      "descripcion": "Cartulina A4 (Pack) 048 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC048.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 351,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 108,
+    "fields": {
+      "producto": "ESC048",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 108,
+    "fields": {
+      "producto": "ESC048",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC049",
+    "fields": {
+      "codigo_barras": "789260120049",
+      "nombre": "Colores 12 unidades 049",
+      "descripcion": "Colores 12 unidades 049 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC049.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 468,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 109,
+    "fields": {
+      "producto": "ESC049",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 109,
+    "fields": {
+      "producto": "ESC049",
+      "stock": 4,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC050",
+    "fields": {
+      "codigo_barras": "789260120050",
+      "nombre": "Marcadores Lavables (Pack) 050",
+      "descripcion": "Marcadores Lavables (Pack) 050 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC050.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 234,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 110,
+    "fields": {
+      "producto": "ESC050",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 110,
+    "fields": {
+      "producto": "ESC050",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  }
+]

@@ -1,0 +1,7498 @@
+[
+  {
+    "model": "project_core.categoria",
+    "pk": 1,
+    "fields": {
+      "nombre_categoria": "Oficina",
+      "descripcion_categoria": "Artículos y suministros para uso en oficinas."
+    }
+  },
+  {
+    "model": "project_core.categoria",
+    "pk": 2,
+    "fields": {
+      "nombre_categoria": "Escolar",
+      "descripcion_categoria": "Materiales y útiles para estudiantes."
+    }
+  },
+  {
+    "model": "project_core.categoria",
+    "pk": 3,
+    "fields": {
+      "nombre_categoria": "Tecnología",
+      "descripcion_categoria": "Accesorios y periféricos tecnológicos."
+    }
+  },
+  {
+    "model": "project_core.subcategoria",
+    "pk": 1,
+    "fields": {
+      "nombre_subcategoria": "Papelería",
+      "descripcion_categoria": "Productos de papel y archivo.",
+      "foto_categoria_url": "https://example.com/subcategorias/papeleria.jpg",
+      "categoria": 1
+    }
+  },
+  {
+    "model": "project_core.subcategoria",
+    "pk": 2,
+    "fields": {
+      "nombre_subcategoria": "Escritura",
+      "descripcion_categoria": "Instrumentos para escribir y marcar.",
+      "foto_categoria_url": "https://example.com/subcategorias/escritura.jpg",
+      "categoria": 1
+    }
+  },
+  {
+    "model": "project_core.subcategoria",
+    "pk": 3,
+    "fields": {
+      "nombre_subcategoria": "Organización",
+      "descripcion_categoria": "Carpetas, archivadores y organización.",
+      "foto_categoria_url": "https://example.com/subcategorias/organizacion.jpg",
+      "categoria": 1
+    }
+  },
+  {
+    "model": "project_core.subcategoria",
+    "pk": 4,
+    "fields": {
+      "nombre_subcategoria": "Regreso a Clases",
+      "descripcion_categoria": "Productos recomendados para temporada escolar.",
+      "foto_categoria_url": "https://example.com/subcategorias/regreso_a_clases.jpg",
+      "categoria": 2
+    }
+  },
+  {
+    "model": "project_core.subcategoria",
+    "pk": 5,
+    "fields": {
+      "nombre_subcategoria": "Manualidades",
+      "descripcion_categoria": "Materiales para proyectos artísticos.",
+      "foto_categoria_url": "https://example.com/subcategorias/manualidades.jpg",
+      "categoria": 2
+    }
+  },
+  {
+    "model": "project_core.subcategoria",
+    "pk": 6,
+    "fields": {
+      "nombre_subcategoria": "Accesorios Tech",
+      "descripcion_categoria": "Cables, memorias, audífonos y más.",
+      "foto_categoria_url": "https://example.com/subcategorias/accesorios_tech.jpg",
+      "categoria": 3
+    }
+  },
+  {
+    "model": "project_core.variante",
+    "pk": 1,
+    "fields": {
+      "nombre_variante": "Tamaño Carta",
+      "descripcion_variante": "Formato carta.",
+      "subcategoria": 1
+    }
+  },
+  {
+    "model": "project_core.variante",
+    "pk": 2,
+    "fields": {
+      "nombre_variante": "Tamaño Oficio",
+      "descripcion_variante": "Formato oficio.",
+      "subcategoria": 1
+    }
+  },
+  {
+    "model": "project_core.variante",
+    "pk": 3,
+    "fields": {
+      "nombre_variante": "Color Azul",
+      "descripcion_variante": "Tinta azul.",
+      "subcategoria": 2
+    }
+  },
+  {
+    "model": "project_core.variante",
+    "pk": 4,
+    "fields": {
+      "nombre_variante": "Color Negro",
+      "descripcion_variante": "Tinta negra.",
+      "subcategoria": 2
+    }
+  },
+  {
+    "model": "project_core.variante",
+    "pk": 5,
+    "fields": {
+      "nombre_variante": "Básico",
+      "descripcion_variante": "Versión estándar.",
+      "subcategoria": 4
+    }
+  },
+  {
+    "model": "project_core.variante",
+    "pk": 6,
+    "fields": {
+      "nombre_variante": "Premium",
+      "descripcion_variante": "Materiales y acabados premium.",
+      "subcategoria": 4
+    }
+  },
+  {
+    "model": "project_core.variante",
+    "pk": 7,
+    "fields": {
+      "nombre_variante": "USB 3.0",
+      "descripcion_variante": "Alta velocidad USB 3.0.",
+      "subcategoria": 6
+    }
+  },
+  {
+    "model": "project_core.variante",
+    "pk": 8,
+    "fields": {
+      "nombre_variante": "Bluetooth",
+      "descripcion_variante": "Conectividad Bluetooth.",
+      "subcategoria": 6
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "CUA001",
+    "fields": {
+      "codigo_barras": "789123456001",
+      "nombre": "Cuaderno Profesional 100 Hojas",
+      "descripcion": "Cuaderno tamaño carta, tapa dura.",
+      "marca": "PaperMax",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": "100 hojas",
+      "caracteristica2": "Tapa dura",
+      "caracteristica3": "Rayado",
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/CUA001.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 120
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "BOL002",
+    "fields": {
+      "codigo_barras": "789123456002",
+      "nombre": "Bolígrafo Retráctil Gel 0.5",
+      "descripcion": "Bolígrafo de gel, punta fina.",
+      "marca": "GelWrite",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 3,
+      "caracteristica1": "Punta 0.5mm",
+      "caracteristica2": "Tinta gel",
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/BOL002.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 250
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "RES003",
+    "fields": {
+      "codigo_barras": "789123456003",
+      "nombre": "Resaltador Fluorescente",
+      "descripcion": "Resaltador para documentos.",
+      "marca": "HighlightPro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 3,
+      "caracteristica1": "Punta biselada",
+      "caracteristica2": "Color amarillo",
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": null,
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 300
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "CAR004",
+    "fields": {
+      "codigo_barras": "789123456004",
+      "nombre": "Carpeta Plástica A4",
+      "descripcion": "Carpeta para archivo y organización.",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 1,
+      "caracteristica1": "A4",
+      "caracteristica2": "Con broche",
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/CAR004.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 95
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "PEG005",
+    "fields": {
+      "codigo_barras": "789123456005",
+      "nombre": "Pegamento Líquido 200ml",
+      "descripcion": "Pegamento multiusos para papel y cartón.",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": "200 ml",
+      "caracteristica2": "Secado rápido",
+      "caracteristica3": "No tóxico",
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": null,
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 400
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TIJ006",
+    "fields": {
+      "codigo_barras": "789123456006",
+      "nombre": "Tijeras Escolares Punta Roma",
+      "descripcion": "Tijeras de seguridad para niños.",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": "Punta roma",
+      "caracteristica2": "Mango ergonómico",
+      "caracteristica3": "Acero inoxidable",
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": null,
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 180
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "LAP007",
+    "fields": {
+      "codigo_barras": "789123456007",
+      "nombre": "Lápiz HB #2",
+      "descripcion": "Lápiz escolar HB para escritura y dibujo.",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": "HB",
+      "caracteristica2": "Borrador incluido",
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/LAP007.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 560
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "USB008",
+    "fields": {
+      "codigo_barras": "789123456008",
+      "nombre": "Memoria USB 64GB",
+      "descripcion": "Memoria USB 3.0 de 64GB.",
+      "marca": "DataFlash",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": "64GB",
+      "caracteristica2": "USB 3.0",
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/USB008.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 310
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "AUD009",
+    "fields": {
+      "codigo_barras": "789123456009",
+      "nombre": "Audífonos Bluetooth",
+      "descripcion": "Audífonos inalámbricos con micrófono.",
+      "marca": "SoundGo",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": "Bluetooth",
+      "caracteristica2": "Micrófono",
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/AUD009.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 140
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "CAL010",
+    "fields": {
+      "codigo_barras": "789123456010",
+      "nombre": "Calculadora Científica",
+      "descripcion": "Calculadora científica para colegio/universidad.",
+      "marca": "CalcMaster",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": "240 funciones",
+      "caracteristica2": "Pantalla 2 líneas",
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/CAL010.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 75
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 1,
+    "fields": {
+      "producto": "CUA001",
+      "pvp": "8.50",
+      "pvm": "6.00",
+      "iva": "19.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 1,
+    "fields": {
+      "producto": "CUA001",
+      "stock": 150,
+      "ubicacion_bodega": "Pasillo 1, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 2,
+    "fields": {
+      "producto": "BOL002",
+      "pvp": "2.15",
+      "pvm": "1.50",
+      "iva": "19.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 2,
+    "fields": {
+      "producto": "BOL002",
+      "stock": 500,
+      "ubicacion_bodega": "Pasillo 2, Bin 1"
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 3,
+    "fields": {
+      "producto": "RES003",
+      "pvp": "1.75",
+      "pvm": "1.00",
+      "iva": "19.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "25.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 3,
+    "fields": {
+      "producto": "RES003",
+      "stock": 350,
+      "ubicacion_bodega": "Pasillo 2, Bin 5"
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 4,
+    "fields": {
+      "producto": "CAR004",
+      "pvp": "1.40",
+      "pvm": "1.00",
+      "iva": "19.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 4,
+    "fields": {
+      "producto": "CAR004",
+      "stock": 260,
+      "ubicacion_bodega": "Pasillo 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 5,
+    "fields": {
+      "producto": "PEG005",
+      "pvp": "3.20",
+      "pvm": "2.50",
+      "iva": "19.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "20.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 5,
+    "fields": {
+      "producto": "PEG005",
+      "stock": 280,
+      "ubicacion_bodega": "Pasillo 4, Bin 2"
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 6,
+    "fields": {
+      "producto": "TIJ006",
+      "pvp": "4.50",
+      "pvm": "3.20",
+      "iva": "19.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 6,
+    "fields": {
+      "producto": "TIJ006",
+      "stock": 220,
+      "ubicacion_bodega": "Pasillo 4, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 7,
+    "fields": {
+      "producto": "LAP007",
+      "pvp": "0.35",
+      "pvm": "0.25",
+      "iva": "19.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 7,
+    "fields": {
+      "producto": "LAP007",
+      "stock": 1200,
+      "ubicacion_bodega": "Pasillo 5, Bin 6"
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 8,
+    "fields": {
+      "producto": "USB008",
+      "pvp": "12.99",
+      "pvm": "10.50",
+      "iva": "19.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 8,
+    "fields": {
+      "producto": "USB008",
+      "stock": 240,
+      "ubicacion_bodega": "Tech, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 9,
+    "fields": {
+      "producto": "AUD009",
+      "pvp": "149.99",
+      "pvm": "120.00",
+      "iva": "19.00",
+      "descuento_publico": "25.00",
+      "descuento_mayorista": "30.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 9,
+    "fields": {
+      "producto": "AUD009",
+      "stock": 35,
+      "ubicacion_bodega": "Tech, Vitrina"
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 10,
+    "fields": {
+      "producto": "CAL010",
+      "pvp": "19.90",
+      "pvm": "16.00",
+      "iva": "19.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 10,
+    "fields": {
+      "producto": "CAL010",
+      "stock": 55,
+      "ubicacion_bodega": "Pasillo 6, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI001",
+    "fields": {
+      "codigo_barras": "789260120001",
+      "nombre": "Carpeta Plástica A4 001",
+      "descripcion": "Carpeta Plástica A4 001 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI001.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 390,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 11,
+    "fields": {
+      "producto": "OFI001",
+      "pvp": "1.00",
+      "pvm": "0.9300",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 11,
+    "fields": {
+      "producto": "OFI001",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI002",
+    "fields": {
+      "codigo_barras": "789260120002",
+      "nombre": "Archivador Palanca A4 002",
+      "descripcion": "Archivador Palanca A4 002 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI002.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 175,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 12,
+    "fields": {
+      "producto": "OFI002",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 12,
+    "fields": {
+      "producto": "OFI002",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 1, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI003",
+    "fields": {
+      "codigo_barras": "789260120003",
+      "nombre": "Resma Papel Bond A4 75g 003",
+      "descripcion": "Resma Papel Bond A4 75g 003 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI003.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 195,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 13,
+    "fields": {
+      "producto": "OFI003",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 13,
+    "fields": {
+      "producto": "OFI003",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI004",
+    "fields": {
+      "codigo_barras": "789260120004",
+      "nombre": "Notas Adhesivas 76x76mm 004",
+      "descripcion": "Notas Adhesivas 76x76mm 004 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI004.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 138,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 14,
+    "fields": {
+      "producto": "OFI004",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 14,
+    "fields": {
+      "producto": "OFI004",
+      "stock": 72,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI005",
+    "fields": {
+      "codigo_barras": "789260120005",
+      "nombre": "Grapadora Metálica 005",
+      "descripcion": "Grapadora Metálica 005 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI005.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 142,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 15,
+    "fields": {
+      "producto": "OFI005",
+      "pvp": "8.90",
+      "pvm": "8.2770",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 15,
+    "fields": {
+      "producto": "OFI005",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI006",
+    "fields": {
+      "codigo_barras": "789260120006",
+      "nombre": "Clips Metálicos (Caja) 006",
+      "descripcion": "Clips Metálicos (Caja) 006 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI006.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 544,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 16,
+    "fields": {
+      "producto": "OFI006",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 16,
+    "fields": {
+      "producto": "OFI006",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI007",
+    "fields": {
+      "codigo_barras": "789260120007",
+      "nombre": "Cinta Adhesiva Transparente 48mm 007",
+      "descripcion": "Cinta Adhesiva Transparente 48mm 007 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI007.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 520,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 17,
+    "fields": {
+      "producto": "OFI007",
+      "pvp": "8.90",
+      "pvm": "8.2770",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 17,
+    "fields": {
+      "producto": "OFI007",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI008",
+    "fields": {
+      "codigo_barras": "789260120008",
+      "nombre": "Marcador Permanente 008",
+      "descripcion": "Marcador Permanente 008 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI008.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 441,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 18,
+    "fields": {
+      "producto": "OFI008",
+      "pvp": "1.20",
+      "pvm": "1.1160",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 18,
+    "fields": {
+      "producto": "OFI008",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI009",
+    "fields": {
+      "codigo_barras": "789260120009",
+      "nombre": "Corrector Líquido 20ml 009",
+      "descripcion": "Corrector Líquido 20ml 009 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI009.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 78,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 19,
+    "fields": {
+      "producto": "OFI009",
+      "pvp": "25.30",
+      "pvm": "23.5290",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 19,
+    "fields": {
+      "producto": "OFI009",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI010",
+    "fields": {
+      "codigo_barras": "789260120010",
+      "nombre": "Bandeja Organizadora A4 010",
+      "descripcion": "Bandeja Organizadora A4 010 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI010.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 75,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 20,
+    "fields": {
+      "producto": "OFI010",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 20,
+    "fields": {
+      "producto": "OFI010",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI011",
+    "fields": {
+      "codigo_barras": "789260120011",
+      "nombre": "Carpeta Plástica A4 011",
+      "descripcion": "Carpeta Plástica A4 011 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI011.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 489,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 21,
+    "fields": {
+      "producto": "OFI011",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 21,
+    "fields": {
+      "producto": "OFI011",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 1, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI012",
+    "fields": {
+      "codigo_barras": "789260120012",
+      "nombre": "Archivador Palanca A4 012",
+      "descripcion": "Archivador Palanca A4 012 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI012.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 462,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 22,
+    "fields": {
+      "producto": "OFI012",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 22,
+    "fields": {
+      "producto": "OFI012",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI013",
+    "fields": {
+      "codigo_barras": "789260120013",
+      "nombre": "Resma Papel Bond A4 75g 013",
+      "descripcion": "Resma Papel Bond A4 75g 013 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI013.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 484,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 23,
+    "fields": {
+      "producto": "OFI013",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 23,
+    "fields": {
+      "producto": "OFI013",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 1, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI014",
+    "fields": {
+      "codigo_barras": "789260120014",
+      "nombre": "Notas Adhesivas 76x76mm 014",
+      "descripcion": "Notas Adhesivas 76x76mm 014 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI014.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 21,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 24,
+    "fields": {
+      "producto": "OFI014",
+      "pvp": "0.48",
+      "pvm": "0.4464",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 24,
+    "fields": {
+      "producto": "OFI014",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 1, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI015",
+    "fields": {
+      "codigo_barras": "789260120015",
+      "nombre": "Grapadora Metálica 015",
+      "descripcion": "Grapadora Metálica 015 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI015.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 347,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 25,
+    "fields": {
+      "producto": "OFI015",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 25,
+    "fields": {
+      "producto": "OFI015",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI016",
+    "fields": {
+      "codigo_barras": "789260120016",
+      "nombre": "Clips Metálicos (Caja) 016",
+      "descripcion": "Clips Metálicos (Caja) 016 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI016.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 174,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 26,
+    "fields": {
+      "producto": "OFI016",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 26,
+    "fields": {
+      "producto": "OFI016",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 1, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI017",
+    "fields": {
+      "codigo_barras": "789260120017",
+      "nombre": "Cinta Adhesiva Transparente 48mm 017",
+      "descripcion": "Cinta Adhesiva Transparente 48mm 017 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI017.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 333,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 27,
+    "fields": {
+      "producto": "OFI017",
+      "pvp": "6.10",
+      "pvm": "5.6730",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 27,
+    "fields": {
+      "producto": "OFI017",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI018",
+    "fields": {
+      "codigo_barras": "789260120018",
+      "nombre": "Marcador Permanente 018",
+      "descripcion": "Marcador Permanente 018 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI018.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 389,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 28,
+    "fields": {
+      "producto": "OFI018",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 28,
+    "fields": {
+      "producto": "OFI018",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 1, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI019",
+    "fields": {
+      "codigo_barras": "789260120019",
+      "nombre": "Corrector Líquido 20ml 019",
+      "descripcion": "Corrector Líquido 20ml 019 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI019.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 108,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 29,
+    "fields": {
+      "producto": "OFI019",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 29,
+    "fields": {
+      "producto": "OFI019",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 1, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI020",
+    "fields": {
+      "codigo_barras": "789260120020",
+      "nombre": "Bandeja Organizadora A4 020",
+      "descripcion": "Bandeja Organizadora A4 020 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI020.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 21,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 30,
+    "fields": {
+      "producto": "OFI020",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 30,
+    "fields": {
+      "producto": "OFI020",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 1, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI021",
+    "fields": {
+      "codigo_barras": "789260120021",
+      "nombre": "Carpeta Plástica A4 021",
+      "descripcion": "Carpeta Plástica A4 021 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI021.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 231,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 31,
+    "fields": {
+      "producto": "OFI021",
+      "pvp": "25.30",
+      "pvm": "23.5290",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 31,
+    "fields": {
+      "producto": "OFI021",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI022",
+    "fields": {
+      "codigo_barras": "789260120022",
+      "nombre": "Archivador Palanca A4 022",
+      "descripcion": "Archivador Palanca A4 022 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI022.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 420,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 32,
+    "fields": {
+      "producto": "OFI022",
+      "pvp": "0.48",
+      "pvm": "0.4464",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 32,
+    "fields": {
+      "producto": "OFI022",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 1, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI023",
+    "fields": {
+      "codigo_barras": "789260120023",
+      "nombre": "Resma Papel Bond A4 75g 023",
+      "descripcion": "Resma Papel Bond A4 75g 023 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI023.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 340,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 33,
+    "fields": {
+      "producto": "OFI023",
+      "pvp": "25.30",
+      "pvm": "23.5290",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 33,
+    "fields": {
+      "producto": "OFI023",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 1, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI024",
+    "fields": {
+      "codigo_barras": "789260120024",
+      "nombre": "Notas Adhesivas 76x76mm 024",
+      "descripcion": "Notas Adhesivas 76x76mm 024 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI024.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 21,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 34,
+    "fields": {
+      "producto": "OFI024",
+      "pvp": "17.70",
+      "pvm": "16.4610",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 34,
+    "fields": {
+      "producto": "OFI024",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 1, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI025",
+    "fields": {
+      "codigo_barras": "789260120025",
+      "nombre": "Grapadora Metálica 025",
+      "descripcion": "Grapadora Metálica 025 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI025.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 42,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 35,
+    "fields": {
+      "producto": "OFI025",
+      "pvp": "1.00",
+      "pvm": "0.9300",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 35,
+    "fields": {
+      "producto": "OFI025",
+      "stock": 180,
+      "ubicacion_bodega": "Bodega 1, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI026",
+    "fields": {
+      "codigo_barras": "789260120026",
+      "nombre": "Clips Metálicos (Caja) 026",
+      "descripcion": "Clips Metálicos (Caja) 026 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI026.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 255,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 36,
+    "fields": {
+      "producto": "OFI026",
+      "pvp": "1.20",
+      "pvm": "1.1160",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 36,
+    "fields": {
+      "producto": "OFI026",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI027",
+    "fields": {
+      "codigo_barras": "789260120027",
+      "nombre": "Cinta Adhesiva Transparente 48mm 027",
+      "descripcion": "Cinta Adhesiva Transparente 48mm 027 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI027.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 592,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 37,
+    "fields": {
+      "producto": "OFI027",
+      "pvp": "1.00",
+      "pvm": "0.9300",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 37,
+    "fields": {
+      "producto": "OFI027",
+      "stock": 896,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI028",
+    "fields": {
+      "codigo_barras": "789260120028",
+      "nombre": "Marcador Permanente 028",
+      "descripcion": "Marcador Permanente 028 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI028.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 233,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 38,
+    "fields": {
+      "producto": "OFI028",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 38,
+    "fields": {
+      "producto": "OFI028",
+      "stock": 1200,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI029",
+    "fields": {
+      "codigo_barras": "789260120029",
+      "nombre": "Corrector Líquido 20ml 029",
+      "descripcion": "Corrector Líquido 20ml 029 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI029.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 41,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 39,
+    "fields": {
+      "producto": "OFI029",
+      "pvp": "8.90",
+      "pvm": "8.2770",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 39,
+    "fields": {
+      "producto": "OFI029",
+      "stock": 1,
+      "ubicacion_bodega": "Bodega 1, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI030",
+    "fields": {
+      "codigo_barras": "789260120030",
+      "nombre": "Bandeja Organizadora A4 030",
+      "descripcion": "Bandeja Organizadora A4 030 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI030.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 498,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 40,
+    "fields": {
+      "producto": "OFI030",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 40,
+    "fields": {
+      "producto": "OFI030",
+      "stock": 72,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI031",
+    "fields": {
+      "codigo_barras": "789260120031",
+      "nombre": "Carpeta Plástica A4 031",
+      "descripcion": "Carpeta Plástica A4 031 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI031.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 134,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 41,
+    "fields": {
+      "producto": "OFI031",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 41,
+    "fields": {
+      "producto": "OFI031",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI032",
+    "fields": {
+      "codigo_barras": "789260120032",
+      "nombre": "Archivador Palanca A4 032",
+      "descripcion": "Archivador Palanca A4 032 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI032.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 175,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 42,
+    "fields": {
+      "producto": "OFI032",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 42,
+    "fields": {
+      "producto": "OFI032",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 1, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI033",
+    "fields": {
+      "codigo_barras": "789260120033",
+      "nombre": "Resma Papel Bond A4 75g 033",
+      "descripcion": "Resma Papel Bond A4 75g 033 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI033.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 272,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 43,
+    "fields": {
+      "producto": "OFI033",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 43,
+    "fields": {
+      "producto": "OFI033",
+      "stock": 180,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI034",
+    "fields": {
+      "codigo_barras": "789260120034",
+      "nombre": "Notas Adhesivas 76x76mm 034",
+      "descripcion": "Notas Adhesivas 76x76mm 034 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI034.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 585,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 44,
+    "fields": {
+      "producto": "OFI034",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 44,
+    "fields": {
+      "producto": "OFI034",
+      "stock": 180,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI035",
+    "fields": {
+      "codigo_barras": "789260120035",
+      "nombre": "Grapadora Metálica 035",
+      "descripcion": "Grapadora Metálica 035 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI035.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 326,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 45,
+    "fields": {
+      "producto": "OFI035",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 45,
+    "fields": {
+      "producto": "OFI035",
+      "stock": 112,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI036",
+    "fields": {
+      "codigo_barras": "789260120036",
+      "nombre": "Clips Metálicos (Caja) 036",
+      "descripcion": "Clips Metálicos (Caja) 036 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI036.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 507,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 46,
+    "fields": {
+      "producto": "OFI036",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 46,
+    "fields": {
+      "producto": "OFI036",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI037",
+    "fields": {
+      "codigo_barras": "789260120037",
+      "nombre": "Cinta Adhesiva Transparente 48mm 037",
+      "descripcion": "Cinta Adhesiva Transparente 48mm 037 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI037.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 417,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 47,
+    "fields": {
+      "producto": "OFI037",
+      "pvp": "8.90",
+      "pvm": "8.2770",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 47,
+    "fields": {
+      "producto": "OFI037",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 1, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI038",
+    "fields": {
+      "codigo_barras": "789260120038",
+      "nombre": "Marcador Permanente 038",
+      "descripcion": "Marcador Permanente 038 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI038.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 339,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 48,
+    "fields": {
+      "producto": "OFI038",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 48,
+    "fields": {
+      "producto": "OFI038",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 1, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI039",
+    "fields": {
+      "codigo_barras": "789260120039",
+      "nombre": "Corrector Líquido 20ml 039",
+      "descripcion": "Corrector Líquido 20ml 039 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI039.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 211,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 49,
+    "fields": {
+      "producto": "OFI039",
+      "pvp": "1.20",
+      "pvm": "1.1160",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 49,
+    "fields": {
+      "producto": "OFI039",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI040",
+    "fields": {
+      "codigo_barras": "789260120040",
+      "nombre": "Bandeja Organizadora A4 040",
+      "descripcion": "Bandeja Organizadora A4 040 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI040.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 128,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 50,
+    "fields": {
+      "producto": "OFI040",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 50,
+    "fields": {
+      "producto": "OFI040",
+      "stock": 180,
+      "ubicacion_bodega": "Bodega 1, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI041",
+    "fields": {
+      "codigo_barras": "789260120041",
+      "nombre": "Carpeta Plástica A4 041",
+      "descripcion": "Carpeta Plástica A4 041 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI041.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 93,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 51,
+    "fields": {
+      "producto": "OFI041",
+      "pvp": "6.10",
+      "pvm": "5.6730",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 51,
+    "fields": {
+      "producto": "OFI041",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI042",
+    "fields": {
+      "codigo_barras": "789260120042",
+      "nombre": "Archivador Palanca A4 042",
+      "descripcion": "Archivador Palanca A4 042 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI042.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 448,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 52,
+    "fields": {
+      "producto": "OFI042",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 52,
+    "fields": {
+      "producto": "OFI042",
+      "stock": 1,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI043",
+    "fields": {
+      "codigo_barras": "789260120043",
+      "nombre": "Resma Papel Bond A4 75g 043",
+      "descripcion": "Resma Papel Bond A4 75g 043 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI043.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 277,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 53,
+    "fields": {
+      "producto": "OFI043",
+      "pvp": "6.10",
+      "pvm": "5.6730",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 53,
+    "fields": {
+      "producto": "OFI043",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI044",
+    "fields": {
+      "codigo_barras": "789260120044",
+      "nombre": "Notas Adhesivas 76x76mm 044",
+      "descripcion": "Notas Adhesivas 76x76mm 044 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI044.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 31,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 54,
+    "fields": {
+      "producto": "OFI044",
+      "pvp": "1.00",
+      "pvm": "0.9300",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 54,
+    "fields": {
+      "producto": "OFI044",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI045",
+    "fields": {
+      "codigo_barras": "789260120045",
+      "nombre": "Grapadora Metálica 045",
+      "descripcion": "Grapadora Metálica 045 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI045.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 478,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 55,
+    "fields": {
+      "producto": "OFI045",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 55,
+    "fields": {
+      "producto": "OFI045",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI046",
+    "fields": {
+      "codigo_barras": "789260120046",
+      "nombre": "Clips Metálicos (Caja) 046",
+      "descripcion": "Clips Metálicos (Caja) 046 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI046.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 272,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 56,
+    "fields": {
+      "producto": "OFI046",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 56,
+    "fields": {
+      "producto": "OFI046",
+      "stock": 1200,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI047",
+    "fields": {
+      "codigo_barras": "789260120047",
+      "nombre": "Cinta Adhesiva Transparente 48mm 047",
+      "descripcion": "Cinta Adhesiva Transparente 48mm 047 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI047.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 366,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 57,
+    "fields": {
+      "producto": "OFI047",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 57,
+    "fields": {
+      "producto": "OFI047",
+      "stock": 72,
+      "ubicacion_bodega": "Bodega 1, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI048",
+    "fields": {
+      "codigo_barras": "789260120048",
+      "nombre": "Marcador Permanente 048",
+      "descripcion": "Marcador Permanente 048 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI048.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 204,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 58,
+    "fields": {
+      "producto": "OFI048",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 58,
+    "fields": {
+      "producto": "OFI048",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 1, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI049",
+    "fields": {
+      "codigo_barras": "789260120049",
+      "nombre": "Corrector Líquido 20ml 049",
+      "descripcion": "Corrector Líquido 20ml 049 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI049.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 307,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 59,
+    "fields": {
+      "producto": "OFI049",
+      "pvp": "17.70",
+      "pvm": "16.4610",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 59,
+    "fields": {
+      "producto": "OFI049",
+      "stock": 112,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI050",
+    "fields": {
+      "codigo_barras": "789260120050",
+      "nombre": "Bandeja Organizadora A4 050",
+      "descripcion": "Bandeja Organizadora A4 050 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI050.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 178,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 60,
+    "fields": {
+      "producto": "OFI050",
+      "pvp": "0.48",
+      "pvm": "0.4464",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 60,
+    "fields": {
+      "producto": "OFI050",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC001",
+    "fields": {
+      "codigo_barras": "789260120001",
+      "nombre": "Cuaderno Espiral 100 Hojas 001",
+      "descripcion": "Cuaderno Espiral 100 Hojas 001 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC001.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 4,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 61,
+    "fields": {
+      "producto": "ESC001",
+      "pvp": "1.20",
+      "pvm": "1.1160",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 61,
+    "fields": {
+      "producto": "ESC001",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC002",
+    "fields": {
+      "codigo_barras": "789260120002",
+      "nombre": "Lápiz HB #2 002",
+      "descripcion": "Lápiz HB #2 002 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC002.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 352,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 62,
+    "fields": {
+      "producto": "ESC002",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 62,
+    "fields": {
+      "producto": "ESC002",
+      "stock": 4,
+      "ubicacion_bodega": "Bodega 2, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC003",
+    "fields": {
+      "codigo_barras": "789260120003",
+      "nombre": "Borrador Blanco 003",
+      "descripcion": "Borrador Blanco 003 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC003.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 248,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 63,
+    "fields": {
+      "producto": "ESC003",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 63,
+    "fields": {
+      "producto": "ESC003",
+      "stock": 896,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC004",
+    "fields": {
+      "codigo_barras": "789260120004",
+      "nombre": "Sacapuntas Doble 004",
+      "descripcion": "Sacapuntas Doble 004 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC004.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 113,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 64,
+    "fields": {
+      "producto": "ESC004",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 64,
+    "fields": {
+      "producto": "ESC004",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 2, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC005",
+    "fields": {
+      "codigo_barras": "789260120005",
+      "nombre": "Regla 30cm 005",
+      "descripcion": "Regla 30cm 005 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC005.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 215,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 65,
+    "fields": {
+      "producto": "ESC005",
+      "pvp": "0.87",
+      "pvm": "0.8091",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 65,
+    "fields": {
+      "producto": "ESC005",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC006",
+    "fields": {
+      "codigo_barras": "789260120006",
+      "nombre": "Tijeras Escolares Punta Roma 006",
+      "descripcion": "Tijeras Escolares Punta Roma 006 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC006.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 345,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 66,
+    "fields": {
+      "producto": "ESC006",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 66,
+    "fields": {
+      "producto": "ESC006",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC007",
+    "fields": {
+      "codigo_barras": "789260120007",
+      "nombre": "Pegamento Líquido 200ml 007",
+      "descripcion": "Pegamento Líquido 200ml 007 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC007.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 325,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 67,
+    "fields": {
+      "producto": "ESC007",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 67,
+    "fields": {
+      "producto": "ESC007",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC008",
+    "fields": {
+      "codigo_barras": "789260120008",
+      "nombre": "Cartulina A4 (Pack) 008",
+      "descripcion": "Cartulina A4 (Pack) 008 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC008.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 373,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 68,
+    "fields": {
+      "producto": "ESC008",
+      "pvp": "14.26",
+      "pvm": "13.2618",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 68,
+    "fields": {
+      "producto": "ESC008",
+      "stock": 574,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC009",
+    "fields": {
+      "codigo_barras": "789260120009",
+      "nombre": "Colores 12 unidades 009",
+      "descripcion": "Colores 12 unidades 009 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC009.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 589,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 69,
+    "fields": {
+      "producto": "ESC009",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 69,
+    "fields": {
+      "producto": "ESC009",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 2, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC010",
+    "fields": {
+      "codigo_barras": "789260120010",
+      "nombre": "Marcadores Lavables (Pack) 010",
+      "descripcion": "Marcadores Lavables (Pack) 010 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC010.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 170,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 70,
+    "fields": {
+      "producto": "ESC010",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 70,
+    "fields": {
+      "producto": "ESC010",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC011",
+    "fields": {
+      "codigo_barras": "789260120011",
+      "nombre": "Cuaderno Espiral 100 Hojas 011",
+      "descripcion": "Cuaderno Espiral 100 Hojas 011 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC011.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 328,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 71,
+    "fields": {
+      "producto": "ESC011",
+      "pvp": "0.48",
+      "pvm": "0.4464",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 71,
+    "fields": {
+      "producto": "ESC011",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC012",
+    "fields": {
+      "codigo_barras": "789260120012",
+      "nombre": "Lápiz HB #2 012",
+      "descripcion": "Lápiz HB #2 012 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC012.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 101,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 72,
+    "fields": {
+      "producto": "ESC012",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 72,
+    "fields": {
+      "producto": "ESC012",
+      "stock": 4,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC013",
+    "fields": {
+      "codigo_barras": "789260120013",
+      "nombre": "Borrador Blanco 013",
+      "descripcion": "Borrador Blanco 013 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC013.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 59,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 73,
+    "fields": {
+      "producto": "ESC013",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 73,
+    "fields": {
+      "producto": "ESC013",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 2, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC014",
+    "fields": {
+      "codigo_barras": "789260120014",
+      "nombre": "Sacapuntas Doble 014",
+      "descripcion": "Sacapuntas Doble 014 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC014.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 459,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 74,
+    "fields": {
+      "producto": "ESC014",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 74,
+    "fields": {
+      "producto": "ESC014",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 2, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC015",
+    "fields": {
+      "codigo_barras": "789260120015",
+      "nombre": "Regla 30cm 015",
+      "descripcion": "Regla 30cm 015 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC015.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 488,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 75,
+    "fields": {
+      "producto": "ESC015",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 75,
+    "fields": {
+      "producto": "ESC015",
+      "stock": 180,
+      "ubicacion_bodega": "Bodega 2, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC016",
+    "fields": {
+      "codigo_barras": "789260120016",
+      "nombre": "Tijeras Escolares Punta Roma 016",
+      "descripcion": "Tijeras Escolares Punta Roma 016 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC016.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 318,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 76,
+    "fields": {
+      "producto": "ESC016",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 76,
+    "fields": {
+      "producto": "ESC016",
+      "stock": 574,
+      "ubicacion_bodega": "Bodega 2, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC017",
+    "fields": {
+      "codigo_barras": "789260120017",
+      "nombre": "Pegamento Líquido 200ml 017",
+      "descripcion": "Pegamento Líquido 200ml 017 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC017.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 379,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 77,
+    "fields": {
+      "producto": "ESC017",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 77,
+    "fields": {
+      "producto": "ESC017",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC018",
+    "fields": {
+      "codigo_barras": "789260120018",
+      "nombre": "Cartulina A4 (Pack) 018",
+      "descripcion": "Cartulina A4 (Pack) 018 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC018.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 66,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 78,
+    "fields": {
+      "producto": "ESC018",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 78,
+    "fields": {
+      "producto": "ESC018",
+      "stock": 22,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC019",
+    "fields": {
+      "codigo_barras": "789260120019",
+      "nombre": "Colores 12 unidades 019",
+      "descripcion": "Colores 12 unidades 019 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC019.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 556,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 79,
+    "fields": {
+      "producto": "ESC019",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 79,
+    "fields": {
+      "producto": "ESC019",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 2, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC020",
+    "fields": {
+      "codigo_barras": "789260120020",
+      "nombre": "Marcadores Lavables (Pack) 020",
+      "descripcion": "Marcadores Lavables (Pack) 020 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC020.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 506,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 80,
+    "fields": {
+      "producto": "ESC020",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 80,
+    "fields": {
+      "producto": "ESC020",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC021",
+    "fields": {
+      "codigo_barras": "789260120021",
+      "nombre": "Cuaderno Espiral 100 Hojas 021",
+      "descripcion": "Cuaderno Espiral 100 Hojas 021 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC021.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 496,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 81,
+    "fields": {
+      "producto": "ESC021",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 81,
+    "fields": {
+      "producto": "ESC021",
+      "stock": 1,
+      "ubicacion_bodega": "Bodega 2, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC022",
+    "fields": {
+      "codigo_barras": "789260120022",
+      "nombre": "Lápiz HB #2 022",
+      "descripcion": "Lápiz HB #2 022 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC022.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 320,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 82,
+    "fields": {
+      "producto": "ESC022",
+      "pvp": "0.48",
+      "pvm": "0.4464",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 82,
+    "fields": {
+      "producto": "ESC022",
+      "stock": 112,
+      "ubicacion_bodega": "Bodega 2, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC023",
+    "fields": {
+      "codigo_barras": "789260120023",
+      "nombre": "Borrador Blanco 023",
+      "descripcion": "Borrador Blanco 023 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC023.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 515,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 83,
+    "fields": {
+      "producto": "ESC023",
+      "pvp": "25.30",
+      "pvm": "23.5290",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 83,
+    "fields": {
+      "producto": "ESC023",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 2, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC024",
+    "fields": {
+      "codigo_barras": "789260120024",
+      "nombre": "Sacapuntas Doble 024",
+      "descripcion": "Sacapuntas Doble 024 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC024.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 600,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 84,
+    "fields": {
+      "producto": "ESC024",
+      "pvp": "14.26",
+      "pvm": "13.2618",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 84,
+    "fields": {
+      "producto": "ESC024",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 2, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC025",
+    "fields": {
+      "codigo_barras": "789260120025",
+      "nombre": "Regla 30cm 025",
+      "descripcion": "Regla 30cm 025 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC025.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 553,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 85,
+    "fields": {
+      "producto": "ESC025",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 85,
+    "fields": {
+      "producto": "ESC025",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC026",
+    "fields": {
+      "codigo_barras": "789260120026",
+      "nombre": "Tijeras Escolares Punta Roma 026",
+      "descripcion": "Tijeras Escolares Punta Roma 026 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC026.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 414,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 86,
+    "fields": {
+      "producto": "ESC026",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 86,
+    "fields": {
+      "producto": "ESC026",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC027",
+    "fields": {
+      "codigo_barras": "789260120027",
+      "nombre": "Pegamento Líquido 200ml 027",
+      "descripcion": "Pegamento Líquido 200ml 027 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC027.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 180,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 87,
+    "fields": {
+      "producto": "ESC027",
+      "pvp": "1.00",
+      "pvm": "0.9300",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 87,
+    "fields": {
+      "producto": "ESC027",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC028",
+    "fields": {
+      "codigo_barras": "789260120028",
+      "nombre": "Cartulina A4 (Pack) 028",
+      "descripcion": "Cartulina A4 (Pack) 028 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC028.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 555,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 88,
+    "fields": {
+      "producto": "ESC028",
+      "pvp": "0.87",
+      "pvm": "0.8091",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 88,
+    "fields": {
+      "producto": "ESC028",
+      "stock": 4,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC029",
+    "fields": {
+      "codigo_barras": "789260120029",
+      "nombre": "Colores 12 unidades 029",
+      "descripcion": "Colores 12 unidades 029 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC029.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 465,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 89,
+    "fields": {
+      "producto": "ESC029",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 89,
+    "fields": {
+      "producto": "ESC029",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC030",
+    "fields": {
+      "codigo_barras": "789260120030",
+      "nombre": "Marcadores Lavables (Pack) 030",
+      "descripcion": "Marcadores Lavables (Pack) 030 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC030.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 253,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 90,
+    "fields": {
+      "producto": "ESC030",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 90,
+    "fields": {
+      "producto": "ESC030",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC031",
+    "fields": {
+      "codigo_barras": "789260120031",
+      "nombre": "Cuaderno Espiral 100 Hojas 031",
+      "descripcion": "Cuaderno Espiral 100 Hojas 031 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC031.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 274,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 91,
+    "fields": {
+      "producto": "ESC031",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 91,
+    "fields": {
+      "producto": "ESC031",
+      "stock": 574,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC032",
+    "fields": {
+      "codigo_barras": "789260120032",
+      "nombre": "Lápiz HB #2 032",
+      "descripcion": "Lápiz HB #2 032 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC032.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 235,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 92,
+    "fields": {
+      "producto": "ESC032",
+      "pvp": "8.90",
+      "pvm": "8.2770",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 92,
+    "fields": {
+      "producto": "ESC032",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 2, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC033",
+    "fields": {
+      "codigo_barras": "789260120033",
+      "nombre": "Borrador Blanco 033",
+      "descripcion": "Borrador Blanco 033 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC033.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 103,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 93,
+    "fields": {
+      "producto": "ESC033",
+      "pvp": "0.87",
+      "pvm": "0.8091",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 93,
+    "fields": {
+      "producto": "ESC033",
+      "stock": 896,
+      "ubicacion_bodega": "Bodega 2, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC034",
+    "fields": {
+      "codigo_barras": "789260120034",
+      "nombre": "Sacapuntas Doble 034",
+      "descripcion": "Sacapuntas Doble 034 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC034.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 562,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 94,
+    "fields": {
+      "producto": "ESC034",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 94,
+    "fields": {
+      "producto": "ESC034",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC035",
+    "fields": {
+      "codigo_barras": "789260120035",
+      "nombre": "Regla 30cm 035",
+      "descripcion": "Regla 30cm 035 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC035.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 66,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 95,
+    "fields": {
+      "producto": "ESC035",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 95,
+    "fields": {
+      "producto": "ESC035",
+      "stock": 1,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC036",
+    "fields": {
+      "codigo_barras": "789260120036",
+      "nombre": "Tijeras Escolares Punta Roma 036",
+      "descripcion": "Tijeras Escolares Punta Roma 036 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC036.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 250,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 96,
+    "fields": {
+      "producto": "ESC036",
+      "pvp": "25.30",
+      "pvm": "23.5290",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 96,
+    "fields": {
+      "producto": "ESC036",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 2, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC037",
+    "fields": {
+      "codigo_barras": "789260120037",
+      "nombre": "Pegamento Líquido 200ml 037",
+      "descripcion": "Pegamento Líquido 200ml 037 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC037.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 493,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 97,
+    "fields": {
+      "producto": "ESC037",
+      "pvp": "1.00",
+      "pvm": "0.9300",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 97,
+    "fields": {
+      "producto": "ESC037",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC038",
+    "fields": {
+      "codigo_barras": "789260120038",
+      "nombre": "Cartulina A4 (Pack) 038",
+      "descripcion": "Cartulina A4 (Pack) 038 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC038.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 523,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 98,
+    "fields": {
+      "producto": "ESC038",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 98,
+    "fields": {
+      "producto": "ESC038",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 2, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC039",
+    "fields": {
+      "codigo_barras": "789260120039",
+      "nombre": "Colores 12 unidades 039",
+      "descripcion": "Colores 12 unidades 039 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC039.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 530,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 99,
+    "fields": {
+      "producto": "ESC039",
+      "pvp": "14.26",
+      "pvm": "13.2618",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 99,
+    "fields": {
+      "producto": "ESC039",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 2, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC040",
+    "fields": {
+      "codigo_barras": "789260120040",
+      "nombre": "Marcadores Lavables (Pack) 040",
+      "descripcion": "Marcadores Lavables (Pack) 040 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC040.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 31,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 100,
+    "fields": {
+      "producto": "ESC040",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 100,
+    "fields": {
+      "producto": "ESC040",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC041",
+    "fields": {
+      "codigo_barras": "789260120041",
+      "nombre": "Cuaderno Espiral 100 Hojas 041",
+      "descripcion": "Cuaderno Espiral 100 Hojas 041 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC041.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 241,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 101,
+    "fields": {
+      "producto": "ESC041",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 101,
+    "fields": {
+      "producto": "ESC041",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC042",
+    "fields": {
+      "codigo_barras": "789260120042",
+      "nombre": "Lápiz HB #2 042",
+      "descripcion": "Lápiz HB #2 042 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC042.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 10,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 102,
+    "fields": {
+      "producto": "ESC042",
+      "pvp": "8.90",
+      "pvm": "8.2770",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 102,
+    "fields": {
+      "producto": "ESC042",
+      "stock": 1200,
+      "ubicacion_bodega": "Bodega 2, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC043",
+    "fields": {
+      "codigo_barras": "789260120043",
+      "nombre": "Borrador Blanco 043",
+      "descripcion": "Borrador Blanco 043 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC043.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 316,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 103,
+    "fields": {
+      "producto": "ESC043",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 103,
+    "fields": {
+      "producto": "ESC043",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 2, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC044",
+    "fields": {
+      "codigo_barras": "789260120044",
+      "nombre": "Sacapuntas Doble 044",
+      "descripcion": "Sacapuntas Doble 044 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC044.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 411,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 104,
+    "fields": {
+      "producto": "ESC044",
+      "pvp": "17.70",
+      "pvm": "16.4610",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 104,
+    "fields": {
+      "producto": "ESC044",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC045",
+    "fields": {
+      "codigo_barras": "789260120045",
+      "nombre": "Regla 30cm 045",
+      "descripcion": "Regla 30cm 045 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC045.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 243,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 105,
+    "fields": {
+      "producto": "ESC045",
+      "pvp": "14.26",
+      "pvm": "13.2618",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 105,
+    "fields": {
+      "producto": "ESC045",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 2, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC046",
+    "fields": {
+      "codigo_barras": "789260120046",
+      "nombre": "Tijeras Escolares Punta Roma 046",
+      "descripcion": "Tijeras Escolares Punta Roma 046 - producto generado (MVP).",
+      "marca": "SchoolLine",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC046.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 318,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 106,
+    "fields": {
+      "producto": "ESC046",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 106,
+    "fields": {
+      "producto": "ESC046",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 2, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC047",
+    "fields": {
+      "codigo_barras": "789260120047",
+      "nombre": "Pegamento Líquido 200ml 047",
+      "descripcion": "Pegamento Líquido 200ml 047 - producto generado (MVP).",
+      "marca": "GraphiPlus",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC047.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 28,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 107,
+    "fields": {
+      "producto": "ESC047",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 107,
+    "fields": {
+      "producto": "ESC047",
+      "stock": 72,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC048",
+    "fields": {
+      "codigo_barras": "789260120048",
+      "nombre": "Cartulina A4 (Pack) 048",
+      "descripcion": "Cartulina A4 (Pack) 048 - producto generado (MVP).",
+      "marca": "SafeCut",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC048.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 351,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 108,
+    "fields": {
+      "producto": "ESC048",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 108,
+    "fields": {
+      "producto": "ESC048",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 2, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC049",
+    "fields": {
+      "codigo_barras": "789260120049",
+      "nombre": "Colores 12 unidades 049",
+      "descripcion": "Colores 12 unidades 049 - producto generado (MVP).",
+      "marca": "Adherix",
+      "categoria": 2,
+      "subcategoria": 4,
+      "variante": 5,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC049.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 468,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 109,
+    "fields": {
+      "producto": "ESC049",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 109,
+    "fields": {
+      "producto": "ESC049",
+      "stock": 4,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "ESC050",
+    "fields": {
+      "codigo_barras": "789260120050",
+      "nombre": "Marcadores Lavables (Pack) 050",
+      "descripcion": "Marcadores Lavables (Pack) 050 - producto generado (MVP).",
+      "marca": "ColorArt",
+      "categoria": 2,
+      "subcategoria": 5,
+      "variante": 6,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/ESC050.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 234,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 110,
+    "fields": {
+      "producto": "ESC050",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 110,
+    "fields": {
+      "producto": "ESC050",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 2, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC001",
+    "fields": {
+      "codigo_barras": "789260120001",
+      "nombre": "Memoria USB 32GB 001",
+      "descripcion": "Memoria USB 32GB 001 - producto generado (MVP).",
+      "marca": "DataFlash",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC001.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 326,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 111,
+    "fields": {
+      "producto": "TEC001",
+      "pvp": "8.41",
+      "pvm": "7.8213",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 111,
+    "fields": {
+      "producto": "TEC001",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 3, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC002",
+    "fields": {
+      "codigo_barras": "789260120002",
+      "nombre": "Memoria USB 64GB 002",
+      "descripcion": "Memoria USB 64GB 002 - producto generado (MVP).",
+      "marca": "SoundGo",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC002.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 101,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 112,
+    "fields": {
+      "producto": "TEC002",
+      "pvp": "18.35",
+      "pvm": "17.0655",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 112,
+    "fields": {
+      "producto": "TEC002",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 3, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC003",
+    "fields": {
+      "codigo_barras": "789260120003",
+      "nombre": "Audífonos Bluetooth 003",
+      "descripcion": "Audífonos Bluetooth 003 - producto generado (MVP).",
+      "marca": "TechNova",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC003.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 73,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 113,
+    "fields": {
+      "producto": "TEC003",
+      "pvp": "10.52",
+      "pvm": "9.7836",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 113,
+    "fields": {
+      "producto": "TEC003",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 3, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC004",
+    "fields": {
+      "codigo_barras": "789260120004",
+      "nombre": "Cable USB-C 1m 004",
+      "descripcion": "Cable USB-C 1m 004 - producto generado (MVP).",
+      "marca": "WireLink",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC004.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 123,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 114,
+    "fields": {
+      "producto": "TEC004",
+      "pvp": "150.73",
+      "pvm": "140.1789",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 114,
+    "fields": {
+      "producto": "TEC004",
+      "stock": 574,
+      "ubicacion_bodega": "Bodega 3, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC005",
+    "fields": {
+      "codigo_barras": "789260120005",
+      "nombre": "Cargador 20W USB-C 005",
+      "descripcion": "Cargador 20W USB-C 005 - producto generado (MVP).",
+      "marca": "PowerPlus",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC005.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 321,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 115,
+    "fields": {
+      "producto": "TEC005",
+      "pvp": "25.30",
+      "pvm": "23.5290",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 115,
+    "fields": {
+      "producto": "TEC005",
+      "stock": 1,
+      "ubicacion_bodega": "Bodega 3, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC006",
+    "fields": {
+      "codigo_barras": "789260120006",
+      "nombre": "Mouse Inalámbrico 006",
+      "descripcion": "Mouse Inalámbrico 006 - producto generado (MVP).",
+      "marca": "DataFlash",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC006.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 369,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 116,
+    "fields": {
+      "producto": "TEC006",
+      "pvp": "75.37",
+      "pvm": "70.0941",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 116,
+    "fields": {
+      "producto": "TEC006",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 3, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC007",
+    "fields": {
+      "codigo_barras": "789260120007",
+      "nombre": "Teclado Bluetooth 007",
+      "descripcion": "Teclado Bluetooth 007 - producto generado (MVP).",
+      "marca": "SoundGo",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC007.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 547,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 117,
+    "fields": {
+      "producto": "TEC007",
+      "pvp": "25.78",
+      "pvm": "23.9754",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 117,
+    "fields": {
+      "producto": "TEC007",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 3, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC008",
+    "fields": {
+      "codigo_barras": "789260120008",
+      "nombre": "Adaptador HDMI 008",
+      "descripcion": "Adaptador HDMI 008 - producto generado (MVP).",
+      "marca": "TechNova",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC008.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 500,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 118,
+    "fields": {
+      "producto": "TEC008",
+      "pvp": "15.68",
+      "pvm": "14.5824",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 118,
+    "fields": {
+      "producto": "TEC008",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 3, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC009",
+    "fields": {
+      "codigo_barras": "789260120009",
+      "nombre": "Power Bank 10,000mAh 009",
+      "descripcion": "Power Bank 10,000mAh 009 - producto generado (MVP).",
+      "marca": "WireLink",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC009.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 355,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 119,
+    "fields": {
+      "producto": "TEC009",
+      "pvp": "35.72",
+      "pvm": "33.2196",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 119,
+    "fields": {
+      "producto": "TEC009",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 3, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC010",
+    "fields": {
+      "codigo_barras": "789260120010",
+      "nombre": "Tarjeta MicroSD 64GB 010",
+      "descripcion": "Tarjeta MicroSD 64GB 010 - producto generado (MVP).",
+      "marca": "PowerPlus",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC010.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 44,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 120,
+    "fields": {
+      "producto": "TEC010",
+      "pvp": "25.28",
+      "pvm": "23.5104",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 120,
+    "fields": {
+      "producto": "TEC010",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 3, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC011",
+    "fields": {
+      "codigo_barras": "789260120011",
+      "nombre": "Memoria USB 32GB 011",
+      "descripcion": "Memoria USB 32GB 011 - producto generado (MVP).",
+      "marca": "DataFlash",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC011.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 578,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 121,
+    "fields": {
+      "producto": "TEC011",
+      "pvp": "12.45",
+      "pvm": "11.5785",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 121,
+    "fields": {
+      "producto": "TEC011",
+      "stock": 180,
+      "ubicacion_bodega": "Bodega 3, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC012",
+    "fields": {
+      "codigo_barras": "789260120012",
+      "nombre": "Memoria USB 64GB 012",
+      "descripcion": "Memoria USB 64GB 012 - producto generado (MVP).",
+      "marca": "SoundGo",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC012.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 128,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 122,
+    "fields": {
+      "producto": "TEC012",
+      "pvp": "150.68",
+      "pvm": "140.1324",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 122,
+    "fields": {
+      "producto": "TEC012",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 3, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC013",
+    "fields": {
+      "codigo_barras": "789260120013",
+      "nombre": "Audífonos Bluetooth 013",
+      "descripcion": "Audífonos Bluetooth 013 - producto generado (MVP).",
+      "marca": "TechNova",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC013.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 329,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 123,
+    "fields": {
+      "producto": "TEC013",
+      "pvp": "8.59",
+      "pvm": "7.9887",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 123,
+    "fields": {
+      "producto": "TEC013",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 3, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC014",
+    "fields": {
+      "codigo_barras": "789260120014",
+      "nombre": "Cable USB-C 1m 014",
+      "descripcion": "Cable USB-C 1m 014 - producto generado (MVP).",
+      "marca": "WireLink",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC014.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 378,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 124,
+    "fields": {
+      "producto": "TEC014",
+      "pvp": "12.09",
+      "pvm": "11.2437",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 124,
+    "fields": {
+      "producto": "TEC014",
+      "stock": 574,
+      "ubicacion_bodega": "Bodega 3, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC015",
+    "fields": {
+      "codigo_barras": "789260120015",
+      "nombre": "Cargador 20W USB-C 015",
+      "descripcion": "Cargador 20W USB-C 015 - producto generado (MVP).",
+      "marca": "PowerPlus",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC015.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 55,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 125,
+    "fields": {
+      "producto": "TEC015",
+      "pvp": "10.61",
+      "pvm": "9.8673",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 125,
+    "fields": {
+      "producto": "TEC015",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 3, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC016",
+    "fields": {
+      "codigo_barras": "789260120016",
+      "nombre": "Mouse Inalámbrico 016",
+      "descripcion": "Mouse Inalámbrico 016 - producto generado (MVP).",
+      "marca": "DataFlash",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC016.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 534,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 126,
+    "fields": {
+      "producto": "TEC016",
+      "pvp": "120.37",
+      "pvm": "111.9441",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 126,
+    "fields": {
+      "producto": "TEC016",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 3, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC017",
+    "fields": {
+      "codigo_barras": "789260120017",
+      "nombre": "Teclado Bluetooth 017",
+      "descripcion": "Teclado Bluetooth 017 - producto generado (MVP).",
+      "marca": "SoundGo",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC017.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 264,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 127,
+    "fields": {
+      "producto": "TEC017",
+      "pvp": "50.11",
+      "pvm": "46.6023",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 127,
+    "fields": {
+      "producto": "TEC017",
+      "stock": 1,
+      "ubicacion_bodega": "Bodega 3, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC018",
+    "fields": {
+      "codigo_barras": "789260120018",
+      "nombre": "Adaptador HDMI 018",
+      "descripcion": "Adaptador HDMI 018 - producto generado (MVP).",
+      "marca": "TechNova",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC018.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 321,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 128,
+    "fields": {
+      "producto": "TEC018",
+      "pvp": "50.75",
+      "pvm": "47.1975",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 128,
+    "fields": {
+      "producto": "TEC018",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 3, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC019",
+    "fields": {
+      "codigo_barras": "789260120019",
+      "nombre": "Power Bank 10,000mAh 019",
+      "descripcion": "Power Bank 10,000mAh 019 - producto generado (MVP).",
+      "marca": "WireLink",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC019.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 391,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 129,
+    "fields": {
+      "producto": "TEC019",
+      "pvp": "120.44",
+      "pvm": "112.0092",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 129,
+    "fields": {
+      "producto": "TEC019",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 3, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC020",
+    "fields": {
+      "codigo_barras": "789260120020",
+      "nombre": "Tarjeta MicroSD 64GB 020",
+      "descripcion": "Tarjeta MicroSD 64GB 020 - producto generado (MVP).",
+      "marca": "PowerPlus",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC020.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 186,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 130,
+    "fields": {
+      "producto": "TEC020",
+      "pvp": "150.16",
+      "pvm": "139.6488",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 130,
+    "fields": {
+      "producto": "TEC020",
+      "stock": 4,
+      "ubicacion_bodega": "Bodega 3, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC021",
+    "fields": {
+      "codigo_barras": "789260120021",
+      "nombre": "Memoria USB 32GB 021",
+      "descripcion": "Memoria USB 32GB 021 - producto generado (MVP).",
+      "marca": "DataFlash",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC021.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 322,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 131,
+    "fields": {
+      "producto": "TEC021",
+      "pvp": "35.00",
+      "pvm": "32.5500",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 131,
+    "fields": {
+      "producto": "TEC021",
+      "stock": 180,
+      "ubicacion_bodega": "Bodega 3, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC022",
+    "fields": {
+      "codigo_barras": "789260120022",
+      "nombre": "Memoria USB 64GB 022",
+      "descripcion": "Memoria USB 64GB 022 - producto generado (MVP).",
+      "marca": "SoundGo",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC022.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 266,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 132,
+    "fields": {
+      "producto": "TEC022",
+      "pvp": "8.55",
+      "pvm": "7.9515",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 132,
+    "fields": {
+      "producto": "TEC022",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 3, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC023",
+    "fields": {
+      "codigo_barras": "789260120023",
+      "nombre": "Audífonos Bluetooth 023",
+      "descripcion": "Audífonos Bluetooth 023 - producto generado (MVP).",
+      "marca": "TechNova",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC023.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 515,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 133,
+    "fields": {
+      "producto": "TEC023",
+      "pvp": "150.77",
+      "pvm": "140.2161",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 133,
+    "fields": {
+      "producto": "TEC023",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 3, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC024",
+    "fields": {
+      "codigo_barras": "789260120024",
+      "nombre": "Cable USB-C 1m 024",
+      "descripcion": "Cable USB-C 1m 024 - producto generado (MVP).",
+      "marca": "WireLink",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC024.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 579,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 134,
+    "fields": {
+      "producto": "TEC024",
+      "pvp": "35.62",
+      "pvm": "33.1266",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 134,
+    "fields": {
+      "producto": "TEC024",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 3, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC025",
+    "fields": {
+      "codigo_barras": "789260120025",
+      "nombre": "Cargador 20W USB-C 025",
+      "descripcion": "Cargador 20W USB-C 025 - producto generado (MVP).",
+      "marca": "PowerPlus",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC025.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 549,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 135,
+    "fields": {
+      "producto": "TEC025",
+      "pvp": "12.21",
+      "pvm": "11.3553",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 135,
+    "fields": {
+      "producto": "TEC025",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 3, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC026",
+    "fields": {
+      "codigo_barras": "789260120026",
+      "nombre": "Mouse Inalámbrico 026",
+      "descripcion": "Mouse Inalámbrico 026 - producto generado (MVP).",
+      "marca": "DataFlash",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC026.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 152,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 136,
+    "fields": {
+      "producto": "TEC026",
+      "pvp": "50.74",
+      "pvm": "47.1882",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 136,
+    "fields": {
+      "producto": "TEC026",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 3, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC027",
+    "fields": {
+      "codigo_barras": "789260120027",
+      "nombre": "Teclado Bluetooth 027",
+      "descripcion": "Teclado Bluetooth 027 - producto generado (MVP).",
+      "marca": "SoundGo",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC027.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 207,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 137,
+    "fields": {
+      "producto": "TEC027",
+      "pvp": "12.85",
+      "pvm": "11.9505",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 137,
+    "fields": {
+      "producto": "TEC027",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 3, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC028",
+    "fields": {
+      "codigo_barras": "789260120028",
+      "nombre": "Adaptador HDMI 028",
+      "descripcion": "Adaptador HDMI 028 - producto generado (MVP).",
+      "marca": "TechNova",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC028.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 155,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 138,
+    "fields": {
+      "producto": "TEC028",
+      "pvp": "8.03",
+      "pvm": "7.4679",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 138,
+    "fields": {
+      "producto": "TEC028",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 3, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC029",
+    "fields": {
+      "codigo_barras": "789260120029",
+      "nombre": "Power Bank 10,000mAh 029",
+      "descripcion": "Power Bank 10,000mAh 029 - producto generado (MVP).",
+      "marca": "WireLink",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC029.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 47,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 139,
+    "fields": {
+      "producto": "TEC029",
+      "pvp": "150.14",
+      "pvm": "139.6302",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 139,
+    "fields": {
+      "producto": "TEC029",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 3, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC030",
+    "fields": {
+      "codigo_barras": "789260120030",
+      "nombre": "Tarjeta MicroSD 64GB 030",
+      "descripcion": "Tarjeta MicroSD 64GB 030 - producto generado (MVP).",
+      "marca": "PowerPlus",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC030.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 142,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 140,
+    "fields": {
+      "producto": "TEC030",
+      "pvp": "150.58",
+      "pvm": "140.0394",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 140,
+    "fields": {
+      "producto": "TEC030",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 3, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC031",
+    "fields": {
+      "codigo_barras": "789260120031",
+      "nombre": "Memoria USB 32GB 031",
+      "descripcion": "Memoria USB 32GB 031 - producto generado (MVP).",
+      "marca": "DataFlash",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC031.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 409,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 141,
+    "fields": {
+      "producto": "TEC031",
+      "pvp": "15.82",
+      "pvm": "14.7126",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 141,
+    "fields": {
+      "producto": "TEC031",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 3, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC032",
+    "fields": {
+      "codigo_barras": "789260120032",
+      "nombre": "Memoria USB 64GB 032",
+      "descripcion": "Memoria USB 64GB 032 - producto generado (MVP).",
+      "marca": "SoundGo",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC032.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 165,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 142,
+    "fields": {
+      "producto": "TEC032",
+      "pvp": "8.96",
+      "pvm": "8.3328",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 142,
+    "fields": {
+      "producto": "TEC032",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 3, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC033",
+    "fields": {
+      "codigo_barras": "789260120033",
+      "nombre": "Audífonos Bluetooth 033",
+      "descripcion": "Audífonos Bluetooth 033 - producto generado (MVP).",
+      "marca": "TechNova",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC033.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 449,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 143,
+    "fields": {
+      "producto": "TEC033",
+      "pvp": "120.45",
+      "pvm": "112.0185",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 143,
+    "fields": {
+      "producto": "TEC033",
+      "stock": 574,
+      "ubicacion_bodega": "Bodega 3, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC034",
+    "fields": {
+      "codigo_barras": "789260120034",
+      "nombre": "Cable USB-C 1m 034",
+      "descripcion": "Cable USB-C 1m 034 - producto generado (MVP).",
+      "marca": "WireLink",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC034.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 126,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 144,
+    "fields": {
+      "producto": "TEC034",
+      "pvp": "75.84",
+      "pvm": "70.5312",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 144,
+    "fields": {
+      "producto": "TEC034",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 3, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC035",
+    "fields": {
+      "codigo_barras": "789260120035",
+      "nombre": "Cargador 20W USB-C 035",
+      "descripcion": "Cargador 20W USB-C 035 - producto generado (MVP).",
+      "marca": "PowerPlus",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC035.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 562,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 145,
+    "fields": {
+      "producto": "TEC035",
+      "pvp": "120.58",
+      "pvm": "112.1394",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 145,
+    "fields": {
+      "producto": "TEC035",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 3, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC036",
+    "fields": {
+      "codigo_barras": "789260120036",
+      "nombre": "Mouse Inalámbrico 036",
+      "descripcion": "Mouse Inalámbrico 036 - producto generado (MVP).",
+      "marca": "DataFlash",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC036.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 76,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 146,
+    "fields": {
+      "producto": "TEC036",
+      "pvp": "25.38",
+      "pvm": "23.6034",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 146,
+    "fields": {
+      "producto": "TEC036",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 3, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC037",
+    "fields": {
+      "codigo_barras": "789260120037",
+      "nombre": "Teclado Bluetooth 037",
+      "descripcion": "Teclado Bluetooth 037 - producto generado (MVP).",
+      "marca": "SoundGo",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC037.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 48,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 147,
+    "fields": {
+      "producto": "TEC037",
+      "pvp": "150.72",
+      "pvm": "140.1696",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 147,
+    "fields": {
+      "producto": "TEC037",
+      "stock": 1,
+      "ubicacion_bodega": "Bodega 3, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC038",
+    "fields": {
+      "codigo_barras": "789260120038",
+      "nombre": "Adaptador HDMI 038",
+      "descripcion": "Adaptador HDMI 038 - producto generado (MVP).",
+      "marca": "TechNova",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC038.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 186,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 148,
+    "fields": {
+      "producto": "TEC038",
+      "pvp": "25.84",
+      "pvm": "24.0312",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 148,
+    "fields": {
+      "producto": "TEC038",
+      "stock": 1200,
+      "ubicacion_bodega": "Bodega 3, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC039",
+    "fields": {
+      "codigo_barras": "789260120039",
+      "nombre": "Power Bank 10,000mAh 039",
+      "descripcion": "Power Bank 10,000mAh 039 - producto generado (MVP).",
+      "marca": "WireLink",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC039.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 533,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 149,
+    "fields": {
+      "producto": "TEC039",
+      "pvp": "18.99",
+      "pvm": "17.6607",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 149,
+    "fields": {
+      "producto": "TEC039",
+      "stock": 72,
+      "ubicacion_bodega": "Bodega 3, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC040",
+    "fields": {
+      "codigo_barras": "789260120040",
+      "nombre": "Tarjeta MicroSD 64GB 040",
+      "descripcion": "Tarjeta MicroSD 64GB 040 - producto generado (MVP).",
+      "marca": "PowerPlus",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC040.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 97,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 150,
+    "fields": {
+      "producto": "TEC040",
+      "pvp": "12.35",
+      "pvm": "11.4855",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 150,
+    "fields": {
+      "producto": "TEC040",
+      "stock": 112,
+      "ubicacion_bodega": "Bodega 3, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC041",
+    "fields": {
+      "codigo_barras": "789260120041",
+      "nombre": "Memoria USB 32GB 041",
+      "descripcion": "Memoria USB 32GB 041 - producto generado (MVP).",
+      "marca": "DataFlash",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC041.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 313,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 151,
+    "fields": {
+      "producto": "TEC041",
+      "pvp": "15.47",
+      "pvm": "14.3871",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 151,
+    "fields": {
+      "producto": "TEC041",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 3, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC042",
+    "fields": {
+      "codigo_barras": "789260120042",
+      "nombre": "Memoria USB 64GB 042",
+      "descripcion": "Memoria USB 64GB 042 - producto generado (MVP).",
+      "marca": "SoundGo",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC042.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 500,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 152,
+    "fields": {
+      "producto": "TEC042",
+      "pvp": "15.35",
+      "pvm": "14.2755",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 152,
+    "fields": {
+      "producto": "TEC042",
+      "stock": 4,
+      "ubicacion_bodega": "Bodega 3, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC043",
+    "fields": {
+      "codigo_barras": "789260120043",
+      "nombre": "Audífonos Bluetooth 043",
+      "descripcion": "Audífonos Bluetooth 043 - producto generado (MVP).",
+      "marca": "TechNova",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC043.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 224,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 153,
+    "fields": {
+      "producto": "TEC043",
+      "pvp": "150.46",
+      "pvm": "139.9278",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 153,
+    "fields": {
+      "producto": "TEC043",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 3, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC044",
+    "fields": {
+      "codigo_barras": "789260120044",
+      "nombre": "Cable USB-C 1m 044",
+      "descripcion": "Cable USB-C 1m 044 - producto generado (MVP).",
+      "marca": "WireLink",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC044.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 119,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 154,
+    "fields": {
+      "producto": "TEC044",
+      "pvp": "120.09",
+      "pvm": "111.6837",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 154,
+    "fields": {
+      "producto": "TEC044",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 3, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC045",
+    "fields": {
+      "codigo_barras": "789260120045",
+      "nombre": "Cargador 20W USB-C 045",
+      "descripcion": "Cargador 20W USB-C 045 - producto generado (MVP).",
+      "marca": "PowerPlus",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC045.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 239,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 155,
+    "fields": {
+      "producto": "TEC045",
+      "pvp": "120.84",
+      "pvm": "112.3812",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 155,
+    "fields": {
+      "producto": "TEC045",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 3, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC046",
+    "fields": {
+      "codigo_barras": "789260120046",
+      "nombre": "Mouse Inalámbrico 046",
+      "descripcion": "Mouse Inalámbrico 046 - producto generado (MVP).",
+      "marca": "DataFlash",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC046.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 39,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 156,
+    "fields": {
+      "producto": "TEC046",
+      "pvp": "18.34",
+      "pvm": "17.0562",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 156,
+    "fields": {
+      "producto": "TEC046",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 3, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC047",
+    "fields": {
+      "codigo_barras": "789260120047",
+      "nombre": "Teclado Bluetooth 047",
+      "descripcion": "Teclado Bluetooth 047 - producto generado (MVP).",
+      "marca": "SoundGo",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC047.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 165,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 157,
+    "fields": {
+      "producto": "TEC047",
+      "pvp": "150.37",
+      "pvm": "139.8441",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 157,
+    "fields": {
+      "producto": "TEC047",
+      "stock": 72,
+      "ubicacion_bodega": "Bodega 3, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC048",
+    "fields": {
+      "codigo_barras": "789260120048",
+      "nombre": "Adaptador HDMI 048",
+      "descripcion": "Adaptador HDMI 048 - producto generado (MVP).",
+      "marca": "TechNova",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC048.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 199,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 158,
+    "fields": {
+      "producto": "TEC048",
+      "pvp": "35.30",
+      "pvm": "32.8290",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 158,
+    "fields": {
+      "producto": "TEC048",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 3, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC049",
+    "fields": {
+      "codigo_barras": "789260120049",
+      "nombre": "Power Bank 10,000mAh 049",
+      "descripcion": "Power Bank 10,000mAh 049 - producto generado (MVP).",
+      "marca": "WireLink",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 7,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC049.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 591,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 159,
+    "fields": {
+      "producto": "TEC049",
+      "pvp": "18.26",
+      "pvm": "16.9818",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 159,
+    "fields": {
+      "producto": "TEC049",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 3, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "TEC050",
+    "fields": {
+      "codigo_barras": "789260120050",
+      "nombre": "Tarjeta MicroSD 64GB 050",
+      "descripcion": "Tarjeta MicroSD 64GB 050 - producto generado (MVP).",
+      "marca": "PowerPlus",
+      "categoria": 3,
+      "subcategoria": 6,
+      "variante": 8,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/TEC050.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 191,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 160,
+    "fields": {
+      "producto": "TEC050",
+      "pvp": "25.12",
+      "pvm": "23.3616",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 160,
+    "fields": {
+      "producto": "TEC050",
+      "stock": 22,
+      "ubicacion_bodega": "Bodega 3, Estante 6"
+    }
+  }
+]

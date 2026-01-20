@@ -1,11 +1,10 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- Hero Banner -->
+    <!-- Banner -->
     <ProductsHero />
-    
-    <!-- Main Content -->
+
     <div class="max-w-7xl mx-auto px-6 py-8">
-      <!-- Filter Section -->
+      <!-- Filtros -->
       <CategoryFilterComponent
         :selectedCategory="selectedCategory"
         :sortBy="sortBy"
@@ -14,35 +13,65 @@
         @sort-changed="handleSortChange"
         buttonColor="#1F2937"
       />
-      
-      <!-- Featured Products -->
-      <FeaturedProducts
-        title="Productos Destacados"
-        :featuredProducts="featuredProducts"
-        @add-to-cart="handleAddToCart"
-        @select-product="handleSelectProduct"
-      />
-      
-      <!-- Newsletter Section -->
-    <ProductsNewsletter
-        :email="newsletterEmail"
-        @update:email="newsletterEmail = $event"
-        @subscribe="handleSubscribe"
-      />
+
+      <!-- Grilla plana -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        <FeaturedProduct
+          v-for="product in products"
+          :key="product.id"
+          :product="product"
+          badgeText=""
+          @add-to-cart="handleAddToCart"
+          @select-product="handleSelectProduct"
+        />
+      </div>
+
+      <!-- Paginación smart (truncada) -->
+      <div v-if="totalPages > 1" class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <button
+          type="button"
+          class="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          :disabled="currentPage <= 1"
+          @click="goToPage(currentPage - 1)"
+        >
+          Anterior
+        </button>
+
+        <div class="flex flex-wrap items-center justify-center gap-2">
+          <button
+            v-for="(item, idx) in paginationItems"
+            :key="`page-item-${idx}-${item}`"
+            type="button"
+            class="min-w-[40px] px-3 py-2 rounded-lg border text-sm font-medium transition-colors"
+            :class="item === currentPage
+              ? 'bg-blue-600 border-blue-700 text-white cursor-pointer'
+              : (item === '...'
+                ? 'bg-white border-transparent text-gray-500 cursor-default'
+                : 'bg-white border-gray-300 text-gray-800 hover:bg-gray-50 cursor-pointer')"
+            :disabled="item === '...'"
+            @click="item !== '...' && goToPage(item)"
+          >
+            {{ item }}
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          :disabled="currentPage >= totalPages"
+          @click="goToPage(currentPage + 1)"
+        >
+          Siguiente
+        </button>
+      </div>
     </div>
-    
-    <!-- Security Footer -->
-    <ProductsFooter />
-    
   </div>
 </template>
 
 <script>
 import ProductsHero from './ProductsHero.vue';
 import CategoryFilterComponent from './CategoryFilterComponent.vue';
-import FeaturedProducts from './FeaturedProducts.vue';
-import ProductsNewsletter from './ProductsNewsletter.vue';
-import ProductsFooter from './ProductsFooter.vue';
+import FeaturedProduct from './FeaturedProduct.vue';
 import { mapGetters } from 'vuex';
 import api from '@/utils/api';
 
@@ -51,54 +80,58 @@ export default {
   components: {
     ProductsHero,
     CategoryFilterComponent,
-    FeaturedProducts,
-    ProductsNewsletter,
-    ProductsFooter
+    FeaturedProduct
   },
   inject: ['addToCart', 'selectProduct'],
   data() {
     return {
       selectedCategory: 'all',
       sortBy: 'discount',
-      newsletterEmail: '',
       filterCategories: [],
       products: [], // Inicializar para asegurar reactividad
-      featuredProducts: [], // Inicializar para asegurar reactividad
       // Si la navegación viene desde Home con ?subcategoria=Papeleria, la aplicamos cuando carguen las categorías
       pendingSubcategoriaFromRoute: '',
+      currentPage: 1,
+      totalPages: 1,
+      totalCount: 0,
+      pageSize: 9,
+      searchQuery: '',
     }
   },
   computed: {
     ...mapGetters(['isAuthenticated', 'cartItemCount']), 
-    filteredProducts() {
-      let filtered = Array.isArray(this.products) ? [...this.products] : [];
-      
-      // Filtrar por término de búsqueda
-      if (this.searchQuery) {
-        const lowerCaseQuery = this.searchQuery.toLowerCase();
-        filtered = filtered.filter(product => 
-          product.name.toLowerCase().includes(lowerCaseQuery) ||
-          product.description.toLowerCase().includes(lowerCaseQuery) ||
-          (product.category && product.category.toLowerCase().includes(lowerCaseQuery))
-        );
+    paginationItems() {
+      const total = Number(this.totalPages || 1);
+      const current = Number(this.currentPage || 1);
+      if (total <= 1) return [1];
+
+      // Si hay pocas páginas, mostramos todas
+      if (total <= 7) {
+        return Array.from({ length: total }, (_, i) => i + 1);
       }
 
-      // Filtrar por categoría
-      if (this.selectedCategory !== 'all') {
-        filtered = filtered.filter(product => product.category === this.selectedCategory);
+      const items = [];
+      const push = (v) => items.push(v);
+
+      // Siempre primera
+      push(1);
+
+      const left = Math.max(2, current - 1);
+      const right = Math.min(total - 1, current + 1);
+
+      if (left > 2) push('...');
+
+      for (let p = left; p <= right; p++) {
+        push(p);
       }
-      
-      // Ordenar
-      if (this.sortBy === 'discount') {
-        filtered = filtered.sort((a, b) => b.discount - a.discount);
-      } else if (this.sortBy === 'price') {
-        filtered = filtered.sort((a, b) => a.salePrice - b.salePrice);
-      } else if (this.sortBy === 'name') {
-        filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
-      }
-      
-      return filtered;
-    }
+
+      if (right < total - 1) push('...');
+
+      // Siempre última
+      push(total);
+
+      return items;
+    },
   },
   watch: {
     // Nuevo: Observar cambios en el parámetro de búsqueda de la URL
@@ -106,8 +139,9 @@ export default {
       immediate: true, // Ejecutar inmediatamente al cargar el componente
       handler(newSearchQuery) {
         this.searchQuery = newSearchQuery || '';
-        // No es necesario llamar a fetchProducts o handleCategoryChange aquí,
-        // ya que el computed property filteredProducts reaccionará automáticamente.
+        // CRÍTICO: al cambiar filtros, volver siempre a página 1
+        this.currentPage = 1;
+        this.fetchProducts();
       }
     }
     ,
@@ -142,7 +176,6 @@ export default {
     }
 
     this.fetchProducts();
-    this.fetchFeaturedProducts(this.selectedCategory);
   },
   methods: {
     async fetchCategories() {
@@ -178,20 +211,37 @@ export default {
       this.selectedCategory = match ? match.id : 'all';
 
       // Al cambiar vía URL, recargamos el contenido para reflejar el filtro seleccionado
+      this.currentPage = 1;
       this.fetchProducts();
-      this.fetchFeaturedProducts(this.selectedCategory);
     },
     fetchProducts() {
-      let url = '/productos/';
+      const params = {
+        // Activar paginación en backend
+        page: this.currentPage,
+      };
+
+      // Filtros
       if (this.selectedCategory !== 'all') {
-        url += `?subcategoria=${this.selectedCategory}&limite=20`;
-      } else {
-        url += `?limite=20`;
+        params.subcategoria = this.selectedCategory;
       }
-      api.get(url)
+      if (this.searchQuery) {
+        params.search = this.searchQuery;
+      }
+
+      // Ordenamiento (backend)
+      if (this.sortBy === 'discount') params.ordering = 'descuento';
+      else if (this.sortBy === 'name') params.ordering = 'alphabet';
+      else if (this.sortBy === 'price') params.ordering = 'pvp';
+
+      api.get('/productos/', { params })
         .then(response => {
           const raw = response && response.data;
           const list = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.results) ? raw.results : []);
+
+          // Paginación estándar DRF
+          const count = (raw && typeof raw.count === 'number') ? raw.count : list.length;
+          this.totalCount = count;
+          this.totalPages = Math.max(1, Math.ceil(count / this.pageSize));
 
           this.products = list.map(product => {
             // Backend: usar campos *_activo (ya vienen ajustados según token público vs mayorista)
@@ -236,11 +286,23 @@ export default {
     },
     handleCategoryChange(categoryId) {
       this.selectedCategory = categoryId;
+      // CRÍTICO: al cambiar filtros, volver siempre a página 1
+      this.currentPage = 1;
       this.fetchProducts(); // Vuelve a cargar todos los productos con el filtro de categoría
-      this.fetchFeaturedProducts(categoryId);
     },
     handleSortChange(sortValue) {
       this.sortBy = sortValue;
+      // CRÍTICO: al cambiar filtros, volver siempre a página 1
+      this.currentPage = 1;
+      this.fetchProducts();
+    },
+    goToPage(page) {
+      const next = Number(page);
+      if (!Number.isFinite(next)) return;
+      if (next < 1 || next > this.totalPages) return;
+      if (next === this.currentPage) return;
+      this.currentPage = next;
+      this.fetchProducts();
     },
     handleAddToCart(product) {
       // Utiliza la función addToCart inyectada desde App.vue
@@ -256,70 +318,6 @@ export default {
     handleSearch(query) {
       this.$emit('search', query);
     },
-    handleSubscribe(email) {
-      this.$emit('subscribe-newsletter', email);
-      this.newsletterEmail = '';
-    },
-    fetchFeaturedProducts(selectedCategoryId = 'all') {
-      const params = {
-        ordering: 'total_vendidos',
-        limite: 20,
-      };
-
-      // Para 'subcategoria' usamos el nombre del filtro (viene del backend).
-      // Nota: selectedCategoryId normalmente es el id del filtro (en minúsculas).
-      if (selectedCategoryId && selectedCategoryId !== 'all') {
-        const selected = (this.filterCategories || []).find(c => c.id === selectedCategoryId);
-        const subcategoriaNombre = selected && selected.name ? selected.name : selectedCategoryId;
-        params.subcategoria = subcategoriaNombre;
-      }
-
-      api.get('/productos/', { params })
-        .then(response => {
-          const raw = response && response.data;
-          const list = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.results) ? raw.results : []);
-
-          this.featuredProducts = list.map(product => {
-            // Backend: usar campos *_activo (ya vienen ajustados según token público vs mayorista)
-            const precioBaseActivo = parseFloat(product.precio_base_activo || '0');
-            const descuentoActivo = parseFloat(product.descuento_activo || '0');
-            const precioConDescuentoActivo = parseFloat(product.precio_con_descuento_activo || precioBaseActivo || '0');
-            const precioConIvaActivo = parseFloat(product.precio_con_iva_activo || precioConDescuentoActivo || precioBaseActivo || '0');
-            const hasDiscount =
-              descuentoActivo >= 1.0 &&
-              precioBaseActivo > 0 &&
-              precioConDescuentoActivo > 0 &&
-              precioConDescuentoActivo < precioBaseActivo;
-
-            return ({
-            id: product.SKU,
-            sku: product.SKU, // Añadir sku
-            name: product.nombre,
-            brand: product.marca,
-            description: product.descripcion, 
-            image: product.imagen_url,
-            // Mantener compatibilidad con componentes existentes, pero SIN mezclar bases:
-            // - "originalPrice" y "salePrice" deben estar en la misma base (aquí: sin IVA)
-            // - si quieres mostrar el precio final con IVA, usa `precio_con_iva_activo` en otra parte del UI
-            originalPrice: precioBaseActivo,
-            salePrice: hasDiscount ? precioConDescuentoActivo : null,
-            discount: hasDiscount ? descuentoActivo : 0,
-
-            // Campos activos (para futuras mejoras de UI mayorista)
-            tipo_precio_activo: product.tipo_precio_activo,
-            precio_base_activo: precioBaseActivo,
-            descuento_activo: descuentoActivo,
-            precio_con_descuento_activo: precioConDescuentoActivo,
-            precio_con_iva_activo: precioConIvaActivo,
-            bulto_minimo_mayorista: product.bulto_minimo_mayorista,
-            category: product.categoria ? product.categoria.toLowerCase() : 'otros'
-            });
-          });
-        })
-        .catch(error => {
-          console.error('Error fetching featured products:', error);
-        });
-    }
   }
 }
 </script>

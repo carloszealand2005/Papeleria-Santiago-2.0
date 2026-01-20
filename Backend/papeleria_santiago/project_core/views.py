@@ -43,6 +43,7 @@ from .models import FavoritosCliente # Importar el modelo FavoritosCliente
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.pagination import PageNumberPagination
 
 # Create your views here.
 
@@ -115,10 +116,15 @@ def generar_factura_pdf(request, pedido_id):
 # Maneja las peticiones GET, POST, PUT, DELETE para productos
 #------------------
 
+class ProductoPagination(PageNumberPagination):
+    # Paginación estándar DRF: {count,next,previous,results}
+    page_size = 9
+
 
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
+    pagination_class = ProductoPagination
     filter_backends = [DjangoFilterBackend] # Añadir backends de filtro y búsqueda
     filterset_fields = ['categoria', 'marca', 'SKU'] # Filtrar por categoría, marca y SKU
     search_fields = ['nombre', 'marca'] # Campos para búsqueda de texto
@@ -255,6 +261,13 @@ class ProductoViewSet(viewsets.ModelViewSet):
             elif key in ('SKU', 'nombre', 'pvp', 'pvm'):
                 queryset = queryset.order_by(f"-{key}" if is_desc else key)
 
+        # Default ordering (lista plana, sin agrupaciones visuales):
+        # - primero más vendidos (destacados)
+        # - luego SKU para estabilidad
+        # Nota: solo aplica si el frontend NO envía ordering.
+        if not ordering:
+            queryset = queryset.order_by('-total_vendidos', 'SKU')
+
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -273,10 +286,17 @@ class ProductoViewSet(viewsets.ModelViewSet):
             except ValueError:
                 pass # Ignorar si el valor no es un número entero válido
 
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            # Compatibilidad: si el caller usa `limite`, devolvemos lista plana (sin paginar).
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+
+        # Paginación: solo aplicarla cuando el frontend envía ?page=X
+        # (Esto evita romper pantallas existentes que esperan lista completa.)
+        if 'page' in request.query_params:
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

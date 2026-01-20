@@ -1,0 +1,2302 @@
+[
+  {
+    "model": "project_core.producto",
+    "pk": "OFI001",
+    "fields": {
+      "codigo_barras": "789260120001",
+      "nombre": "Carpeta Plástica A4 001",
+      "descripcion": "Carpeta Plástica A4 001 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI001.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 390,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 11,
+    "fields": {
+      "producto": "OFI001",
+      "pvp": "1.00",
+      "pvm": "0.9300",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 11,
+    "fields": {
+      "producto": "OFI001",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI002",
+    "fields": {
+      "codigo_barras": "789260120002",
+      "nombre": "Archivador Palanca A4 002",
+      "descripcion": "Archivador Palanca A4 002 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI002.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 175,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 12,
+    "fields": {
+      "producto": "OFI002",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 12,
+    "fields": {
+      "producto": "OFI002",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 1, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI003",
+    "fields": {
+      "codigo_barras": "789260120003",
+      "nombre": "Resma Papel Bond A4 75g 003",
+      "descripcion": "Resma Papel Bond A4 75g 003 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI003.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 195,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 13,
+    "fields": {
+      "producto": "OFI003",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 13,
+    "fields": {
+      "producto": "OFI003",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI004",
+    "fields": {
+      "codigo_barras": "789260120004",
+      "nombre": "Notas Adhesivas 76x76mm 004",
+      "descripcion": "Notas Adhesivas 76x76mm 004 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI004.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 138,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 14,
+    "fields": {
+      "producto": "OFI004",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 14,
+    "fields": {
+      "producto": "OFI004",
+      "stock": 72,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI005",
+    "fields": {
+      "codigo_barras": "789260120005",
+      "nombre": "Grapadora Metálica 005",
+      "descripcion": "Grapadora Metálica 005 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI005.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 142,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 15,
+    "fields": {
+      "producto": "OFI005",
+      "pvp": "8.90",
+      "pvm": "8.2770",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 15,
+    "fields": {
+      "producto": "OFI005",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI006",
+    "fields": {
+      "codigo_barras": "789260120006",
+      "nombre": "Clips Metálicos (Caja) 006",
+      "descripcion": "Clips Metálicos (Caja) 006 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI006.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 544,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 16,
+    "fields": {
+      "producto": "OFI006",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 16,
+    "fields": {
+      "producto": "OFI006",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI007",
+    "fields": {
+      "codigo_barras": "789260120007",
+      "nombre": "Cinta Adhesiva Transparente 48mm 007",
+      "descripcion": "Cinta Adhesiva Transparente 48mm 007 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI007.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 520,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 17,
+    "fields": {
+      "producto": "OFI007",
+      "pvp": "8.90",
+      "pvm": "8.2770",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 17,
+    "fields": {
+      "producto": "OFI007",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI008",
+    "fields": {
+      "codigo_barras": "789260120008",
+      "nombre": "Marcador Permanente 008",
+      "descripcion": "Marcador Permanente 008 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI008.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 441,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 18,
+    "fields": {
+      "producto": "OFI008",
+      "pvp": "1.20",
+      "pvm": "1.1160",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 18,
+    "fields": {
+      "producto": "OFI008",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI009",
+    "fields": {
+      "codigo_barras": "789260120009",
+      "nombre": "Corrector Líquido 20ml 009",
+      "descripcion": "Corrector Líquido 20ml 009 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI009.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 78,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 19,
+    "fields": {
+      "producto": "OFI009",
+      "pvp": "25.30",
+      "pvm": "23.5290",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 19,
+    "fields": {
+      "producto": "OFI009",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 3"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI010",
+    "fields": {
+      "codigo_barras": "789260120010",
+      "nombre": "Bandeja Organizadora A4 010",
+      "descripcion": "Bandeja Organizadora A4 010 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI010.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 75,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 20,
+    "fields": {
+      "producto": "OFI010",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 20,
+    "fields": {
+      "producto": "OFI010",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI011",
+    "fields": {
+      "codigo_barras": "789260120011",
+      "nombre": "Carpeta Plástica A4 011",
+      "descripcion": "Carpeta Plástica A4 011 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI011.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 489,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 21,
+    "fields": {
+      "producto": "OFI011",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 21,
+    "fields": {
+      "producto": "OFI011",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 1, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI012",
+    "fields": {
+      "codigo_barras": "789260120012",
+      "nombre": "Archivador Palanca A4 012",
+      "descripcion": "Archivador Palanca A4 012 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI012.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 462,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 22,
+    "fields": {
+      "producto": "OFI012",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 22,
+    "fields": {
+      "producto": "OFI012",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI013",
+    "fields": {
+      "codigo_barras": "789260120013",
+      "nombre": "Resma Papel Bond A4 75g 013",
+      "descripcion": "Resma Papel Bond A4 75g 013 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI013.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 484,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 23,
+    "fields": {
+      "producto": "OFI013",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 23,
+    "fields": {
+      "producto": "OFI013",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 1, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI014",
+    "fields": {
+      "codigo_barras": "789260120014",
+      "nombre": "Notas Adhesivas 76x76mm 014",
+      "descripcion": "Notas Adhesivas 76x76mm 014 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI014.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 21,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 24,
+    "fields": {
+      "producto": "OFI014",
+      "pvp": "0.48",
+      "pvm": "0.4464",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 24,
+    "fields": {
+      "producto": "OFI014",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 1, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI015",
+    "fields": {
+      "codigo_barras": "789260120015",
+      "nombre": "Grapadora Metálica 015",
+      "descripcion": "Grapadora Metálica 015 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI015.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 347,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 25,
+    "fields": {
+      "producto": "OFI015",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 25,
+    "fields": {
+      "producto": "OFI015",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI016",
+    "fields": {
+      "codigo_barras": "789260120016",
+      "nombre": "Clips Metálicos (Caja) 016",
+      "descripcion": "Clips Metálicos (Caja) 016 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI016.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 174,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 26,
+    "fields": {
+      "producto": "OFI016",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 26,
+    "fields": {
+      "producto": "OFI016",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 1, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI017",
+    "fields": {
+      "codigo_barras": "789260120017",
+      "nombre": "Cinta Adhesiva Transparente 48mm 017",
+      "descripcion": "Cinta Adhesiva Transparente 48mm 017 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI017.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 333,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 27,
+    "fields": {
+      "producto": "OFI017",
+      "pvp": "6.10",
+      "pvm": "5.6730",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 27,
+    "fields": {
+      "producto": "OFI017",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI018",
+    "fields": {
+      "codigo_barras": "789260120018",
+      "nombre": "Marcador Permanente 018",
+      "descripcion": "Marcador Permanente 018 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI018.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 389,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 28,
+    "fields": {
+      "producto": "OFI018",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 28,
+    "fields": {
+      "producto": "OFI018",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 1, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI019",
+    "fields": {
+      "codigo_barras": "789260120019",
+      "nombre": "Corrector Líquido 20ml 019",
+      "descripcion": "Corrector Líquido 20ml 019 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI019.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 108,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 29,
+    "fields": {
+      "producto": "OFI019",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 29,
+    "fields": {
+      "producto": "OFI019",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 1, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI020",
+    "fields": {
+      "codigo_barras": "789260120020",
+      "nombre": "Bandeja Organizadora A4 020",
+      "descripcion": "Bandeja Organizadora A4 020 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI020.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 21,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 30,
+    "fields": {
+      "producto": "OFI020",
+      "pvp": "3.30",
+      "pvm": "3.0690",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 30,
+    "fields": {
+      "producto": "OFI020",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 1, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI021",
+    "fields": {
+      "codigo_barras": "789260120021",
+      "nombre": "Carpeta Plástica A4 021",
+      "descripcion": "Carpeta Plástica A4 021 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI021.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 231,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 31,
+    "fields": {
+      "producto": "OFI021",
+      "pvp": "25.30",
+      "pvm": "23.5290",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 31,
+    "fields": {
+      "producto": "OFI021",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI022",
+    "fields": {
+      "codigo_barras": "789260120022",
+      "nombre": "Archivador Palanca A4 022",
+      "descripcion": "Archivador Palanca A4 022 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI022.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 420,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 32,
+    "fields": {
+      "producto": "OFI022",
+      "pvp": "0.48",
+      "pvm": "0.4464",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 32,
+    "fields": {
+      "producto": "OFI022",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 1, Estante 6"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI023",
+    "fields": {
+      "codigo_barras": "789260120023",
+      "nombre": "Resma Papel Bond A4 75g 023",
+      "descripcion": "Resma Papel Bond A4 75g 023 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI023.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 340,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 33,
+    "fields": {
+      "producto": "OFI023",
+      "pvp": "25.30",
+      "pvm": "23.5290",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 33,
+    "fields": {
+      "producto": "OFI023",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 1, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI024",
+    "fields": {
+      "codigo_barras": "789260120024",
+      "nombre": "Notas Adhesivas 76x76mm 024",
+      "descripcion": "Notas Adhesivas 76x76mm 024 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI024.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 21,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 34,
+    "fields": {
+      "producto": "OFI024",
+      "pvp": "17.70",
+      "pvm": "16.4610",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 34,
+    "fields": {
+      "producto": "OFI024",
+      "stock": 49,
+      "ubicacion_bodega": "Bodega 1, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI025",
+    "fields": {
+      "codigo_barras": "789260120025",
+      "nombre": "Grapadora Metálica 025",
+      "descripcion": "Grapadora Metálica 025 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI025.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 42,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 35,
+    "fields": {
+      "producto": "OFI025",
+      "pvp": "1.00",
+      "pvm": "0.9300",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 35,
+    "fields": {
+      "producto": "OFI025",
+      "stock": 180,
+      "ubicacion_bodega": "Bodega 1, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI026",
+    "fields": {
+      "codigo_barras": "789260120026",
+      "nombre": "Clips Metálicos (Caja) 026",
+      "descripcion": "Clips Metálicos (Caja) 026 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI026.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 255,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 36,
+    "fields": {
+      "producto": "OFI026",
+      "pvp": "1.20",
+      "pvm": "1.1160",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 36,
+    "fields": {
+      "producto": "OFI026",
+      "stock": 2,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI027",
+    "fields": {
+      "codigo_barras": "789260120027",
+      "nombre": "Cinta Adhesiva Transparente 48mm 027",
+      "descripcion": "Cinta Adhesiva Transparente 48mm 027 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI027.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 592,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 37,
+    "fields": {
+      "producto": "OFI027",
+      "pvp": "1.00",
+      "pvm": "0.9300",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 37,
+    "fields": {
+      "producto": "OFI027",
+      "stock": 896,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI028",
+    "fields": {
+      "codigo_barras": "789260120028",
+      "nombre": "Marcador Permanente 028",
+      "descripcion": "Marcador Permanente 028 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI028.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 233,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 38,
+    "fields": {
+      "producto": "OFI028",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 38,
+    "fields": {
+      "producto": "OFI028",
+      "stock": 1200,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI029",
+    "fields": {
+      "codigo_barras": "789260120029",
+      "nombre": "Corrector Líquido 20ml 029",
+      "descripcion": "Corrector Líquido 20ml 029 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI029.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 41,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 39,
+    "fields": {
+      "producto": "OFI029",
+      "pvp": "8.90",
+      "pvm": "8.2770",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 39,
+    "fields": {
+      "producto": "OFI029",
+      "stock": 1,
+      "ubicacion_bodega": "Bodega 1, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI030",
+    "fields": {
+      "codigo_barras": "789260120030",
+      "nombre": "Bandeja Organizadora A4 030",
+      "descripcion": "Bandeja Organizadora A4 030 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI030.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 498,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 40,
+    "fields": {
+      "producto": "OFI030",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 40,
+    "fields": {
+      "producto": "OFI030",
+      "stock": 72,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI031",
+    "fields": {
+      "codigo_barras": "789260120031",
+      "nombre": "Carpeta Plástica A4 031",
+      "descripcion": "Carpeta Plástica A4 031 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI031.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 134,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 41,
+    "fields": {
+      "producto": "OFI031",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 41,
+    "fields": {
+      "producto": "OFI031",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI032",
+    "fields": {
+      "codigo_barras": "789260120032",
+      "nombre": "Archivador Palanca A4 032",
+      "descripcion": "Archivador Palanca A4 032 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI032.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 175,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 42,
+    "fields": {
+      "producto": "OFI032",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 42,
+    "fields": {
+      "producto": "OFI032",
+      "stock": 998,
+      "ubicacion_bodega": "Bodega 1, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI033",
+    "fields": {
+      "codigo_barras": "789260120033",
+      "nombre": "Resma Papel Bond A4 75g 033",
+      "descripcion": "Resma Papel Bond A4 75g 033 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI033.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 272,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 43,
+    "fields": {
+      "producto": "OFI033",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "5.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 43,
+    "fields": {
+      "producto": "OFI033",
+      "stock": 180,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI034",
+    "fields": {
+      "codigo_barras": "789260120034",
+      "nombre": "Notas Adhesivas 76x76mm 034",
+      "descripcion": "Notas Adhesivas 76x76mm 034 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI034.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 585,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 44,
+    "fields": {
+      "producto": "OFI034",
+      "pvp": "2.10",
+      "pvm": "1.9530",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 44,
+    "fields": {
+      "producto": "OFI034",
+      "stock": 180,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI035",
+    "fields": {
+      "codigo_barras": "789260120035",
+      "nombre": "Grapadora Metálica 035",
+      "descripcion": "Grapadora Metálica 035 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI035.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 326,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 45,
+    "fields": {
+      "producto": "OFI035",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 45,
+    "fields": {
+      "producto": "OFI035",
+      "stock": 112,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI036",
+    "fields": {
+      "codigo_barras": "789260120036",
+      "nombre": "Clips Metálicos (Caja) 036",
+      "descripcion": "Clips Metálicos (Caja) 036 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI036.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 507,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 46,
+    "fields": {
+      "producto": "OFI036",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 46,
+    "fields": {
+      "producto": "OFI036",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI037",
+    "fields": {
+      "codigo_barras": "789260120037",
+      "nombre": "Cinta Adhesiva Transparente 48mm 037",
+      "descripcion": "Cinta Adhesiva Transparente 48mm 037 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI037.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 417,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 47,
+    "fields": {
+      "producto": "OFI037",
+      "pvp": "8.90",
+      "pvm": "8.2770",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 47,
+    "fields": {
+      "producto": "OFI037",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 1, Estante 5"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI038",
+    "fields": {
+      "codigo_barras": "789260120038",
+      "nombre": "Marcador Permanente 038",
+      "descripcion": "Marcador Permanente 038 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI038.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 339,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 48,
+    "fields": {
+      "producto": "OFI038",
+      "pvp": "2.50",
+      "pvm": "2.3250",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 48,
+    "fields": {
+      "producto": "OFI038",
+      "stock": 11,
+      "ubicacion_bodega": "Bodega 1, Estante 7"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI039",
+    "fields": {
+      "codigo_barras": "789260120039",
+      "nombre": "Corrector Líquido 20ml 039",
+      "descripcion": "Corrector Líquido 20ml 039 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI039.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 211,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 49,
+    "fields": {
+      "producto": "OFI039",
+      "pvp": "1.20",
+      "pvm": "1.1160",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 49,
+    "fields": {
+      "producto": "OFI039",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI040",
+    "fields": {
+      "codigo_barras": "789260120040",
+      "nombre": "Bandeja Organizadora A4 040",
+      "descripcion": "Bandeja Organizadora A4 040 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI040.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 128,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 50,
+    "fields": {
+      "producto": "OFI040",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 50,
+    "fields": {
+      "producto": "OFI040",
+      "stock": 180,
+      "ubicacion_bodega": "Bodega 1, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI041",
+    "fields": {
+      "codigo_barras": "789260120041",
+      "nombre": "Carpeta Plástica A4 041",
+      "descripcion": "Carpeta Plástica A4 041 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI041.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 93,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 51,
+    "fields": {
+      "producto": "OFI041",
+      "pvp": "6.10",
+      "pvm": "5.6730",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 51,
+    "fields": {
+      "producto": "OFI041",
+      "stock": 987,
+      "ubicacion_bodega": "Bodega 1, Estante 1"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI042",
+    "fields": {
+      "codigo_barras": "789260120042",
+      "nombre": "Archivador Palanca A4 042",
+      "descripcion": "Archivador Palanca A4 042 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI042.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 448,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 52,
+    "fields": {
+      "producto": "OFI042",
+      "pvp": "11.73",
+      "pvm": "10.9089",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 52,
+    "fields": {
+      "producto": "OFI042",
+      "stock": 1,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI043",
+    "fields": {
+      "codigo_barras": "789260120043",
+      "nombre": "Resma Papel Bond A4 75g 043",
+      "descripcion": "Resma Papel Bond A4 75g 043 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI043.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 277,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 53,
+    "fields": {
+      "producto": "OFI043",
+      "pvp": "6.10",
+      "pvm": "5.6730",
+      "iva": "15.00",
+      "descuento_publico": "10.00",
+      "descuento_mayorista": "5.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 53,
+    "fields": {
+      "producto": "OFI043",
+      "stock": 6,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI044",
+    "fields": {
+      "codigo_barras": "789260120044",
+      "nombre": "Notas Adhesivas 76x76mm 044",
+      "descripcion": "Notas Adhesivas 76x76mm 044 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI044.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 31,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 54,
+    "fields": {
+      "producto": "OFI044",
+      "pvp": "1.00",
+      "pvm": "0.9300",
+      "iva": "15.00",
+      "descuento_publico": "20.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 54,
+    "fields": {
+      "producto": "OFI044",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI045",
+    "fields": {
+      "codigo_barras": "789260120045",
+      "nombre": "Grapadora Metálica 045",
+      "descripcion": "Grapadora Metálica 045 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI045.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 478,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 55,
+    "fields": {
+      "producto": "OFI045",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 55,
+    "fields": {
+      "producto": "OFI045",
+      "stock": 4590,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI046",
+    "fields": {
+      "codigo_barras": "789260120046",
+      "nombre": "Clips Metálicos (Caja) 046",
+      "descripcion": "Clips Metálicos (Caja) 046 - producto generado (MVP).",
+      "marca": "OfficePro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 1,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI046.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 272,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 56,
+    "fields": {
+      "producto": "OFI046",
+      "pvp": "4.65",
+      "pvm": "4.3245",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 56,
+    "fields": {
+      "producto": "OFI046",
+      "stock": 1200,
+      "ubicacion_bodega": "Bodega 1, Estante 9"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI047",
+    "fields": {
+      "codigo_barras": "789260120047",
+      "nombre": "Cinta Adhesiva Transparente 48mm 047",
+      "descripcion": "Cinta Adhesiva Transparente 48mm 047 - producto generado (MVP).",
+      "marca": "FilePro",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": 2,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI047.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 366,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 57,
+    "fields": {
+      "producto": "OFI047",
+      "pvp": "1.74",
+      "pvm": "1.6182",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 57,
+    "fields": {
+      "producto": "OFI047",
+      "stock": 72,
+      "ubicacion_bodega": "Bodega 1, Estante 4"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI048",
+    "fields": {
+      "codigo_barras": "789260120048",
+      "nombre": "Marcador Permanente 048",
+      "descripcion": "Marcador Permanente 048 - producto generado (MVP).",
+      "marca": "PaperMax",
+      "categoria": 1,
+      "subcategoria": 3,
+      "variante": 3,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI048.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 204,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 58,
+    "fields": {
+      "producto": "OFI048",
+      "pvp": "0.35",
+      "pvm": "0.3255",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "15.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 58,
+    "fields": {
+      "producto": "OFI048",
+      "stock": 6367,
+      "ubicacion_bodega": "Bodega 1, Estante 8"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI049",
+    "fields": {
+      "codigo_barras": "789260120049",
+      "nombre": "Corrector Líquido 20ml 049",
+      "descripcion": "Corrector Líquido 20ml 049 - producto generado (MVP).",
+      "marca": "MarkPro",
+      "categoria": 1,
+      "subcategoria": 1,
+      "variante": 4,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI049.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 307,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 59,
+    "fields": {
+      "producto": "OFI049",
+      "pvp": "17.70",
+      "pvm": "16.4610",
+      "iva": "15.00",
+      "descuento_publico": "15.00",
+      "descuento_mayorista": "0.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 59,
+    "fields": {
+      "producto": "OFI049",
+      "stock": 112,
+      "ubicacion_bodega": "Bodega 1, Estante 2"
+    }
+  },
+  {
+    "model": "project_core.producto",
+    "pk": "OFI050",
+    "fields": {
+      "codigo_barras": "789260120050",
+      "nombre": "Bandeja Organizadora A4 050",
+      "descripcion": "Bandeja Organizadora A4 050 - producto generado (MVP).",
+      "marca": "StickNote",
+      "categoria": 1,
+      "subcategoria": 2,
+      "variante": null,
+      "caracteristica1": null,
+      "caracteristica2": null,
+      "caracteristica3": null,
+      "caracteristica4": null,
+      "caracteristica5": null,
+      "imagen_url": "https://example.com/productos/OFI050.jpg",
+      "imagen_url2": null,
+      "imagen_url3": null,
+      "imagen_url4": null,
+      "total_vendidos": 178,
+      "disponible_mayorista": true,
+      "bulto_minimo_mayorista": 1
+    }
+  },
+  {
+    "model": "project_core.precio",
+    "pk": 60,
+    "fields": {
+      "producto": "OFI050",
+      "pvp": "0.48",
+      "pvm": "0.4464",
+      "iva": "15.00",
+      "descuento_publico": "0.00",
+      "descuento_mayorista": "10.00"
+    }
+  },
+  {
+    "model": "project_core.inventario",
+    "pk": 60,
+    "fields": {
+      "producto": "OFI050",
+      "stock": 0,
+      "ubicacion_bodega": "Bodega 1, Estante 4"
+    }
+  }
+]
