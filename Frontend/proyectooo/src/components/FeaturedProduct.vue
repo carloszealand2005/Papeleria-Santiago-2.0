@@ -21,7 +21,7 @@
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center space-x-2">
           <template v-if="parseFloat(product.discount) >= 1.00">
-            <span class="text-lg text-gray-500 line-through opacity-75">${{ parseFloat(product.originalPrice).toFixed(2) }}</span>
+            <span class="text-lg text-gray-600 line-through">${{ parseFloat(product.originalPrice).toFixed(2) }}</span>
             <span class="text-2xl font-bold text-green-700">${{ parseFloat(product.salePrice).toFixed(2) }}</span>
             <span class="text-sm font-medium text-green-700">(-{{ parseFloat(product.discount).toFixed(0) }}%)</span>
           </template>
@@ -31,6 +31,12 @@
         </div>
         <span class="text-sm text-blue-600 font-semibold">Disponible</span>
       </div>
+      <p
+        v-if="product && product.bulto_minimo_mayorista !== undefined && product.bulto_minimo_mayorista !== null && String(product.bulto_minimo_mayorista) !== ''"
+        class="text-xs text-slate-700 mb-4"
+      >
+        Bulto mínimo: {{ product.bulto_minimo_mayorista }}
+      </p>
       <button 
         @click="addToCart"
         @mouseover="hoverButton = true"

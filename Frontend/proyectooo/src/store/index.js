@@ -36,6 +36,10 @@ export default new Vuex.Store({
           // Estos campos no existen aún en el formulario actual; quedan opcionales.
           celular: credentials.celular || '',
           ciudad: credentials.ciudad || '',
+          // El backend diferencia Persona/Empresa por este campo
+          tipo_cliente: credentials.tipo_cliente || 'Persona',
+          // Solo aplica para Empresa (mayorista): URL del documento para validación
+          ...(credentials.url_validacion ? { url_validacion: credentials.url_validacion } : {}),
         };
         const response = await api.post('/auth/init-register/', payload);
 
@@ -56,10 +60,20 @@ export default new Vuex.Store({
         const response = await api.post('/auth/verify-otp/', payload);
         const { token, username, email } = response.data;
 
-        localStorage.setItem('user-token', token);
+        // En el caso Empresa, el backend responde 200 OK pero SIN token (cuenta en revisión)
+        if (token) {
+          localStorage.setItem('user-token', token);
+          // Persistimos info mínima del usuario para poder mostrar el nombre tras recargar.
+          localStorage.setItem('user-data', JSON.stringify({ username, email }));
+          commit('SET_AUTH_DATA', { isLoggedIn: true, user: { username, email }, token });
+        } else {
+          // Aseguramos estado "no logueado"
+          localStorage.removeItem('user-token');
+          localStorage.removeItem('user-data');
+          commit('SET_AUTH_DATA', { isLoggedIn: false, user: null, token: null });
+        }
         localStorage.removeItem('pending-verification-email');
         commit('SET_PENDING_VERIFICATION_EMAIL', null);
-        commit('SET_AUTH_DATA', { isLoggedIn: true, user: { username, email }, token });
 
         return response.data;
       } catch (error) {
@@ -87,6 +101,8 @@ export default new Vuex.Store({
         const { token, username, email } = response.data;
 
         localStorage.setItem('user-token', token); // Guardamos el token en localStorage
+        // Guardamos también datos del usuario para persistir el nombre en UI tras recargar.
+        localStorage.setItem('user-data', JSON.stringify({ username, email }));
         commit('SET_AUTH_DATA', { isLoggedIn: true, user: { username, email }, token });
         return response.data; // Devuelve los datos de login incluyendo el token
       } catch (error) {
@@ -96,6 +112,7 @@ export default new Vuex.Store({
     },
     logout({ commit }) {
       localStorage.removeItem('user-token'); // Eliminamos el token de localStorage
+      localStorage.removeItem('user-data');
       localStorage.removeItem('pending-verification-email');
       commit('SET_AUTH_DATA', { isLoggedIn: false, user: null, token: null });
       commit('SET_CART_ITEM_COUNT', 0); // También reseteamos el conteo del carrito al cerrar sesión

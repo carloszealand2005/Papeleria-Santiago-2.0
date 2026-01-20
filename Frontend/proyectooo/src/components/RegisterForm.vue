@@ -17,7 +17,7 @@
           <!-- Full Name Field -->
           <div>
             <label for="fullName" class="block text-sm font-medium text-gray-700 mb-2">
-              Nombre Completo
+              {{ fullNameLabel }}
             </label>
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -30,10 +30,77 @@
                 required
                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 :class="{ 'border-red-300': serverErrors.username }"
-                placeholder="Ingresa tu nombre completo"
+                :placeholder="fullNamePlaceholder"
               />
             </div>
             <p v-if="serverErrors.username" class="mt-1 text-xs text-red-600">{{ serverErrors.username[0] }}</p>
+          </div>
+
+          <!-- Documento/Archivo Field (solo mayoristas) -->
+          <div v-if="isWholesale">
+            <label for="documentUrl" class="block text-sm font-medium text-gray-700 mb-2">
+              Documento/Archivo (URL)
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-link text-gray-400 text-sm"></i>
+              </div>
+              <input
+                id="documentUrl"
+                v-model="formData.documentUrl"
+                type="url"
+                required
+                class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                :class="{ 'border-red-300': !!documentUrlError }"
+                placeholder="https://drive.google.com/..."
+                @blur="validateDocumentUrl"
+              />
+            </div>
+            <p v-if="documentUrlError" class="mt-1 text-xs text-red-600">{{ documentUrlError }}</p>
+            <p v-else class="mt-1 text-xs text-gray-500">
+              Sube un documento a la nube y pega aquí el enlace para validar la empresa.
+            </p>
+          </div>
+
+          <!-- Ciudad y Dirección (solo mayoristas) -->
+          <div v-if="isWholesale" class="space-y-6">
+            <!-- City Field -->
+            <div>
+              <label for="city" class="block text-sm font-medium text-gray-700 mb-2">
+                Ciudad
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-city text-gray-400 text-sm"></i>
+                </div>
+                <input
+                  id="city"
+                  v-model="formData.city"
+                  type="text"
+                  class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Ingresa tu ciudad"
+                />
+              </div>
+            </div>
+
+            <!-- Address Field -->
+            <div>
+              <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
+                Dirección
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-map-marker-alt text-gray-400 text-sm"></i>
+                </div>
+                <input
+                  id="address"
+                  v-model="formData.address"
+                  type="text"
+                  class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Ingresa tu dirección"
+                />
+              </div>
+            </div>
           </div>
 
           <!-- Email Field -->
@@ -195,10 +262,20 @@ import { mapActions } from 'vuex';
 
 export default {
   name: 'RegisterForm',
+  props: {
+    variant: {
+      type: String,
+      default: 'individual',
+      validator: (v) => ['individual', 'wholesale'].includes(v),
+    },
+  },
   data() {
     return {
       formData: {
         fullName: '',
+        documentUrl: '',
+        city: '',
+        address: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -209,6 +286,7 @@ export default {
       showConfirmPassword: false,
       isLoading: false,
       emailError: '',
+      documentUrlError: '',
       passwordMismatch: false,
       passwordStrength: 0,
       serverErrors: { // Nuevo objeto para almacenar errores del servidor
@@ -219,14 +297,25 @@ export default {
     };
   },
   computed: {
+    isWholesale() {
+      return this.variant === 'wholesale';
+    },
+    fullNameLabel() {
+      return this.isWholesale ? 'Razón Social' : 'Nombre Completo';
+    },
+    fullNamePlaceholder() {
+      return this.isWholesale ? 'Ingresa la razón social' : 'Ingresa tu nombre completo';
+    },
     isFormValid() {
       return (
         this.formData.fullName.trim() !== '' &&
+        (!this.isWholesale || (this.formData.documentUrl.trim() !== '' && !this.documentUrlError)) &&
         this.formData.email.trim() !== '' &&
         this.formData.password.length >= 6 &&
         this.formData.confirmPassword === this.formData.password &&
         this.formData.acceptTerms &&
         !this.emailError &&
+        !this.documentUrlError &&
         !this.serverErrors.username && // Considerar errores del servidor en la validez del formulario
         !this.serverErrors.email &&
         !this.serverErrors.password
@@ -256,6 +345,30 @@ export default {
   },
   methods: {
     ...mapActions(['register']),
+    validateDocumentUrl() {
+      if (!this.isWholesale) {
+        this.documentUrlError = '';
+        return;
+      }
+
+      const value = String(this.formData.documentUrl || '').trim();
+      if (!value) {
+        this.documentUrlError = 'El enlace del documento es requerido';
+        return;
+      }
+
+      try {
+        // Validación simple: URL válida (http/https)
+        const parsed = new URL(value);
+        if (!['http:', 'https:'].includes(parsed.protocol)) {
+          this.documentUrlError = 'Por favor, ingresa un enlace válido (http o https)';
+          return;
+        }
+        this.documentUrlError = '';
+      } catch (e) {
+        this.documentUrlError = 'Por favor, ingresa un enlace válido';
+      }
+    },
     validateEmail() {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (this.formData.email && !emailRegex.test(this.formData.email)) {
@@ -285,6 +398,11 @@ export default {
       // Limpiar errores previos del servidor
       this.serverErrors = { username: null, email: null, password: null };
 
+      // Validaciones específicas (UI)
+      if (this.isWholesale) {
+        this.validateDocumentUrl();
+      }
+
       if (!this.isFormValid) {
         this.isLoading = false;
         return;
@@ -294,7 +412,12 @@ export default {
         const response = await this.register({ 
           email: this.formData.email,
           username: this.formData.fullName,
-          password: this.formData.password
+          password: this.formData.password,
+          // Para mayoristas (Empresa) el backend requiere este campo como url_validacion
+          url_validacion: this.isWholesale ? this.formData.documentUrl : '',
+          tipo_cliente: this.isWholesale ? 'Empresa' : 'Persona',
+          ciudad: this.formData.city,
+          direccion: this.formData.address,
         });
 
         console.log('Registro exitoso:', response);
@@ -336,6 +459,13 @@ export default {
         this.checkPasswordMatch();
       }
     },
+    'formData.documentUrl'() {
+      if (this.isWholesale) {
+        this.validateDocumentUrl();
+      } else {
+        this.documentUrlError = '';
+      }
+    },
     'formData.email'() {
       this.serverErrors.email = null; // Limpiar error de email del servidor al cambiar el campo
     },
@@ -357,6 +487,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 input[type="number"] {
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 

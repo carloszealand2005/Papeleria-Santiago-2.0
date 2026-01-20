@@ -20,17 +20,26 @@
           <a href="#" class="text-gray-600 hover:text-indigo-600 px-3 py-2 text-sm font-medium cursor-pointer">Contacto</a>
           <div class="flex items-center ml-6">
             <div class="relative">
+              <label for="product-details-header-search" class="sr-only">Buscar productos</label>
               <input
+                id="product-details-header-search"
                 type="text"
                 placeholder="Buscar..."
                 v-model="searchQuery"
                 @keyup.enter="handleSearch"
                 class="pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
-              <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+              <i class="fas fa-search absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true"></i>
             </div>
-            <button class="ml-3 bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 cursor-pointer" @click="handleSearch">
-              <i class="fas fa-search"></i>
+            <button
+              type="button"
+              class="ml-3 bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 cursor-pointer"
+              @click="handleSearch"
+              aria-label="Buscar productos"
+              title="Buscar productos"
+            >
+              <i class="fas fa-search" aria-hidden="true"></i>
+              <span class="sr-only">Buscar productos</span>
             </button>
           </div>
         </div>

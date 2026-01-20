@@ -30,25 +30,25 @@
             <!-- Badges -->
             <div class="absolute top-3 left-3">
               <span 
-                v-if="product.isNew" 
                 class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold"
               >
-                Nuevo
+                Premium
               </span>
               <span 
-                v-if="product.discount" 
+                v-if="Number(product.discount) >= 1" 
                 class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold ml-2"
               >
-                -{{ product.discount }}%
+                -{{ Number(product.discount).toFixed(0) }}%
               </span>
             </div>
             <!-- Favorite Button -->
             <div class="absolute top-3 right-3">
-              <button 
+              <A11yIconButton
                 class="bg-white/80 hover:bg-white text-slate-600 hover:text-red-500 p-2 rounded-full transition-all"
-              >
-                <i class="fas fa-heart text-sm"></i>
-              </button>
+                aria-label="Agregar a favoritos"
+                title="Agregar a favoritos"
+                icon-class="fas fa-heart text-sm"
+              />
             </div>
           </div>
 
@@ -61,21 +61,30 @@
               <p class="text-slate-600 text-sm">{{ product.category }}</p>
             </div>
             <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <span class="text-2xl font-bold text-slate-900">${{ product.price }}</span>
-                <span 
-                  v-if="product.originalPrice" 
-                  class="text-sm text-slate-400 line-through"
+              <div class="flex flex-col">
+                <div class="flex items-center space-x-2">
+                  <span class="text-2xl font-bold text-slate-900">${{ product.price }}</span>
+                  <span 
+                    v-if="product.originalPrice" 
+                    class="text-sm text-slate-400 line-through"
+                  >
+                    ${{ product.originalPrice }}
+                  </span>
+                </div>
+                <p
+                  v-if="product && product.bulto_minimo_mayorista !== undefined && product.bulto_minimo_mayorista !== null && String(product.bulto_minimo_mayorista) !== ''"
+                  class="text-xs text-slate-700 mt-1"
                 >
-                  ${{ product.originalPrice }}
-                </span>
+                  Bulto mínimo: {{ product.bulto_minimo_mayorista }}
+                </p>
               </div>
-              <button 
+              <A11yIconButton
                 class="bg-blue-600 hover:bg-blue-700 text-white p-2 !rounded-button transition-colors"
+                aria-label="Agregar al carrito"
+                title="Agregar al carrito"
+                icon-class="fas fa-plus text-sm"
                 @click="addToCart(product)"
-              >
-                <i class="fas fa-plus text-sm"></i>
-              </button>
+              />
             </div>
           </div>
         </div>
@@ -85,8 +94,13 @@
 </template>
 
 <script>
+import A11yIconButton from './A11yIconButton.vue';
+
 export default {
   name: "NovedadesSection",
+  components: {
+    A11yIconButton,
+  },
   props: {
     featuredProducts: {
       type: Array,

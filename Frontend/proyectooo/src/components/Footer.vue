@@ -13,11 +13,11 @@
           </p>
           <div class="flex space-x-4">
             <div class="flex items-center space-x-2 text-slate-400">
-              <i class="fas fa-map-marker-alt"></i>
+              <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
               <span>Bogotá, Colombia</span>
             </div>
             <div class="flex items-center space-x-2 text-slate-400">
-              <i class="fas fa-phone"></i>
+              <i class="fas fa-phone" aria-hidden="true"></i>
               <span>(601) 234-5678</span>
             </div>
           </div>
@@ -71,17 +71,21 @@
       <div class="border-t border-slate-800 mt-12 pt-8 flex justify-between items-center">
         <p class="text-slate-400">&copy; 2024 Santiago Papelería. Todos los derechos reservados.</p>
         <div class="flex space-x-6">
-          <a href="#" class="text-slate-400 hover:text-white transition-colors">
-            <i class="fab fa-facebook-f text-xl"></i>
+          <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="Facebook" title="Facebook">
+            <i class="fab fa-facebook-f text-xl" aria-hidden="true"></i>
+            <span class="sr-only">Facebook</span>
           </a>
-          <a href="#" class="text-slate-400 hover:text-white transition-colors">
-            <i class="fab fa-instagram text-xl"></i>
+          <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="Instagram" title="Instagram">
+            <i class="fab fa-instagram text-xl" aria-hidden="true"></i>
+            <span class="sr-only">Instagram</span>
           </a>
-          <a href="#" class="text-slate-400 hover:text-white transition-colors">
-            <i class="fab fa-twitter text-xl"></i>
+          <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="Twitter" title="Twitter">
+            <i class="fab fa-twitter text-xl" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span>
           </a>
-          <a href="#" class="text-slate-400 hover:text-white transition-colors">
-            <i class="fab fa-linkedin text-xl"></i>
+          <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="LinkedIn" title="LinkedIn">
+            <i class="fab fa-linkedin text-xl" aria-hidden="true"></i>
+            <span class="sr-only">LinkedIn</span>
           </a>
         </div>
       </div>

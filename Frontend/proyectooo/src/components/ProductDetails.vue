@@ -61,6 +61,22 @@ export default {
     }
   },
   methods: {
+    extractApiErrorMessage(error) {
+      const data = error && error.response && error.response.data;
+      if (!data) return '';
+      if (typeof data === 'string') return data;
+      if (typeof data.message === 'string') return data.message;
+      if (typeof data.detail === 'string') return data.detail;
+      const firstKey = Object.keys(data || {})[0];
+      const val = firstKey ? data[firstKey] : null;
+      if (Array.isArray(val) && typeof val[0] === 'string') return val[0];
+      return '';
+    },
+    getBulkStepFromProduct(product) {
+      const raw = product && product.bulto_minimo_mayorista;
+      const n = parseInt(raw, 10);
+      return Number.isFinite(n) && n > 0 ? n : 1;
+    },
     fetchProductDetails() {
       const sku = this.$route.params.id;
       if (!sku) {
@@ -71,15 +87,37 @@ export default {
         .then(response => {
           if (response.data && response.data.length > 0) {
             const productData = response.data[0];
+            // Backend: usar campos *_activo (ya vienen ajustados según token público vs mayorista)
+            const precioBaseActivo = parseFloat(productData.precio_base_activo || '0');
+            const descuentoActivo = parseFloat(productData.descuento_activo || '0');
+            const precioConDescuentoActivo = parseFloat(productData.precio_con_descuento_activo || precioBaseActivo || '0');
+            const precioConIvaActivo = parseFloat(productData.precio_con_iva_activo || precioConDescuentoActivo || precioBaseActivo || '0');
+            const hasDiscount =
+              descuentoActivo >= 1.0 &&
+              precioBaseActivo > 0 &&
+              precioConDescuentoActivo > 0 &&
+              precioConDescuentoActivo < precioBaseActivo;
+
             this.product = {
               id: productData.SKU,
+              sku: productData.SKU,
               name: productData.nombre,
               description: productData.descripcion,
-              originalPrice: parseFloat(productData.pvp),
-              salePrice: parseFloat(productData.precio_con_descuento_publico), 
-              discount: parseFloat(productData.descuento_publico),
+            // Mantener compatibilidad con componentes existentes, pero SIN mezclar bases:
+            // - "originalPrice" y "salePrice" deben estar en la misma base (aquí: sin IVA)
+            // - el precio final con IVA se puede mostrar aparte con `precio_con_iva_activo`
+            originalPrice: precioBaseActivo,
+            salePrice: hasDiscount ? precioConDescuentoActivo : null,
+              discount: hasDiscount ? descuentoActivo : 0,
+
+              // Campos activos (para futuras mejoras de UI mayorista)
+              tipo_precio_activo: productData.tipo_precio_activo,
+              precio_base_activo: precioBaseActivo,
+              descuento_activo: descuentoActivo,
+              precio_con_descuento_activo: precioConDescuentoActivo,
+              precio_con_iva_activo: precioConIvaActivo,
+              bulto_minimo_mayorista: productData.bulto_minimo_mayorista,
               iva: parseFloat(productData.iva),
-              precio_con_iva_publico: parseFloat(productData.precio_con_iva_publico),
               category: productData.categoria,
               mainImage: productData.imagen_url,
               gallery: [
@@ -113,7 +151,11 @@ export default {
         return;
       }
 
-      const { id: producto_sku, quantity } = cartItem;
+      const { id: producto_sku } = cartItem;
+      const step = this.getBulkStepFromProduct(cartItem);
+      let quantity = cartItem && cartItem.quantity != null ? Number(cartItem.quantity) : step;
+      if (!Number.isFinite(quantity) || quantity <= 0) quantity = step;
+      if (step > 1 && quantity < step) quantity = step;
 
       try {
         await api.post(`/mi-carrito-detalles/`, {
@@ -124,7 +166,8 @@ export default {
         this.$store.commit('SET_CART_ITEM_COUNT', this.cartItemCount + 1);
       } catch (error) {
         console.error('Error al añadir producto al carrito:', error);
-        this.showNotification('Error al añadir producto al carrito.', 'error');
+        const msg = this.extractApiErrorMessage(error);
+        this.showNotification(msg || 'Error al añadir producto al carrito.', 'error');
       }
     },
     handleSelectProduct(product) {

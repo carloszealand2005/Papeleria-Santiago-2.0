@@ -20,7 +20,6 @@
       @redirect="handleRedirect"
       @go-to-register="handleGoToRegister"
       @forgot-password="handleForgotPassword"
-      @user-type-changed="handleUserTypeChanged"
       @error="handleError"
       @success="handleSuccess"
     />
@@ -66,14 +65,16 @@ export default {
       // Implementar redirección según el destino
       // this.$router.push(`/${destination}`);
     },
-    handleGoToRegister() {
+    handleGoToRegister(type) {
+      // type viene desde LoginForm: 'individual' | 'wholesale'
+      if (type === 'wholesale') {
+        this.$router.push('/registro/mayorista');
+        return;
+      }
       this.$router.push('/registro');
     },
     handleForgotPassword() {
       this.$router.push('/recuperar-contraseña');
-    },
-    handleUserTypeChanged(type) {
-      console.log('Tipo de usuario cambiado:', type);
     },
     handleError(message) {
       console.error('Error en login:', message);

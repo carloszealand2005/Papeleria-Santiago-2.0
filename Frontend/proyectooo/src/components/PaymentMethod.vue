@@ -21,23 +21,6 @@
       </label>
       <label 
         class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
-        :class="{ 'border-blue-600 bg-blue-50': selectedPayment === 'paypal' }"
-      >
-        <input
-          type="radio"
-          name="payment"
-          value="paypal"
-          v-model="localPayment"
-          class="text-green-600 focus:ring-green-500"
-          @change="updatePayment"
-        >
-        <div class="ml-3 flex items-center">
-          <i class="fab fa-paypal text-gray-500 mr-3"></i>
-          <span class="font-medium text-gray-900">PayPal</span>
-        </div>
-      </label>
-      <label 
-        class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
         :class="{ 'border-blue-600 bg-blue-50': selectedPayment === 'transfer' }"
       >
         <input

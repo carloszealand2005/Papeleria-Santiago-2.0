@@ -228,6 +228,48 @@ RETURNS: {
     "message": "Inicio de sesión exitoso."
 }
 
+IMPLEMENTANDO CODIGO DE VERIFICACIÓN VÍA E-MAIL
+-----
+
+Paso 1: enviar OTP (Persona o Empresa)
+POST -> /api/auth/init-register/
+Persona
+
+{"email": "persona@demo.com",  
+"first_name": "Juan",  
+"password": "12345678",  
+"celular": "0999999999", 
+"ciudad": "Loja",  
+"tipo_cliente": "Persona"}
+
+
+Empresa (requiere url_validacion)
+{"email": "empresa@demo.com",
+"first_name": "Mi Empresa",
+"password": "12345678",
+"celular": "0999999999",
+"ciudad": "Loja",
+"tipo_cliente": "Empresa",
+"url_validacion": "https://drive.google.com/..."}
+
+
+Respuesta: 200 OK con "Código enviado..."
+
+
+
+Paso 2: verificar OTP
+POST ->  /api/auth/verify-otp/
+{ "email": "empresa@demo.com", "otp": "123456" }
+Si es Persona → 200 OK + token
+Si es Empresa → 200 OK + sin token:
+{  "message": "Cuenta en revisión. Te informaremos por correo cuando tu empresa sea validada.",  "email": "empresa@demo.com"}
+
+
+Paso 3: Login 
+POST /api/autenticacion/login/
+Si estado_cuenta != ACTIVO (ej. Empresa PENDIENTE) → rechaza con error de cuenta no activa.
+Si ACTIVO → devuelve token normal.
+
 -----
 USUARIO (Requiere token de autenticación): 
 GET -> http://127.0.0.1:8000/api/mi-perfil/ (Devuelve los datos del usuario)
@@ -306,3 +348,13 @@ TODO:
 PostgreSQL: 
 - INSTALAR DOS DEPENDENCIAS ENTORNO VIRTUAL 
 INSERT, VISTA, URL 
+
+
+
+IMPORTANT NOTES:
+
+Público / Persona → calcula con PVP + descuento_publico
+Empresa + estado_cuenta=ACTIVO → calcula con PVM + descuento_mayorista
+Además, para mayorista ACTIVO:
+se mantiene el filtro disponible_mayorista=True
+se incluye bulto_minimo_mayorista (si no, se oculta)

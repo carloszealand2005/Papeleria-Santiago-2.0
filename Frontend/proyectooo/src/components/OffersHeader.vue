@@ -23,7 +23,9 @@
         <!-- Search and Cart -->
         <div class="flex items-center space-x-4">
           <div class="relative">
+            <label for="offers-header-search" class="sr-only">Buscar productos</label>
             <input
+              id="offers-header-search"
               type="text"
               placeholder="Buscar productos..."
               v-model="searchQuery"
@@ -31,17 +33,22 @@
               style="--tw-ring-color: #2563EB;"
               @keyup.enter="handleSearch"
             >
-            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true"></i>
           </div>
           <button 
+            type="button"
             class="relative p-2 text-white rounded-lg hover:bg-blue-700 transition-colors !rounded-button" 
             style="background-color: #2563EB;"
             @click="goToCart"
+            :aria-label="cartButtonAriaLabel"
+            :title="cartButtonAriaLabel"
           >
-            <i class="fas fa-shopping-cart"></i>
+            <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+            <span class="sr-only">{{ cartButtonAriaLabel }}</span>
             <span 
               v-if="cartItemCount > 0"
               class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+              aria-hidden="true"
             >
               {{ cartItemCount }}
             </span>
@@ -71,6 +78,10 @@ export default {
   },
   computed: {
     ...mapGetters(['isAuthenticated', 'cartItemCount']), // Mapeamos cartItemCount directamente desde Vuex
+    cartButtonAriaLabel() {
+      if (this.cartItemCount > 0) return `Ir al carrito (${this.cartItemCount} producto${this.cartItemCount === 1 ? '' : 's'})`;
+      return 'Ir al carrito';
+    },
   },
   methods: {
     handleSearch() {

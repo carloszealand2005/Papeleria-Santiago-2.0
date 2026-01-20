@@ -26,7 +26,7 @@
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center space-x-2">
           <template v-if="parseFloat(offer.discount) >= 1.00">
-            <span class="text-lg text-gray-500 line-through opacity-75">${{ parseFloat(offer.originalPrice).toFixed(2) }}</span>
+            <span class="text-lg text-gray-600 line-through">${{ parseFloat(offer.originalPrice).toFixed(2) }}</span>
           </template>
           <template v-else>
             <span class="text-2xl font-bold" style="color: #1F2937;">${{ parseFloat(offer.originalPrice).toFixed(2) }}</span>
@@ -39,6 +39,12 @@
           </template>
         </div>
       </div>
+      <p
+        v-if="offer && offer.bulto_minimo_mayorista !== undefined && offer.bulto_minimo_mayorista !== null && String(offer.bulto_minimo_mayorista) !== ''"
+        class="text-xs text-slate-700 mb-4"
+      >
+        Bulto mínimo: {{ offer.bulto_minimo_mayorista }}
+      </p>
       <button 
         @click="addToCart"
         class="w-full text-white py-3 rounded-lg hover:bg-blue-700 transition-colors !rounded-button whitespace-nowrap" 

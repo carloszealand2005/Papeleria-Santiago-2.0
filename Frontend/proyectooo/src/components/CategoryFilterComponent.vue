@@ -16,10 +16,12 @@
         </button>
       </div>
       <div class="flex items-center space-x-4">
-        <span class="text-sm text-gray-600">Ordenar por:</span>
+        <label for="category-filter-sort" class="text-sm text-gray-600">Ordenar por:</label>
         <select 
+          id="category-filter-sort"
           :value="sortBy" 
           @change="handleSortChange"
+          aria-label="Ordenar por"
           class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:border-blue-600" 
           :style="`--tw-ring-color: ${buttonColor};`"
         >

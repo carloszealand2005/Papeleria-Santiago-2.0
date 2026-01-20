@@ -67,6 +67,14 @@ class Producto(models.Model):
 
     total_vendidos = models.IntegerField(default=0)
 
+    # ----------------
+    # Mayoristas (Empresa)
+    # - disponible_mayorista: permite excluir productos del catálogo mayorista sin depender del bulto mínimo
+    # - bulto_minimo_mayorista: cantidad mínima por SKU (se valida por total acumulado en carrito)
+    # ----------------
+    disponible_mayorista = models.BooleanField(default=True)
+    bulto_minimo_mayorista = models.PositiveIntegerField(default=1)
+
 
     def __str__(self):
         return f"{self.SKU} - {self.nombre}. Se han vendido {self.total_vendidos} unidades."
@@ -156,10 +164,49 @@ class Cliente(models.Model):
     ]
 
     tipo_cliente = models.CharField(max_length=20, choices=TIPOS_CLIENTES_CHOICES)
+    url_validacion = models.URLField(blank=True, null=True)
+
+    # ----------------
+    # Estado de cuenta (aplica a Persona y Empresa)
+    # - Persona: nace ACTIVO tras verificar OTP
+    # - Empresa: nace PENDIENTE tras verificar OTP y no puede logear hasta ACTIVO
+    # ----------------
+    ACTIVO = 'ACTIVO'
+    PENDIENTE = 'PENDIENTE'
+    INACTIVO = 'INACTIVO'
+    ELIMINADO = 'ELIMINADO'
+    ESTADOS_CUENTA_CHOICES = [
+        (ACTIVO, 'ACTIVO'),
+        (PENDIENTE, 'PENDIENTE'),
+        (INACTIVO, 'INACTIVO'),
+        (ELIMINADO, 'ELIMINADO'),
+    ]
+    estado_cuenta = models.CharField(
+        max_length=20,
+        choices=ESTADOS_CUENTA_CHOICES,
+        default=ACTIVO,
+    )
+  
 
 
     def __str__(self):
         return f"{self.nombre} - {self.email}. \n Este cliente es una {self.tipo_cliente}."
+
+    def save(self, *args, **kwargs):
+        """
+        Mantiene sincronizado el estado de negocio (Cliente.estado_cuenta) con la capacidad
+        de autenticarse en el sistema (User.is_active).
+        """
+        super().save(*args, **kwargs)
+
+        # Si no hay usuario asociado, no hay nada que sincronizar
+        if not self.user_id:
+            return
+
+        should_be_active = self.estado_cuenta == self.ACTIVO
+        if self.user.is_active != should_be_active:
+            self.user.is_active = should_be_active
+            self.user.save(update_fields=['is_active'])
 
 
 # ----------------
@@ -171,6 +218,13 @@ class PreRegistroUser(models.Model):
     password = models.CharField(max_length=128)
     celular = models.CharField(max_length=30, blank=True, null=True)
     ciudad = models.CharField(max_length=100, blank=True, null=True)
+    # Campos adicionales para soportar registro mayorista (staging antes del OTP correcto)
+    tipo_cliente = models.CharField(
+        max_length=20,
+        choices=Cliente.TIPOS_CLIENTES_CHOICES,
+        default=Cliente.PERSONA
+    )
+    url_validacion = models.URLField(blank=True, null=True)
     otp_code = models.CharField(max_length=6)
     intentos = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -311,7 +365,11 @@ class DetalleCarrito(models.Model):
                 base_precio_unitario = Decimal('0.00')
                 descuento_porcentaje = Decimal('0.00')
 
-                if self.carrito.cliente.tipo_cliente == 'Empresa':
+                # Mayorista SOLO si es Empresa y su cuenta está ACTIVA
+                if (
+                    self.carrito.cliente.tipo_cliente == 'Empresa'
+                    and getattr(self.carrito.cliente, 'estado_cuenta', None) == Cliente.ACTIVO
+                ):
                     base_precio_unitario = precio_obj.pvm
                     descuento_porcentaje = precio_obj.descuento_mayorista
                 else:
@@ -385,6 +443,27 @@ class Pedido(models.Model):
     fecha_pedido = models.DateField(auto_now_add=True)
     estado_pedido = models.CharField(max_length=20, choices=ESTADO_PEDIDO_CHOICES)
 
+    # ----------------
+    # Snapshot de datos de envío (domicilio) al momento de pagar.
+    # Importante: NO deben depender del perfil del cliente, porque el cliente puede cambiar su dirección en el futuro.
+    # Estos campos se pueden enviar desde el frontend al pagar, o (por compatibilidad) copiarse desde Cliente si faltan.
+    # ----------------
+    ciudad_envio = models.CharField(max_length=100, blank=True, null=True)
+    direccion_envio = models.TextField(blank=True, null=True)
+    numero_casa_envio = models.CharField(max_length=50, blank=True, null=True)
+    codigo_postal_envio = models.CharField(max_length=20, blank=True, null=True)
+
+    # Snapshot adicional (contacto y pago) al momento de pagar:
+    cedula_envio = models.CharField(max_length=20, blank=True, null=True)
+    telefono_envio = models.CharField(max_length=20, blank=True, null=True)
+    referencia_envio = models.TextField(blank=True, null=True)
+    METODO_PAGO_CHOICES = [
+        ('Tarjeta', 'Tarjeta'),
+        ('Transferencia bancaria', 'Transferencia bancaria'),
+    ]
+    metodo_pago = models.CharField(max_length=50, choices=METODO_PAGO_CHOICES, blank=True, null=True, default='Tarjeta')
+    costo_envio = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=Decimal('0.00'))
+
     @property
     def subtotal_general_comprobante(self):
         # Suma los subtotales de todos los DetallePedido asociados a este Pedido
@@ -418,13 +497,17 @@ class Pedido(models.Model):
     def total_general_comprobante(self):
         # Suma los totales de todos los DetallePedido asociados a este Pedido
         total_agregado = self.detalles_pedido.aggregate(total_sum=Sum('total_detalle_pedido'))['total_sum']
-        return total_agregado if total_agregado is not None else Decimal('0.00')
+        total_items = total_agregado if total_agregado is not None else Decimal('0.00')
+        costo_envio = self.costo_envio if self.costo_envio is not None else Decimal('0.00')
+        return total_items + costo_envio
 
     @property
     def monto_total(self):
         # Suma el campo 'total' de todos los DetallePedido relacionados con este Pedido
         total_agregado = self.detalles_pedido.aggregate(total_sum=Sum('total_detalle_pedido'))['total_sum']
-        return total_agregado if total_agregado is not None else Decimal('0.00')
+        total_items = total_agregado if total_agregado is not None else Decimal('0.00')
+        costo_envio = self.costo_envio if self.costo_envio is not None else Decimal('0.00')
+        return total_items + costo_envio
 
 
     def __str__(self):
@@ -466,7 +549,8 @@ class Transportista(models.Model):
         primary_key=False
     )
 
-    empresa = models.CharField(max_length=100)
+    # Puede quedar vacío al crear el pedido (se asigna luego por admin/operador)
+    empresa = models.CharField(max_length=100, blank=True, null=True)
     ESTADO_ENTREGA_CHOICES = [
         ('Pendiente', 'Pendiente'),
         ('Preparando', 'Preparando'),
@@ -475,8 +559,9 @@ class Transportista(models.Model):
     ]
 
     numero_guia = models.CharField(max_length=50, blank=True, null=True)
-    estado_entrega = models.CharField(max_length=20, choices=ESTADO_ENTREGA_CHOICES)
-    fecha_actualizacion = models.DateField(blank=True, null=True)
+    estado_entrega = models.CharField(max_length=20, choices=ESTADO_ENTREGA_CHOICES, default='Pendiente')
+    # DateTime para tracking real; auto_now actualiza cada vez que se guarda el registro.
+    fecha_actualizacion = models.DateTimeField(blank=True, null=True, auto_now=True)
 
 
 # ------------
@@ -489,7 +574,12 @@ class Comprobante(models.Model):
         primary_key=False)
 
 
+    # Nota: mantenemos opciones legacy para no romper comprobantes existentes en admin.
+    # Para nuevos pedidos (MVP), el backend usará: 'Tarjeta' o 'Transferencia bancaria'.
     METODO_PAGO_CHOICES = [
+        ('Tarjeta', 'Tarjeta'),
+        ('Transferencia bancaria', 'Transferencia bancaria'),
+        # Legacy:
         ('Tarjeta de crédito', 'Tarjeta de crédito'),
         ('Tarjeta de débito', 'Tarjeta de débito'),
         ('Cheque', 'Cheque'),
@@ -503,14 +593,15 @@ class Comprobante(models.Model):
     ]
 
     numero_factura = models.CharField(max_length=50)
-    cedula_cliente = models.CharField(max_length=10, blank=True, null=True)
+    cedula_cliente = models.CharField(max_length=20, blank=True, null=True)
     direccion_cliente = models.TextField(blank=True, null=True)
     email_cliente = models.EmailField(blank=True, null=True)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     descuento = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     iva = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    metodo_pago = models.CharField(max_length=20, choices=METODO_PAGO_CHOICES, blank=True, null=True)
+    costo_envio = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=Decimal('0.00'))
+    metodo_pago = models.CharField(max_length=50, choices=METODO_PAGO_CHOICES, blank=True, null=True)
     fecha_emision = models.DateField(auto_now_add=True)
     url_factura = models.URLField(blank=True, null=True)
     estado_fiscal = models.CharField(max_length=20, choices=ESTADO_FISCAL_CHOICES, blank=True, null=True)

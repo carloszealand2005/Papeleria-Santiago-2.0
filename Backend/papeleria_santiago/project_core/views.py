@@ -15,9 +15,10 @@ from django.contrib.auth.hashers import make_password
 from django.utils.text import slugify
 from django.utils import timezone
 from django.db import transaction
+from decimal import Decimal, InvalidOperation
 from datetime import timedelta
 import secrets
-from .models import Comprobante, Pedido, Producto, Carrito, DetalleCarrito, Cliente, DetallePedido, Inventario, Subcategoria # Importamos DetallePedido, Inventario y Subcategoria
+from .models import Comprobante, Pedido, Producto, Carrito, DetalleCarrito, Cliente, DetallePedido, Inventario, Subcategoria, Transportista # Importamos DetallePedido, Inventario y Subcategoria
 from .models import PreRegistroUser, PasswordResetOtp
 from rest_framework import viewsets, filters, status, mixins, permissions, serializers # Importar filters, status, mixins, permissions y serializers
 from rest_framework import generics
@@ -126,6 +127,24 @@ class ProductoViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
 
+        # ----------------
+        # Catálogo reactivo para mayoristas:
+        # Si viene token de Empresa ACTIVO, ocultamos productos marcados como no disponibles para mayorista.
+        # ----------------
+        try:
+            user = getattr(self.request, 'user', None)
+            cliente = getattr(user, 'cliente_profile', None) if user and getattr(user, 'is_authenticated', False) else None
+            is_mayorista_activo = bool(
+                cliente
+                and cliente.tipo_cliente == Cliente.EMPRESA
+                and cliente.estado_cuenta == Cliente.ACTIVO
+            )
+        except Exception:
+            is_mayorista_activo = False
+
+        if is_mayorista_activo:
+            queryset = queryset.filter(disponible_mayorista=True)
+
         # Anotar precios (desde el OneToOne `precios`) para:
         # - permitir ordering=pvp / ordering=pvm aunque no sean campos físicos en Producto
         # - mantener compatibilidad con el frontend
@@ -160,14 +179,18 @@ class ProductoViewSet(viewsets.ModelViewSet):
         precio_min = self.request.query_params.get('precio_min')
         precio_max = self.request.query_params.get('precio_max')
 
+        # Para mayorista ACTIVO filtramos por precio base mayorista (PVM).
+        # Para público / Persona filtramos por precio base público (PVP).
+        precio_base_field = 'precios__pvm' if is_mayorista_activo else 'precios__pvp'
+
         if precio_min:
             # Asumimos que `precios` es el related_name del OneToOneField del Precio
             # que apunta a Producto. Para filtrar por precio en el modelo Precio,
             # necesitamos acceder a `precios__pvp` o `precios__pvm`.
             # Vamos a usar `precios__pvp` para este ejemplo.
-            queryset = queryset.filter(precios__pvp__gte=precio_min)
+            queryset = queryset.filter(**{f"{precio_base_field}__gte": precio_min})
         if precio_max:
-            queryset = queryset.filter(precios__pvp__lte=precio_max)
+            queryset = queryset.filter(**{f"{precio_base_field}__lte": precio_max})
             
         # Filtrar por nombre de subcategoría (case-insensitive)
         subcategoria_nombre = self.request.query_params.get('subcategoria')
@@ -178,38 +201,33 @@ class ProductoViewSet(viewsets.ModelViewSet):
         descuento_min = self.request.query_params.get('descuento_min')
         descuento_max = self.request.query_params.get('descuento_max') 
 
+        # Para mayorista ACTIVO filtramos/ordenamos por descuento mayorista.
+        # Para público / Persona filtramos/ordenamos por descuento público.
+        descuento_field = 'precios__descuento_mayorista' if is_mayorista_activo else 'precios__descuento_publico'
+
         if descuento_min and descuento_max:
             try:
                 descuento_min = float(descuento_min)
                 descuento_max = float(descuento_max)
-                queryset = queryset.filter(
-                    (Q(precios__descuento_publico__gte=descuento_min) & Q(precios__descuento_publico__lte=descuento_max)) |
-                    (Q(precios__descuento_mayorista__gte=descuento_min) & Q(precios__descuento_mayorista__lte=descuento_max))
-                )
+                queryset = queryset.filter(**{f"{descuento_field}__gte": descuento_min, f"{descuento_field}__lte": descuento_max})
             except ValueError:
                 pass
         elif descuento_min:
             try:
                 descuento_min = float(descuento_min)
-                queryset = queryset.filter(
-                    Q(precios__descuento_publico__gte=descuento_min) |
-                    Q(precios__descuento_mayorista__gte=descuento_min)
-                )
+                queryset = queryset.filter(**{f"{descuento_field}__gte": descuento_min})
             except ValueError:
                 pass # Ignorar si el valor no es un número válido
         elif descuento_max:
             try:
                 descuento_max = float(descuento_max)
-                queryset = queryset.filter(
-                    Q(precios__descuento_publico__lte=descuento_max) |
-                    Q(precios__descuento_mayorista__lte=descuento_max)
-                )
+                queryset = queryset.filter(**{f"{descuento_field}__lte": descuento_max})
             except ValueError:
                 pass
 
         # Ordering “custom” para el frontend (aliases):
         # - ordering=total_vendidos  -> más vendidos primero
-        # - ordering=descuento       -> mayor descuento_publico primero
+        # - ordering=descuento       -> mayor descuento primero (público o mayorista según el usuario)
         # - ordering=alphabet        -> nombre A-Z
         #
         # Nota: lo hacemos aquí (y NO vía OrderingFilter) porque OrderingFilter:
@@ -226,8 +244,8 @@ class ProductoViewSet(viewsets.ModelViewSet):
                 # default: DESC (más vendidos primero)
                 queryset = queryset.order_by('total_vendidos' if is_desc else '-total_vendidos')
             elif key == 'descuento':
-                # default: DESC (mayor descuento_publico primero)
-                queryset = queryset.order_by('precios__descuento_publico' if is_desc else '-precios__descuento_publico')
+                # default: DESC (mayor descuento primero)
+                queryset = queryset.order_by(f"{descuento_field}" if is_desc else f"-{descuento_field}")
             elif key == 'alphabet':
                 # default: ASC (A-Z)
                 queryset = queryset.order_by('-nombre' if is_desc else 'nombre')
@@ -272,6 +290,21 @@ class ProductoViewSet(viewsets.ModelViewSet):
             return Response({'error': 'El parámetro limite debe ser un número entero.'}, status=status.HTTP_400_BAD_REQUEST)
         
         productos_destacados = Producto.objects.all()
+
+        # Catálogo reactivo para mayoristas (ver get_queryset)
+        try:
+            user = getattr(self.request, 'user', None)
+            cliente = getattr(user, 'cliente_profile', None) if user and getattr(user, 'is_authenticated', False) else None
+            is_mayorista_activo = bool(
+                cliente
+                and cliente.tipo_cliente == Cliente.EMPRESA
+                and cliente.estado_cuenta == Cliente.ACTIVO
+            )
+        except Exception:
+            is_mayorista_activo = False
+
+        if is_mayorista_activo:
+            productos_destacados = productos_destacados.filter(disponible_mayorista=True)
 
         # Aplicar filtro por subcategoría si se proporciona
         subcategoria_nombre = self.request.query_params.get('subcategoria')
@@ -327,6 +360,36 @@ def _send_password_reset_otp_email(to_email, otp_code):
     return sent
 
 
+def _send_empresa_pending_email(to_email):
+    """
+    Correo informativo para cuentas mayoristas (Empresa) que quedan en estado PENDIENTE.
+    Nota: no contiene OTP, es solo comunicación post-registro.
+    """
+    subject = "Cuenta mayorista en revisión - Papelería Santiago"
+    message = (
+        "Tu cuenta ha sido creada exitosamente.\n\n"
+        "Te enviaremos un correo cuando sea aprobada por nuestro equipo de administración.\n\n"
+        "Atentamente:\n"
+        "Papelería Santiago"
+    )
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or settings.EMAIL_HOST_USER
+    sent = send_mail(subject, message, from_email, [to_email], fail_silently=False)
+    return sent
+
+
+def _send_persona_verified_email(to_email):
+    """
+    Correo informativo para cuentas Persona que quedan ACTIVO al verificar OTP.
+    """
+    subject = "Cuenta verificada - Papelería Santiago"
+    message = (
+        "Tu cuenta ha sido verificada, ya puedes iniciar sesión dentro de la tienda virtual Papelería Santiago."
+    )
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or settings.EMAIL_HOST_USER
+    sent = send_mail(subject, message, from_email, [to_email], fail_silently=False)
+    return sent
+
+
 class InitRegisterAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -339,6 +402,8 @@ class InitRegisterAPIView(APIView):
         password = serializer.validated_data['password']
         celular = serializer.validated_data.get('celular') or ''
         ciudad = serializer.validated_data.get('ciudad') or ''
+        tipo_cliente = serializer.validated_data.get('tipo_cliente') or Cliente.PERSONA
+        url_validacion = serializer.validated_data.get('url_validacion') or None
 
         # Seguridad: no permitir iniciar registro si ya existe usuario real (doble check)
         if User.objects.filter(email=email).exists():
@@ -354,6 +419,8 @@ class InitRegisterAPIView(APIView):
                 'password': hashed_password,
                 'celular': celular,
                 'ciudad': ciudad,
+                'tipo_cliente': tipo_cliente,
+                'url_validacion': url_validacion,
                 'otp_code': otp_code,
                 'intentos': 0,
             }
@@ -413,11 +480,16 @@ class VerifyOtpAPIView(APIView):
                 return Response({'error': 'Este correo ya está registrado.'}, status=status.HTTP_400_BAD_REQUEST)
 
             username = _generate_unique_username(email, prereg.first_name)
+            tipo_cliente = getattr(prereg, 'tipo_cliente', Cliente.PERSONA) or Cliente.PERSONA
+            is_empresa = tipo_cliente == Cliente.EMPRESA
+
+            # Si es Empresa: nace PENDIENTE y NO puede logearse hasta aprobación (User.is_active=False)
             user = User.objects.create(
                 username=username,
                 email=email,
                 first_name=prereg.first_name or '',
                 password=prereg.password,  # ya está hasheada
+                is_active=(not is_empresa),
             )
 
             cliente = Cliente.objects.create(
@@ -426,14 +498,37 @@ class VerifyOtpAPIView(APIView):
                 email=email,
                 telefono=prereg.celular or '',
                 ciudad=prereg.ciudad or '',
-                tipo_cliente='Persona'
+                tipo_cliente=tipo_cliente,
+                url_validacion=(getattr(prereg, 'url_validacion', None) if is_empresa else None),
+                estado_cuenta=(Cliente.PENDIENTE if is_empresa else Cliente.ACTIVO),
             )
 
             Carrito.objects.create(cliente=cliente)
 
-            token, _ = Token.objects.get_or_create(user=user)
-
             prereg.delete()
+
+        # Respuesta: Persona -> token; Empresa -> mensaje sin token (queda en revisión)
+        if is_empresa:
+            # Enviar correo informativo (no bloquea el flujo si falla el envío)
+            try:
+                _send_empresa_pending_email(email)
+            except Exception:
+                pass
+            return Response(
+                {
+                    'message': 'Cuenta en revisión. Te informaremos por correo cuando tu empresa sea validada.',
+                    'email': email,
+                },
+                status=status.HTTP_200_OK
+            )
+
+        token, _ = Token.objects.get_or_create(user=user)
+
+        # Correo informativo para Persona (no bloquea el flujo si falla el envío)
+        try:
+            _send_persona_verified_email(email)
+        except Exception:
+            pass
 
         return Response(
             {
@@ -500,6 +595,16 @@ class SolicitarRecuperacionAPIView(APIView):
         user = User.objects.filter(email=email).first()
         if not user:
             # Importante: NO generar ni enviar OTP si el correo no existe
+            return Response({'message': generic_message}, status=status.HTTP_200_OK)
+
+        # Solo permitir recuperación si la cuenta está ACTIVA (Persona o Empresa)
+        if not user.is_active:
+            return Response({'message': generic_message}, status=status.HTTP_200_OK)
+        try:
+            cliente = user.cliente_profile
+        except Cliente.DoesNotExist:
+            cliente = None
+        if cliente and getattr(cliente, 'estado_cuenta', None) and cliente.estado_cuenta != Cliente.ACTIVO:
             return Response({'message': generic_message}, status=status.HTTP_200_OK)
 
         now = timezone.now()
@@ -589,6 +694,18 @@ class ConfirmarRecuperacionAPIView(APIView):
             otp_obj.delete()
             return Response({'error': 'Código inválido o expirado.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Bloquear recuperación si la cuenta no está ACTIVA
+        if not user.is_active:
+            otp_obj.delete()
+            return Response({'error': 'Código inválido o expirado.'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            cliente = user.cliente_profile
+        except Cliente.DoesNotExist:
+            cliente = None
+        if cliente and getattr(cliente, 'estado_cuenta', None) and cliente.estado_cuenta != Cliente.ACTIVO:
+            otp_obj.delete()
+            return Response({'error': 'Código inválido o expirado.'}, status=status.HTTP_400_BAD_REQUEST)
+
         with transaction.atomic():
             user.set_password(new_password)
             user.save(update_fields=['password'])
@@ -626,47 +743,95 @@ class CarritoViewSet(viewsets.ModelViewSet):
         #!!    return Response({'error': 'El carrito está vacío, no se puede realizar el pago.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # --- 3. Crear Pedido (estado inicial 'Pagado') ---
-            pedido = Pedido.objects.create(
-                cliente=carrito.cliente,
-                estado_pedido='Pagado',
-                # Otros campos del pedido se llenarán automáticamente o por señales si es necesario
-            )
+            with transaction.atomic():
+                # Datos de envío (snapshot): aceptar del body, fallback a Cliente para compatibilidad.
+                ciudad_envio = (request.data.get('ciudad_envio') or carrito.cliente.ciudad or '').strip() or None
+                direccion_envio = (request.data.get('direccion_envio') or carrito.cliente.direccion or '').strip() or None
+                numero_casa_envio = (request.data.get('numero_casa_envio') or '').strip() or None
+                codigo_postal_envio = (request.data.get('codigo_postal_envio') or '').strip() or None
+                cedula_envio = (request.data.get('cedula_envio') or carrito.cliente.cedula or '').strip() or None
+                telefono_envio = (request.data.get('telefono_envio') or carrito.cliente.telefono or '').strip() or None
+                referencia_envio = (request.data.get('referencia_envio') or '').strip() or None
 
-            # --- 4. Crear DetallePedido a partir de DetalleCarrito ---
-            for detalle_carrito in carrito.detalles_carrito.all():
-                DetallePedido.objects.create(
-                    pedido=pedido,
-                    producto=detalle_carrito.producto,
-                    cantidad=detalle_carrito.cantidad,
-                    precio_unitario=detalle_carrito.precio_unitario,
-                    subtotal_detalle_pedido=detalle_carrito.subtotal_detalle_carrito,
-                    iva_detalle_pedido=detalle_carrito.iva_detalle_carrito, # Asegurarse de que este campo tenga valor en DetalleCarrito
-                    descuento_detalle_pedido=detalle_carrito.descuento_detalle_carrito,
-                    total_detalle_pedido=detalle_carrito.total_detalle_carrito,
+                metodo_pago = (request.data.get('metodo_pago') or 'Tarjeta').strip()
+                if metodo_pago not in ('Tarjeta', 'Transferencia bancaria'):
+                    return Response(
+                        {'error': 'Método de pago inválido. Opciones: Tarjeta, Transferencia bancaria.'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+                # Costo de envío (Decimal >= 0). No asumimos 3.00: si no viene, usamos 0.00 por compatibilidad.
+                raw_costo_envio = request.data.get('costo_envio')
+                if raw_costo_envio is None or str(raw_costo_envio).strip() == '':
+                    costo_envio = Decimal('0.00')
+                else:
+                    try:
+                        costo_envio = Decimal(str(raw_costo_envio))
+                    except (InvalidOperation, ValueError):
+                        return Response({'error': 'costo_envio debe ser un número válido.'}, status=status.HTTP_400_BAD_REQUEST)
+                    if costo_envio < 0:
+                        return Response({'error': 'costo_envio no puede ser negativo.'}, status=status.HTTP_400_BAD_REQUEST)
+                    costo_envio = costo_envio.quantize(Decimal('0.01'))
+
+                # --- 3. Crear Pedido (estado inicial 'Pagado') ---
+                pedido = Pedido.objects.create(
+                    cliente=carrito.cliente,
+                    estado_pedido='Pagado',
+                    # Otros campos del pedido se llenarán automáticamente o por señales si es necesario
+                    ciudad_envio=ciudad_envio,
+                    direccion_envio=direccion_envio,
+                    numero_casa_envio=numero_casa_envio,
+                    codigo_postal_envio=codigo_postal_envio,
+                    cedula_envio=cedula_envio,
+                    telefono_envio=telefono_envio,
+                    referencia_envio=referencia_envio,
+                    metodo_pago=metodo_pago,
+                    costo_envio=costo_envio,
                 )
 
-            # --- 5. Crear Comprobante después de que todos los DetallePedido estén creados ---
-            # Ahora las propiedades del Pedido (subtotal, descuento, iva, total) deberían ser correctas
-            Comprobante.objects.create(
-                pedido=pedido,
-                numero_factura=f"FAC-{pedido.id}-{pedido.fecha_pedido.strftime('%Y%m%d')}",
-                cedula_cliente=pedido.cliente.cedula if pedido.cliente.cedula else 'NO ESPECIFICADO',
-                direccion_cliente=pedido.cliente.direccion,
-                email_cliente=pedido.cliente.email,
-                subtotal=pedido.subtotal_general_comprobante,
-                descuento=pedido.descuento_general_comprobante,
-                iva=pedido.iva_general_comprobante,
-                total=pedido.total_general_comprobante,
-                metodo_pago='Tarjeta de crédito', # Se mantiene el valor por defecto
-                estado_fiscal='Emitido',
-                # url_factura en blanco. TODO(PENDIENTE: GUARDAR URL DE LA FACTURA EN PRODUCCIÓN)
-            )
-            
-            # --- 6. Borrar DetalleCarrito del carrito original ---
-            # Esto también hará que el carrito.estado_dinamico pase a 'Inactivo'
-            carrito.detalles_carrito.all().delete()
-            carrito.save() # Guarda el carrito para actualizar la fecha_actualizacion
+                # --- 3.1 Crear Transportista (entrega) asociado al pedido ---
+                Transportista.objects.create(
+                    pedido=pedido,
+                    estado_entrega='Pendiente',
+                )
+
+                # --- 4. Crear DetallePedido a partir de DetalleCarrito ---
+                for detalle_carrito in carrito.detalles_carrito.all():
+                    DetallePedido.objects.create(
+                        pedido=pedido,
+                        producto=detalle_carrito.producto,
+                        cantidad=detalle_carrito.cantidad,
+                        precio_unitario=detalle_carrito.precio_unitario,
+                        # Subtotal = antes de descuento (para que el desglose Subtotal/Descuento/IVA cuadre)
+                        subtotal_detalle_pedido=detalle_carrito.subtotal_antes_descuento,
+                        iva_detalle_pedido=detalle_carrito.iva_detalle_carrito, # Asegurarse de que este campo tenga valor en DetalleCarrito
+                        descuento_detalle_pedido=detalle_carrito.descuento_detalle_carrito,
+                        total_detalle_pedido=detalle_carrito.total_detalle_carrito,
+                    )
+
+                # --- 5. Crear Comprobante después de que todos los DetallePedido estén creados ---
+                # Ahora las propiedades del Pedido (subtotal, descuento, iva, total) deberían ser correctas
+                Comprobante.objects.create(
+                    pedido=pedido,
+                    numero_factura=f"FAC-{pedido.id}-{pedido.fecha_pedido.strftime('%Y%m%d')}",
+                    # Si no hay cédula, guardar NULL (evita strings largos y respeta blank/null)
+                    cedula_cliente=(pedido.cedula_envio or pedido.cliente.cedula or None),
+                    direccion_cliente=(pedido.direccion_envio or pedido.cliente.direccion),
+                    email_cliente=pedido.cliente.email,
+                    subtotal=pedido.subtotal_general_comprobante,
+                    descuento=pedido.descuento_general_comprobante,
+                    iva=pedido.iva_general_comprobante,
+                    total=pedido.total_general_comprobante,
+                    costo_envio=pedido.costo_envio,
+                    metodo_pago=pedido.metodo_pago,
+                    estado_fiscal='Emitido',
+                    # url_factura en blanco. TODO(PENDIENTE: GUARDAR URL DE LA FACTURA EN PRODUCCIÓN)
+                )
+                
+                # --- 6. Borrar DetalleCarrito del carrito original ---
+                # Esto también hará que el carrito.estado_dinamico pase a 'Inactivo'
+                carrito.detalles_carrito.all().delete()
+                carrito.save() # Guarda el carrito para actualizar la fecha_actualizacion
 
             # TODO: DEVOLVER UNA RESPUESTA DETALLADA DEL PEDIDO CREADO EXITOSAMENTE
             return Response({'message': 'Carrito pagado y pedido creado exitosamente.', 'pedido_id': pedido.id}, status=status.HTTP_201_CREATED)
@@ -824,43 +989,97 @@ class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Qu
             return Response({'error': 'El carrito está vacío, no se puede realizar el pago.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # --- 3. Crear Pedido (estado inicial 'Pagado') ---
-            pedido = Pedido.objects.create(
-                cliente=carrito.cliente,
-                estado_pedido='Pagado',
-            )
+            with transaction.atomic():
+                # ----------------
+                # Datos de envío (snapshot)
+                # - MVP: el frontend puede enviarlos en el body
+                # - Compatibilidad: si no vienen, copiamos desde Cliente (para no romper el flujo actual)
+                # ----------------
+                ciudad_envio = (request.data.get('ciudad_envio') or carrito.cliente.ciudad or '').strip() or None
+                direccion_envio = (request.data.get('direccion_envio') or carrito.cliente.direccion or '').strip() or None
+                numero_casa_envio = (request.data.get('numero_casa_envio') or '').strip() or None
+                codigo_postal_envio = (request.data.get('codigo_postal_envio') or '').strip() or None
+                cedula_envio = (request.data.get('cedula_envio') or carrito.cliente.cedula or '').strip() or None
+                telefono_envio = (request.data.get('telefono_envio') or carrito.cliente.telefono or '').strip() or None
+                referencia_envio = (request.data.get('referencia_envio') or '').strip() or None
 
-            # --- 4. Crear DetallePedido a partir de DetalleCarrito ---
-            for detalle_carrito in carrito.detalles_carrito.all():
-                DetallePedido.objects.create(
-                    pedido=pedido,
-                    producto=detalle_carrito.producto,
-                    cantidad=detalle_carrito.cantidad,
-                    precio_unitario=detalle_carrito.precio_unitario,
-                    subtotal_detalle_pedido=detalle_carrito.subtotal_detalle_carrito,
-                    iva_detalle_pedido=detalle_carrito.iva_detalle_carrito,
-                    descuento_detalle_pedido=detalle_carrito.descuento_detalle_carrito,
-                    total_detalle_pedido=detalle_carrito.total_detalle_carrito,
+                metodo_pago = (request.data.get('metodo_pago') or 'Tarjeta').strip()
+                if metodo_pago not in ('Tarjeta', 'Transferencia bancaria'):
+                    return Response(
+                        {'error': 'Método de pago inválido. Opciones: Tarjeta, Transferencia bancaria.'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+                # Costo de envío (Decimal >= 0). No asumimos 3.00: si no viene, usamos 0.00 por compatibilidad.
+                raw_costo_envio = request.data.get('costo_envio')
+                if raw_costo_envio is None or str(raw_costo_envio).strip() == '':
+                    costo_envio = Decimal('0.00')
+                else:
+                    try:
+                        costo_envio = Decimal(str(raw_costo_envio))
+                    except (InvalidOperation, ValueError):
+                        return Response({'error': 'costo_envio debe ser un número válido.'}, status=status.HTTP_400_BAD_REQUEST)
+                    if costo_envio < 0:
+                        return Response({'error': 'costo_envio no puede ser negativo.'}, status=status.HTTP_400_BAD_REQUEST)
+                    costo_envio = costo_envio.quantize(Decimal('0.01'))
+
+                # --- 3. Crear Pedido (estado inicial 'Pagado') ---
+                pedido = Pedido.objects.create(
+                    cliente=carrito.cliente,
+                    estado_pedido='Pagado',
+                    ciudad_envio=ciudad_envio,
+                    direccion_envio=direccion_envio,
+                    numero_casa_envio=numero_casa_envio,
+                    codigo_postal_envio=codigo_postal_envio,
+                    cedula_envio=cedula_envio,
+                    telefono_envio=telefono_envio,
+                    referencia_envio=referencia_envio,
+                    metodo_pago=metodo_pago,
+                    costo_envio=costo_envio,
                 )
 
-            # --- 5. Crear Comprobante después de que todos los DetallePedido estén creados ---
-            Comprobante.objects.create(
-                pedido=pedido,
-                numero_factura=f"FAC-{pedido.id}-{pedido.fecha_pedido.strftime('%Y%m%d')}",
-                cedula_cliente=pedido.cliente.cedula if pedido.cliente.cedula else 'NO ESPECIFICADO',
-                direccion_cliente=pedido.cliente.direccion,
-                email_cliente=pedido.cliente.email,
-                subtotal=pedido.subtotal_general_comprobante,
-                descuento=pedido.descuento_general_comprobante,
-                iva=pedido.iva_general_comprobante,
-                total=pedido.total_general_comprobante,
-                metodo_pago='Tarjeta de crédito',
-                estado_fiscal='Emitido',
-            )
+                # --- 3.1 Crear Transportista (entrega) asociado al pedido ---
+                # Estado inicial: Pendiente (empresa y guía se asignan luego)
+                Transportista.objects.create(
+                    pedido=pedido,
+                    estado_entrega='Pendiente',
+                )
 
-            # --- 6. Borrar DetalleCarrito del carrito original ---
-            carrito.detalles_carrito.all().delete()
-            carrito.save() # Guarda el carrito para actualizar la fecha_actualizacion
+                # --- 4. Crear DetallePedido a partir de DetalleCarrito ---
+                for detalle_carrito in carrito.detalles_carrito.all():
+                    DetallePedido.objects.create(
+                        pedido=pedido,
+                        producto=detalle_carrito.producto,
+                        cantidad=detalle_carrito.cantidad,
+                        precio_unitario=detalle_carrito.precio_unitario,
+                        # Subtotal = antes de descuento (para que el desglose Subtotal/Descuento/IVA cuadre)
+                        subtotal_detalle_pedido=detalle_carrito.subtotal_antes_descuento,
+                        iva_detalle_pedido=detalle_carrito.iva_detalle_carrito,
+                        descuento_detalle_pedido=detalle_carrito.descuento_detalle_carrito,
+                        total_detalle_pedido=detalle_carrito.total_detalle_carrito,
+                    )
+
+                # --- 5. Crear Comprobante después de que todos los DetallePedido estén creados ---
+                Comprobante.objects.create(
+                    pedido=pedido,
+                    numero_factura=f"FAC-{pedido.id}-{pedido.fecha_pedido.strftime('%Y%m%d')}",
+                    # Si no hay cédula, guardar NULL (evita strings largos y respeta blank/null)
+                    cedula_cliente=(pedido.cedula_envio or pedido.cliente.cedula or None),
+                    # Usar snapshot de envío del pedido (histórico)
+                    direccion_cliente=(pedido.direccion_envio or pedido.cliente.direccion),
+                    email_cliente=pedido.cliente.email,
+                    subtotal=pedido.subtotal_general_comprobante,
+                    descuento=pedido.descuento_general_comprobante,
+                    iva=pedido.iva_general_comprobante,
+                    total=pedido.total_general_comprobante,
+                    costo_envio=pedido.costo_envio,
+                    metodo_pago=pedido.metodo_pago,
+                    estado_fiscal='Emitido',
+                )
+
+                # --- 6. Borrar DetalleCarrito del carrito original ---
+                carrito.detalles_carrito.all().delete()
+                carrito.save() # Guarda el carrito para actualizar la fecha_actualizacion
 
             return Response({'message': 'Carrito pagado y pedido creado exitosamente.', 'pedido_id': pedido.id}, status=status.HTTP_201_CREATED)
 
@@ -925,6 +1144,49 @@ class MiCarritoDetalleViewSet(
             producto = Producto.objects.get(SKU=producto_sku)
         except Producto.DoesNotExist:
             return Response({'error': 'Producto no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # ----------------
+        # Validaciones mayoristas:
+        # - Si el usuario es Empresa ACTIVO:
+        #   - bloquear productos no disponibles para mayorista
+        #   - bloquear cantidades menores al bulto mínimo (cantidad es total acumulado del SKU en carrito)
+        # ----------------
+        try:
+            is_mayorista_activo = bool(
+                cliente.tipo_cliente == Cliente.EMPRESA
+                and cliente.estado_cuenta == Cliente.ACTIVO
+            )
+        except Exception:
+            is_mayorista_activo = False
+
+        if is_mayorista_activo:
+            if not getattr(producto, 'disponible_mayorista', True):
+                return Response(
+                    {'error': 'Producto no disponible para mayorista.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            requerido = getattr(producto, 'bulto_minimo_mayorista', 1) or 1
+            try:
+                requerido = int(requerido)
+            except Exception:
+                requerido = 1
+
+            try:
+                cantidad_int = int(cantidad)
+            except Exception:
+                return Response(
+                    {'error': 'La cantidad debe ser un número entero.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if cantidad_int < requerido:
+                return Response(
+                    {'error': f'Bulto mínimo no alcanzado. Requerido: {requerido}, enviado: {cantidad_int}'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            # normalizamos cantidad para el resto del flujo (stock/guardar)
+            cantidad = cantidad_int
         
         # Validación de stock
         try:
@@ -1021,7 +1283,18 @@ class MisPedidosViewSet(
             return Pedido.objects.none()
 
         # Solo pedidos del usuario autenticado
-        return Pedido.objects.filter(cliente=cliente).order_by('-fecha_pedido', '-id')
+        qs = Pedido.objects.filter(cliente=cliente)
+
+        # Filtro opcional por estado de entrega:
+        # - entrega=en_proceso  -> Pendiente/Preparando/Despachado (todo menos Entregado)
+        # - entrega=entregados  -> solo Entregado
+        entrega = (self.request.query_params.get('entrega') or '').strip().lower()
+        if entrega == 'en_proceso':
+            qs = qs.exclude(transportista__estado_entrega='Entregado')
+        elif entrega == 'entregados':
+            qs = qs.filter(transportista__estado_entrega='Entregado')
+
+        return qs.order_by('-fecha_pedido', '-id')
 
     @action(detail=True, methods=['get'], url_path='comprobante/link')
     def comprobante_link(self, request, pk=None):

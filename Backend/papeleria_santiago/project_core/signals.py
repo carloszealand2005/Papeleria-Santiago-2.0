@@ -1,13 +1,77 @@
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 from .models import DetallePedido, Pedido, Comprobante, Cliente, Carrito, DetalleCarrito, Producto # Importamos Producto para la nueva señal
 import datetime
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 #------------------
 # Clase Djando Signals
 # Esta clase sirve para reaccionar a cambios en la base de datos, modificando otras tablas. 
 #------------------
+
+# ------------------
+# Email automático al aprobar una cuenta mayorista (Empresa):
+# cuando Cliente.estado_cuenta cambia a ACTIVO (por ejemplo, desde Django Admin)
+# ------------------
+
+@receiver(pre_save, sender=Cliente)
+def _cliente_capture_estado_previo(sender, instance, **kwargs):
+    """
+    Guardamos el estado previo para detectar transiciones (ej: PENDIENTE -> ACTIVO).
+    """
+    if not instance.pk:
+        instance._estado_cuenta_anterior = None
+        return
+    try:
+        instance._estado_cuenta_anterior = Cliente.objects.filter(pk=instance.pk).values_list('estado_cuenta', flat=True).first()
+    except Exception:
+        instance._estado_cuenta_anterior = None
+
+
+@receiver(post_save, sender=Cliente)
+def enviar_correo_aprobacion_empresa(sender, instance, created, **kwargs):
+    """
+    Enviar email SOLO para cuentas Empresa cuando pasan a ACTIVO.
+    No bloquea el guardado si el SMTP falla.
+    """
+    try:
+        if instance.tipo_cliente != Cliente.EMPRESA:
+            return
+
+        estado_anterior = getattr(instance, '_estado_cuenta_anterior', None)
+        if instance.estado_cuenta != Cliente.ACTIVO:
+            return
+        if estado_anterior == Cliente.ACTIVO:
+            return
+
+        # Determinar email destino
+        to_email = None
+        if getattr(instance, 'user_id', None) and getattr(instance.user, 'email', None):
+            to_email = instance.user.email
+        elif getattr(instance, 'email', None):
+            to_email = instance.email
+        if not to_email:
+            return
+
+        # Determinar "Nombre de usuario" solicitado
+        nombre_usuario = None
+        if getattr(instance, 'user_id', None) and getattr(instance.user, 'username', None):
+            nombre_usuario = instance.user.username
+        else:
+            nombre_usuario = instance.nombre or "tu usuario"
+
+        subject = "Cuenta de empresa verificada - Papelería Santiago"
+        message = (
+            f"Tu cuenta de empresa para {nombre_usuario} ha sido verificada, ya puedes iniciar sesión dentro de la tienda virtual Papelería Santiago."
+        )
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or settings.EMAIL_HOST_USER
+        send_mail(subject, message, from_email, [to_email], fail_silently=False)
+    except Exception:
+        # No interrumpir el guardado del Cliente por fallos de email
+        return
+
 
 # Receiver: Cuándo Pedido se guarda (post_save) reaccionará este método
 # @receiver(post_save, sender=Pedido)

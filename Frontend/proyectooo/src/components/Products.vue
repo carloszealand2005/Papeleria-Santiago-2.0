@@ -190,18 +190,45 @@ export default {
       }
       api.get(url)
         .then(response => {
-          this.products = response.data.map(product => ({
+          const raw = response && response.data;
+          const list = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.results) ? raw.results : []);
+
+          this.products = list.map(product => {
+            // Backend: usar campos *_activo (ya vienen ajustados según token público vs mayorista)
+            const precioBaseActivo = parseFloat(product.precio_base_activo || '0');
+            const descuentoActivo = parseFloat(product.descuento_activo || '0');
+            const precioConDescuentoActivo = parseFloat(product.precio_con_descuento_activo || precioBaseActivo || '0');
+            const precioConIvaActivo = parseFloat(product.precio_con_iva_activo || precioConDescuentoActivo || precioBaseActivo || '0');
+            const hasDiscount =
+              descuentoActivo >= 1.0 &&
+              precioBaseActivo > 0 &&
+              precioConDescuentoActivo > 0 &&
+              precioConDescuentoActivo < precioBaseActivo;
+
+            return ({
             id: product.SKU,
             sku: product.SKU, // Añadir sku
             name: product.nombre,
             brand: product.marca,
             description: product.descripcion, 
             image: product.imagen_url,
-            originalPrice: parseFloat(product.pvp || '0'), // Asegurar que sea numérico
-            salePrice: parseFloat(product.precio_con_descuento_publico || '0'), // Asegurar que sea numérico
-            discount: parseFloat(product.descuento_publico || '0'), // Asegurar que sea numérico
+            // Mantener compatibilidad con componentes existentes, pero SIN mezclar bases:
+            // - "originalPrice" y "salePrice" deben estar en la misma base (aquí: sin IVA)
+            // - si quieres mostrar el precio final con IVA, usa `precio_con_iva_activo` en otra parte del UI
+            originalPrice: precioBaseActivo,
+            salePrice: hasDiscount ? precioConDescuentoActivo : null,
+            discount: hasDiscount ? descuentoActivo : 0,
+
+            // Campos activos (para futuras mejoras de UI mayorista)
+            tipo_precio_activo: product.tipo_precio_activo,
+            precio_base_activo: precioBaseActivo,
+            descuento_activo: descuentoActivo,
+            precio_con_descuento_activo: precioConDescuentoActivo,
+            precio_con_iva_activo: precioConIvaActivo,
+            bulto_minimo_mayorista: product.bulto_minimo_mayorista,
             category: product.categoria ? product.categoria.toLowerCase() : 'otros'
-          }));
+            });
+          });
         })
         .catch(error => {
           console.error('Error fetching products:', error);
@@ -252,18 +279,42 @@ export default {
           const raw = response && response.data;
           const list = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.results) ? raw.results : []);
 
-          this.featuredProducts = list.map(product => ({
+          this.featuredProducts = list.map(product => {
+            // Backend: usar campos *_activo (ya vienen ajustados según token público vs mayorista)
+            const precioBaseActivo = parseFloat(product.precio_base_activo || '0');
+            const descuentoActivo = parseFloat(product.descuento_activo || '0');
+            const precioConDescuentoActivo = parseFloat(product.precio_con_descuento_activo || precioBaseActivo || '0');
+            const precioConIvaActivo = parseFloat(product.precio_con_iva_activo || precioConDescuentoActivo || precioBaseActivo || '0');
+            const hasDiscount =
+              descuentoActivo >= 1.0 &&
+              precioBaseActivo > 0 &&
+              precioConDescuentoActivo > 0 &&
+              precioConDescuentoActivo < precioBaseActivo;
+
+            return ({
             id: product.SKU,
             sku: product.SKU, // Añadir sku
             name: product.nombre,
             brand: product.marca,
             description: product.descripcion, 
             image: product.imagen_url,
-            originalPrice: parseFloat(product.pvp || '0'), // Asegurar que sea numérico
-            salePrice: parseFloat(product.precio_con_descuento_publico || '0'), // Asegurar que sea numérico
-            discount: parseFloat(product.descuento_publico || '0'), // Asegurar que sea numérico
+            // Mantener compatibilidad con componentes existentes, pero SIN mezclar bases:
+            // - "originalPrice" y "salePrice" deben estar en la misma base (aquí: sin IVA)
+            // - si quieres mostrar el precio final con IVA, usa `precio_con_iva_activo` en otra parte del UI
+            originalPrice: precioBaseActivo,
+            salePrice: hasDiscount ? precioConDescuentoActivo : null,
+            discount: hasDiscount ? descuentoActivo : 0,
+
+            // Campos activos (para futuras mejoras de UI mayorista)
+            tipo_precio_activo: product.tipo_precio_activo,
+            precio_base_activo: precioBaseActivo,
+            descuento_activo: descuentoActivo,
+            precio_con_descuento_activo: precioConDescuentoActivo,
+            precio_con_iva_activo: precioConIvaActivo,
+            bulto_minimo_mayorista: product.bulto_minimo_mayorista,
             category: product.categoria ? product.categoria.toLowerCase() : 'otros'
-          }));
+            });
+          });
         })
         .catch(error => {
           console.error('Error fetching featured products:', error);

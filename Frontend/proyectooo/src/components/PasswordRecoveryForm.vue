@@ -78,8 +78,25 @@
                 required
                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="Ingresa tu nueva contraseña"
-                @input="clearMessages"
+                @input="onNewPasswordInput"
               />
+            </div>
+            <!-- Password Strength Indicator (mismo enfoque que registro) -->
+            <div class="mt-2">
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  class="h-2 rounded-full transition-all duration-300"
+                  :class="passwordStrengthColor"
+                  :style="{ width: passwordStrengthWidth }"
+                ></div>
+              </div>
+              <div class="mt-1 flex items-center justify-between">
+                <span class="text-xs text-gray-600">Fortaleza:</span>
+                <span class="text-xs font-medium" :class="passwordStrengthTextColor">
+                  {{ passwordStrengthText }}
+                </span>
+              </div>
+              <p v-if="passwordPolicyError" class="mt-1 text-xs text-red-600">{{ passwordPolicyError }}</p>
             </div>
           </div>
 
@@ -98,7 +115,7 @@
                 required
                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="Confirma tu nueva contraseña"
-                @input="clearMessages"
+                @input="onConfirmPasswordInput"
               />
             </div>
             <p v-if="passwordError" class="mt-1 text-xs text-red-600">{{ passwordError }}</p>
@@ -124,7 +141,7 @@
 
           <button
             type="submit"
-            :disabled="isLoadingConfirm || !!otpError || !!passwordError || formData.otp_code.length !== 6"
+            :disabled="isConfirmDisabled"
             class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 cursor-pointer"
           >
             <i v-if="isLoadingConfirm" class="fas fa-spinner fa-spin mr-2"></i>
@@ -201,6 +218,7 @@ export default {
       emailError: '',
       otpError: '',
       passwordError: '',
+      passwordStrength: 0,
       generalError: '',
       generalMessage: '',
       resendCooldown: 90,
@@ -214,6 +232,46 @@ export default {
       return (
         this.formData.email.trim() !== '' &&
         !this.emailError
+      );
+    },
+    // Fortaleza de contraseña (reutiliza la misma regla que RegisterForm.vue)
+    passwordStrengthWidth() {
+      return `${(this.passwordStrength / 4) * 100}%`;
+    },
+    passwordStrengthColor() {
+      if (this.passwordStrength <= 1) return 'bg-red-500';
+      if (this.passwordStrength <= 2) return 'bg-yellow-500';
+      if (this.passwordStrength <= 3) return 'bg-blue-500';
+      return 'bg-green-500';
+    },
+    passwordStrengthText() {
+      if (this.passwordStrength <= 1) return 'Débil';
+      if (this.passwordStrength <= 2) return 'Regular';
+      if (this.passwordStrength <= 3) return 'Buena';
+      return 'Fuerte';
+    },
+    passwordStrengthTextColor() {
+      if (this.passwordStrength <= 1) return 'text-red-600';
+      if (this.passwordStrength <= 2) return 'text-yellow-600';
+      if (this.passwordStrength <= 3) return 'text-blue-600';
+      return 'text-green-600';
+    },
+    isPasswordStrongEnough() {
+      // "Fuerte" cuando cumple 4 criterios (length, lower, upper, number/symbol) según nuestro score capado a 4
+      return this.passwordStrength >= 4;
+    },
+    passwordPolicyError() {
+      // Solo mostrar este error cuando el usuario ya empezó a escribir
+      if (!this.formData.new_password) return '';
+      return this.isPasswordStrongEnough ? '' : 'La contraseña debe ser más fuerte (mínimo 8 caracteres, mayúscula, minúscula, número y símbolo).';
+    },
+    isConfirmDisabled() {
+      return (
+        this.isLoadingConfirm ||
+        !!this.otpError ||
+        !!this.passwordError ||
+        !!this.passwordPolicyError ||
+        this.formData.otp_code.length !== 6
       );
     }
   },
@@ -244,6 +302,25 @@ export default {
         return;
       }
       this.passwordError = this.formData.new_password === this.formData.confirm_password ? '' : 'Las contraseñas no coinciden.';
+    },
+    checkPasswordStrength() {
+      const password = this.formData.new_password || '';
+      let strength = 0;
+      if (password.length >= 8) strength++;
+      if (/[a-z]/.test(password)) strength++;
+      if (/[A-Z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      if (/[^A-Za-z0-9]/.test(password)) strength++;
+      this.passwordStrength = Math.min(strength, 4);
+    },
+    onNewPasswordInput() {
+      this.clearMessages();
+      this.checkPasswordStrength();
+      this.validatePasswords();
+    },
+    onConfirmPasswordInput() {
+      this.clearMessages();
+      this.validatePasswords();
     },
     startCooldown(seconds = 90) {
       this.resendCooldown = seconds;
@@ -281,9 +358,11 @@ export default {
     async handleConfirmReset() {
       this.clearMessages();
       this.sanitizeOtp();
+      this.checkPasswordStrength();
       this.validatePasswords();
 
       if (this.passwordError) return;
+      if (!this.isPasswordStrongEnough) return;
       if (this.formData.new_password !== this.formData.confirm_password) {
         this.passwordError = 'Las contraseñas no coinciden.';
         return;
@@ -338,6 +417,7 @@ export default {
       this.formData.otp_code = '';
       this.otpError = '';
       this.passwordError = '';
+      this.passwordStrength = 0;
       this.resendCountLocal = 0;
       this.resendCooldown = 90;
       if (this.cooldownTimer) {
@@ -355,6 +435,7 @@ export default {
     },
     'formData.new_password'() {
       this.validatePasswords();
+      this.checkPasswordStrength();
     }
   }
 }

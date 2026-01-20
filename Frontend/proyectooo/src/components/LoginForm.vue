@@ -11,27 +11,7 @@
             class="h-16 w-auto mx-auto mb-4"
           >
           <h2 class="text-3xl font-bold text-gray-900 mb-2">Iniciar Sesión</h2>
-          <p class="text-gray-600">Accede a tu cuenta de Papelería Santiago</p>
-        </div>
-
-        <!-- User Type Selection -->
-        <div class="mb-6">
-          <div class="flex bg-gray-100 rounded-lg p-1">
-            <button 
-              @click="setUserType('individual')" 
-              :class="userType === 'individual' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600'"
-              class="flex-1 py-2 px-4 !rounded-button whitespace-nowrap transition-all cursor-pointer font-medium"
-            >
-              <i class="fas fa-user mr-2"></i>Cliente Individual
-            </button>
-            <button 
-              @click="setUserType('wholesale')" 
-              :class="userType === 'wholesale' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600'"
-              class="flex-1 py-2 px-4 !rounded-button whitespace-nowrap transition-all cursor-pointer font-medium"
-            >
-              <i class="fas fa-building mr-2"></i>Mayorista
-            </button>
-          </div>
+          <p class="text-gray-600">Cliente Papelería Santiago</p>
         </div>
 
         <!-- Mensaje de error del servidor -->
@@ -45,7 +25,7 @@
           <!-- Email Field -->
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-              {{ userType === 'wholesale' ? 'Email Empresarial' : 'Email' }}
+              Email
             </label>
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -57,7 +37,7 @@
                 id="email"
                 required
                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
-                :placeholder="userType === 'wholesale' ? 'empresa@ejemplo.com' : 'tu@email.com'"
+                placeholder="tu@email.com"
                 @input="clearServerError"
               >
             </div>
@@ -83,28 +63,13 @@
                 type="button"
                 @click="togglePassword"
                 class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                :title="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                :aria-pressed="showPassword ? 'true' : 'false'"
               >
-                <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'" class="text-gray-400 text-sm"></i>
+                <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'" class="text-gray-400 text-sm" aria-hidden="true"></i>
+                <span class="sr-only">{{ showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña' }}</span>
               </button>
-            </div>
-          </div>
-
-          <!-- Additional fields for wholesale users (mantener si es relevante para el futuro) -->
-          <div v-if="userType === 'wholesale'" class="space-y-4">
-            <div>
-              <label for="company" class="block text-sm font-medium text-gray-700 mb-2">Nombre de la Empresa</label>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i class="fas fa-building text-gray-400 text-sm"></i>
-                </div>
-                <input 
-                  v-model="loginForm.company"
-                  type="text" 
-                  id="company"
-                  class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
-                  placeholder="Nombre de tu empresa"
-                >
-              </div>
             </div>
           </div>
 
@@ -168,19 +133,6 @@
             Registrarse como Mayorista
           </button>
         </div>
-
-        <!-- Wholesale Benefits -->
-        <div v-if="userType === 'wholesale'" class="mt-6 p-4 bg-blue-50 rounded-lg">
-          <h3 class="text-sm font-semibold text-blue-900 mb-2">
-            <i class="fas fa-star mr-2"></i>Beneficios Mayoristas
-          </h3>
-          <ul class="text-xs text-blue-800 space-y-1">
-            <li><i class="fas fa-check mr-2"></i>Descuentos especiales por volumen</li>
-            <li><i class="fas fa-check mr-2"></i>Crédito comercial disponible</li>
-            <li><i class="fas fa-check mr-2"></i>Atención personalizada</li>
-            <li><i class="fas fa-check mr-2"></i>Catálogo exclusivo</li>
-          </ul>
-        </div>
       </div>
     </div>
   </div>
@@ -193,28 +145,18 @@ export default {
   name: 'LoginForm',
   data() {
     return {
-      userType: 'individual',
       showPassword: false,
       isLoading: false,
       serverError: null, // Nuevo: para errores del servidor
       loginForm: {
         email: '',
         password: '',
-        company: '',
         rememberMe: false
       }
     }
   },
   methods: {
     ...mapActions(['login']), // Mapeamos la acción 'login' de Vuex
-    setUserType(type) {
-      this.userType = type;
-      // Limpiar campos específicos al cambiar tipo
-      if (type === 'individual') {
-        this.loginForm.company = '';
-      }
-      this.$emit('user-type-changed', type);
-    },
     togglePassword() {
       this.showPassword = !this.showPassword;
     },

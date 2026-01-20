@@ -16,6 +16,12 @@
       <div class="flex items-center justify-between mb-3">
         <div class="flex flex-col">
           <span class="text-lg font-bold" style="color: #1F2937;">${{ product.originalPrice }}</span>
+          <span
+            v-if="product && product.bulto_minimo_mayorista !== undefined && product.bulto_minimo_mayorista !== null && String(product.bulto_minimo_mayorista) !== ''"
+            class="text-xs text-slate-700 mt-1"
+          >
+            Bulto mínimo: {{ product.bulto_minimo_mayorista }}
+          </span>
           <span class="text-xs text-blue-600">EN STOCK</span>
         </div>
       </div>

@@ -9,7 +9,7 @@
         >
       </div>
       <p class="text-gray-400 text-sm">© 2024 Papelería Santiago. Todos los derechos reservados.</p>
-      <p class="text-gray-500 text-xs mt-2">Soluciones completas para oficina y estudio</p>
+      <p class="text-gray-400 text-xs mt-2">Soluciones completas para oficina y estudio</p>
     </div>
   </footer>
 </template>

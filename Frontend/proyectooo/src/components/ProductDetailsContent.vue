@@ -44,14 +44,22 @@
         <!-- Product Information -->
         <div class="space-y-6">
           <div>
-            <h1 class="text-3xl font-bold text-gray-900">{{ currentProduct.name }}</h1>
-            <p class="text-sm text-gray-500 mt-1">SKU: {{ currentProduct.sku }}</p>
+            <div class="flex items-start justify-between gap-4">
+              <h1 class="text-3xl font-bold text-gray-900">{{ currentProduct.name }}</h1>
+              <span
+                v-if="isWholesaleProduct"
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 whitespace-nowrap"
+              >
+                Precio mayorista
+              </span>
+            </div>
+            <p class="text-sm text-gray-500 mt-1">SKU: {{ currentProduct.sku || currentProduct.id }}</p>
           </div>
 
           <!-- Price -->
           <div class="flex items-center space-x-4">
             <template v-if="parseFloat(currentProduct.discount) >= 1.00">
-              <span class="text-lg text-gray-500 line-through opacity-75">${{ parseFloat(currentProduct.originalPrice).toFixed(2) }}</span>
+              <span class="text-lg text-gray-600 line-through">${{ parseFloat(currentProduct.originalPrice).toFixed(2) }}</span>
               <span class="text-4xl font-bold text-green-700">${{ parseFloat(currentProduct.salePrice).toFixed(2) }}</span>
               <span class="text-base font-medium text-green-700">(-{{ parseFloat(currentProduct.discount).toFixed(0) }}%)</span>
             </template>
@@ -61,9 +69,9 @@
           </div>
 
           <!-- IVA and Final Price -->
-          <div v-if="currentProduct.iva && currentProduct.precio_con_iva_publico">
+          <div v-if="currentProduct.iva && currentProduct.precio_con_iva_activo">
             <p class="text-sm text-gray-600 opacity-80 mt-2">
-              Este producto tiene {{ parseFloat(currentProduct.iva).toFixed(0) }}% de IVA. Precio final: ${{ parseFloat(currentProduct.precio_con_iva_publico).toFixed(2) }}
+              Este producto tiene {{ parseFloat(currentProduct.iva).toFixed(0) }}% de IVA. Precio final: ${{ parseFloat(currentProduct.precio_con_iva_activo).toFixed(2) }}
             </p>
           </div>
 
@@ -75,7 +83,7 @@
               </div>
               <span class="ml-2 text-sm text-gray-600">({{ currentProduct.reviewCount }} reseñas)</span>
             </div>
-            <span class="text-sm text-green-600 font-medium">En stock</span>
+            <span class="text-sm text-green-800 font-medium">En stock</span>
           </div>
 
           <!-- Description -->
@@ -98,38 +106,60 @@
           <!-- Quantity and Add to Cart -->
           <div class="space-y-4">
             <div class="flex items-center space-x-4">
-              <label class="text-sm font-medium text-gray-900">Cantidad:</label>
+              <label class="text-sm font-medium text-gray-900">
+                Cantidad<span v-if="showBulkMultipleHint" class="text-slate-600 font-normal"> (múltiplos de {{ bulkStep }})</span>:
+              </label>
               <div class="flex items-center border border-gray-300 rounded-lg">
                 <button
+                  type="button"
                   @click="decreaseQuantity"
                   class="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 cursor-pointer"
-                  :disabled="quantity <= 1"
+                  :disabled="quantity <= bulkStep"
+                  aria-label="Disminuir cantidad"
+                  title="Disminuir cantidad"
                 >
-                  <i class="fas fa-minus text-sm"></i>
+                  <i class="fas fa-minus text-sm" aria-hidden="true"></i>
+                  <span class="sr-only">Disminuir cantidad</span>
                 </button>
                 <span class="px-4 py-2 text-center min-w-[60px] border-x border-gray-300">{{ quantity }}</span>
                 <button
+                  type="button"
                   @click="increaseQuantity"
                   class="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 cursor-pointer"
+                  aria-label="Aumentar cantidad"
+                  title="Aumentar cantidad"
                 >
-                  <i class="fas fa-plus text-sm"></i>
+                  <i class="fas fa-plus text-sm" aria-hidden="true"></i>
+                  <span class="sr-only">Aumentar cantidad</span>
                 </button>
               </div>
             </div>
+            <p
+              v-if="currentProduct && currentProduct.bulto_minimo_mayorista !== undefined && currentProduct.bulto_minimo_mayorista !== null && String(currentProduct.bulto_minimo_mayorista) !== ''"
+              class="text-xs text-slate-600"
+            >
+              Bulto mínimo: {{ currentProduct.bulto_minimo_mayorista }} unidades
+            </p>
             <div class="flex space-x-4">
               <button
+                type="button"
                 @click="addToCart"
                 class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 cursor-pointer"
               >
-                <i class="fas fa-shopping-cart mr-2"></i>
+                <i class="fas fa-shopping-cart mr-2" aria-hidden="true"></i>
                 Agregar al Carrito
               </button>
               <button
+                type="button"
                 @click="toggleWishlist"
                 class="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 cursor-pointer"
                 :class="{ 'text-red-500 border-red-300 bg-red-50': isInWishlist, 'text-gray-600': !isInWishlist }"
+                :aria-pressed="isInWishlist ? 'true' : 'false'"
+                :aria-label="isInWishlist ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+                :title="isInWishlist ? 'Quitar de favoritos' : 'Agregar a favoritos'"
               >
-                <i :class="isInWishlist ? 'fas fa-heart' : 'far fa-heart'"></i>
+                <i :class="isInWishlist ? 'fas fa-heart' : 'far fa-heart'" aria-hidden="true"></i>
+                <span class="sr-only">{{ isInWishlist ? 'Quitar de favoritos' : 'Agregar a favoritos' }}</span>
               </button>
             </div>
           </div>
@@ -162,10 +192,14 @@
           class="max-w-full max-h-full object-contain"
         />
         <button
+          type="button"
           @click="closeImageModal"
           class="absolute top-4 right-4 text-white hover:text-gray-300 text-2xl cursor-pointer"
+          aria-label="Cerrar imagen"
+          title="Cerrar imagen"
         >
-          <i class="fas fa-times"></i>
+          <i class="fas fa-times" aria-hidden="true"></i>
+          <span class="sr-only">Cerrar imagen</span>
         </button>
       </div>
     </div>
@@ -211,6 +245,24 @@ export default {
   computed: {
     currentProduct() {
       return this.product || this.getDefaultProduct();
+    },
+    bulkStep() {
+      const raw = this.currentProduct && this.currentProduct.bulto_minimo_mayorista;
+      const n = parseInt(raw, 10);
+      return Number.isFinite(n) && n > 0 ? n : 1;
+    },
+    isWholesaleProduct() {
+      // Regla de negocio:
+      // - Si el backend incluye bulto_minimo_mayorista (>= 1), asumimos contexto mayorista.
+      // - Si por algún motivo viniera < 1, lo tratamos como NO mayorista.
+      const raw = this.currentProduct && this.currentProduct.bulto_minimo_mayorista;
+      if (raw === undefined || raw === null || String(raw) === '') return false;
+      const n = parseInt(raw, 10);
+      return Number.isFinite(n) && n >= 1;
+    },
+    showBulkMultipleHint() {
+      // Evita ruido visual cuando el bulto es 1.
+      return this.isWholesaleProduct && this.bulkStep > 1;
     }
   },
   watch: {
@@ -218,6 +270,8 @@ export default {
     'currentProduct.id': {
       immediate: true,
       handler(newId) {
+        // Al cambiar de producto, reseteamos la cantidad al step correcto (1 o bulto mínimo)
+        this.quantity = this.bulkStep;
         if (newId && this.isAuthenticated) {
           this.checkFavoriteStatus(newId);
         } else {
@@ -275,12 +329,14 @@ export default {
       this.showImageModal = false;
     },
     increaseQuantity() {
-      this.quantity++;
+      this.quantity = (Number(this.quantity) || 0) + this.bulkStep;
     },
     decreaseQuantity() {
-      if (this.quantity > 1) {
-        this.quantity--;
-      }
+      const step = this.bulkStep;
+      const current = Number(this.quantity) || step;
+      const next = current - step;
+      // Mantener en el mínimo permitido para no caer por debajo del bulto
+      this.quantity = Math.max(step, next);
     },
     addToCart() {
       const cartItem = {

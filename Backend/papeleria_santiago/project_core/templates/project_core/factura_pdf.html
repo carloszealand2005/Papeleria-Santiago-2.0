@@ -249,8 +249,12 @@
                     <td class="text-right">${{ comprobante.descuento|floatformat:2 }}</td>
                 </tr>
                 <tr>
-                    <td>IVA (19%):</td>
+                    <td>IVA acumulado:</td>
                     <td class="text-right">${{ comprobante.iva|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td>Envío:</td>
+                    <td class="text-right">${{ comprobante.costo_envio|floatformat:2 }}</td>
                 </tr>
                 <tr>
                     <td>Total a Pagar:</td>
@@ -263,15 +267,15 @@
         <div class="section info-section">
             <div class="info-block">
                 <h4>Información de Pago:</h4>
-                <p><strong>Método:</strong> Tarjeta de Crédito</p>
+                <p><strong>Método:</strong> {{ comprobante.metodo_pago|default:"Tarjeta" }}</p>
                 <p><strong>Estado:</strong> <span class="estado-pagado">Pagado</span></p>
-                <p><strong>Referencia:</strong> TXN-789456123</p>
             </div>
             <div class="info-block">
                 <h4>Información de Entrega:</h4>
                 <p><strong>Tipo:</strong> Domicilio</p>
                 <p><strong>Fecha:</strong> {{ comprobante.fecha_emision|date:"d/m/Y" }}</p>
                 <p><strong>Dirección:</strong> {{ comprobante.direccion_cliente }}</p>
+                <p><strong>Número de casa:</strong> {{ comprobante.pedido.numero_casa_envio|default:"" }}</p>
             </div>
         </div>
 

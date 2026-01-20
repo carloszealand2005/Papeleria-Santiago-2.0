@@ -7,11 +7,17 @@
         <div class="space-y-8">
           <div class="space-y-4">
             <span class="inline-block px-4 py-2 bg-blue-100 text-blue-800 text-sm font-semibold rounded-full">
-              ✨ Nueva Colección 2024
+              Nueva Colección 2026
             </span>
             <h1 class="text-6xl font-bold text-slate-900 leading-tight">
-              Papelería de 
-              <span class="text-blue-600">calidad</span>
+              <template v-if="isAuthenticated">
+                Te damos la bienvenida,<br>
+                <span class="text-blue-600">{{ firstName }}</span>
+              </template>
+              <template v-else>
+                Papelería de
+                <span class="text-blue-600"> calidad</span>
+              </template>
             </h1>
             <p class="text-xl text-slate-600 leading-relaxed">
               Descubre nuestra amplia selección de productos para oficina, escuela y arte. Calidad premium para profesionales y estudiantes.
@@ -52,8 +58,22 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: "HeroSection",
+  computed: {
+    ...mapGetters(['isAuthenticated', 'getUser']),
+    firstName() {
+      const user = this.getUser;
+      const raw = (user && (user.username || user.email)) ? String(user.username || user.email) : '';
+      const fromEmail = raw.includes('@') ? raw.split('@')[0] : raw;
+      const cleaned = String(fromEmail).trim();
+      if (!cleaned) return 'Cliente';
+      // Tomar el primer nombre/segmento
+      return cleaned.split(/\s+/)[0];
+    }
+  },
   methods: {
     exploreProducts() {
       this.$router.push('/productos');

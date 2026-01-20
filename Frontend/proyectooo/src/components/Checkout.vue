@@ -15,7 +15,7 @@
           </div>
           <CheckoutOrderSummary
             :orderItems="orderItems"
-            :totals="totals"
+            :totals="displayTotals"
             :shippingCost="shippingCost"
           />
         </div>
@@ -113,9 +113,12 @@ export default {
       paymentError: '',
       billingInfo: {
         fullName: '',
+        cedula: '',
         phone: '',
         address: '',
         city: '',
+        houseNumber: '',
+        reference: '',
         zipCode: ''
       },
       selectedShipping: 'standard',
@@ -163,8 +166,17 @@ export default {
       }
     },
     shippingCost() {
-      // Por ahora, envío estático a $0 para mantener consistencia con /carrito
-      return 0;
+      // Por ahora es visual (luego se integra con backend).
+      // Envío Estándar fijo: $3.00
+      return 3.00;
+    },
+    displayTotals() {
+      // Total visual: total backend + envío
+      const base = this.totals || { subtotal: 0, totalDiscount: 0, totalIva: 0, total: 0 };
+      return {
+        ...base,
+        total: (parseFloat(base.total || 0) || 0) + (parseFloat(this.shippingCost || 0) || 0),
+      };
     }
   },
   created() {
@@ -172,6 +184,24 @@ export default {
     this.autofillBillingFromProfile();
   },
   methods: {
+    paymentMethodLabel() {
+      // Backend espera: "Tarjeta" o "Transferencia bancaria"
+      return this.selectedPayment === 'card' ? 'Tarjeta' : 'Transferencia bancaria';
+    },
+    buildCheckoutPayload() {
+      const b = this.billingInfo || {};
+      return {
+        ciudad_envio: String(b.city || '').trim(),
+        direccion_envio: String(b.address || '').trim(),
+        numero_casa_envio: String(b.houseNumber || '').trim(),
+        codigo_postal_envio: String(b.zipCode || '').trim(),
+        cedula_envio: String(b.cedula || '').trim(),
+        telefono_envio: String(b.phone || '').trim(),
+        referencia_envio: String(b.reference || '').trim(),
+        metodo_pago: this.paymentMethodLabel(),
+        costo_envio: Number.parseFloat(this.shippingCost || 0) || 0,
+      };
+    },
     async fetchCheckoutCart() {
       try {
         if (!this.isAuthenticated) {
@@ -198,6 +228,9 @@ export default {
         // Autocompletar solo si el usuario aún no escribió en el campo
         if (!this.billingInfo.fullName) {
           this.billingInfo.fullName = profile.nombre ?? '';
+        }
+        if (!this.billingInfo.cedula) {
+          this.billingInfo.cedula = profile.cedula ?? '';
         }
         if (!this.billingInfo.phone) {
           this.billingInfo.phone = profile.telefono ?? '';
@@ -253,7 +286,8 @@ export default {
 
       try {
         // 1) Pagar el carrito (crea pedido + comprobante en backend)
-        const payRes = await api.post('/mi-carrito/pagar/');
+        const payload = this.buildCheckoutPayload();
+        const payRes = await api.post('/mi-carrito/pagar/', payload);
         const pedidoId = payRes?.data?.pedido_id;
 
         if (!pedidoId) {
@@ -289,8 +323,22 @@ export default {
       }
     },
     validateForm() {
-      if (!this.billingInfo.fullName || !this.billingInfo.address || !this.billingInfo.city) {
+      // Nota: el backend ahora prioriza estos datos enviados en /mi-carrito/pagar/,
+      // por lo que validamos que lo esencial no se envíe vacío.
+      if (
+        !this.billingInfo.fullName ||
+        !this.billingInfo.cedula ||
+        !this.billingInfo.phone ||
+        !this.billingInfo.address ||
+        !this.billingInfo.city ||
+        !this.billingInfo.houseNumber ||
+        !this.billingInfo.zipCode
+      ) {
         this.paymentError = 'Por favor completa todos los campos de facturación.';
+        return false;
+      }
+      if (!this.isValidEcuadorCedula(String(this.billingInfo.cedula || '').trim())) {
+        this.paymentError = 'Por favor ingresa una cédula válida.';
         return false;
       }
       if (this.selectedPayment === 'card') {
@@ -300,6 +348,28 @@ export default {
         }
       }
       return true;
+    },
+    // Validación de cédula ecuatoriana (10 dígitos + checksum)
+    isValidEcuadorCedula(cedula) {
+      const value = String(cedula || '').trim();
+      if (!/^\d{10}$/.test(value)) return false;
+
+      const province = parseInt(value.slice(0, 2), 10);
+      if (province < 1 || province > 24) return false;
+
+      const third = parseInt(value[2], 10);
+      if (third < 0 || third > 5) return false;
+
+      const digits = value.split('').map((d) => parseInt(d, 10));
+      const coeffs = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+      let sum = 0;
+      for (let i = 0; i < 9; i++) {
+        let prod = digits[i] * coeffs[i];
+        if (prod >= 10) prod -= 9;
+        sum += prod;
+      }
+      const checkDigit = (10 - (sum % 10)) % 10;
+      return checkDigit === digits[9];
     }
   }
 }

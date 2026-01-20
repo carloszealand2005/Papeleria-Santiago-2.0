@@ -32,13 +32,13 @@
       <span class="text-gray-600">Subtotal:</span>
       <span class="text-gray-900">${{ formatMoney(subtotal) }}</span>
     </div>
-    <div class="flex justify-between text-sm">
-      <span class="text-gray-600">Envío:</span>
-      <span class="text-gray-900">${{ formatMoney(shipping) }}</span>
-    </div>
     <div class="flex justify-between text-sm text-green-700">
       <span>Total Descuento:</span>
       <span>-${{ formatMoney(totalDiscount) }}</span>
+    </div>
+    <div class="flex justify-between text-sm">
+      <span class="text-gray-600">Envío:</span>
+      <span class="text-gray-900">${{ formatMoney(shipping) }}</span>
     </div>
     <div class="flex justify-between text-sm">
       <span class="text-gray-600">Total IVA:</span>

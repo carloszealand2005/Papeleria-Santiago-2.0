@@ -49,7 +49,9 @@
         </nav>
         <div class="flex items-center space-x-4">
           <div class="relative flex items-center">
+            <label for="cart-header-search" class="sr-only">Buscar productos</label>
             <input
+              id="cart-header-search"
               type="text"
               v-model="searchQuery"
               placeholder="Buscar productos..."
@@ -57,21 +59,33 @@
               @keyup.enter="handleSearch"
             >
             <button 
+              type="button"
               class="absolute right-2 text-white bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded cursor-pointer !rounded-button whitespace-nowrap"
               @click="handleSearch"
+              aria-label="Buscar productos"
+              title="Buscar productos"
             >
-              <i class="fas fa-search text-sm"></i>
+              <i class="fas fa-search text-sm" aria-hidden="true"></i>
+              <span class="sr-only">Buscar productos</span>
             </button>
           </div>
-          <div class="relative" @click="goToCart">
-            <i class="fas fa-shopping-cart text-xl text-blue-600 cursor-pointer"></i>
+          <button
+            type="button"
+            class="relative"
+            @click="goToCart"
+            :aria-label="cartButtonAriaLabel"
+            :title="cartButtonAriaLabel"
+          >
+            <i class="fas fa-shopping-cart text-xl text-blue-600 cursor-pointer" aria-hidden="true"></i>
+            <span class="sr-only">{{ cartButtonAriaLabel }}</span>
             <span 
               v-if="cartItemCount > 0"
               class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+              aria-hidden="true"
             >
               {{ cartItemCount }}
             </span>
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -97,6 +111,10 @@ export default {
   },
   computed: {
     ...mapGetters(['cartItemCount']), // Mapeamos cartItemCount directamente desde Vuex
+    cartButtonAriaLabel() {
+      if (this.cartItemCount > 0) return `Ir al carrito (${this.cartItemCount} producto${this.cartItemCount === 1 ? '' : 's'})`;
+      return 'Ir al carrito';
+    },
   },
   methods: {
     handleSearch() {

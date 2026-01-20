@@ -14,10 +14,10 @@
       <h3 class="font-semibold text-gray-900 mb-1">{{ item.producto.nombre }}</h3>
       <p class="text-sm text-gray-600 mb-2">{{ item.producto.descripcion }}</p>
       <!-- Conditional Discount Display -->
-      <template v-if="item.producto.descuento_publico > 0">
+      <template v-if="parseFloat(item.producto.descuento_activo || '0') > 0">
         <div class="flex items-center space-x-2">
-          <p class="text-sm text-gray-500 line-through opacity-75">${{ parseFloat(item.producto.pvp).toFixed(2) }}</p>
-          <span class="text-sm font-semibold text-green-700">-{{ parseFloat(item.producto.descuento_publico).toFixed(0) }}%</span>
+          <p class="text-sm text-gray-600 line-through">${{ parseFloat(item.producto.precio_base_activo || '0').toFixed(2) }}</p>
+          <span class="text-sm font-semibold text-green-700">-{{ parseFloat(item.producto.descuento_activo || '0').toFixed(0) }}%</span>
         </div>
         <p class="text-lg font-bold text-green-600">${{ parseFloat(item.precio_unitario).toFixed(2) }}</p>
       </template>

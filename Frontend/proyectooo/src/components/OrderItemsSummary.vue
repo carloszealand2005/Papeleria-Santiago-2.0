@@ -3,8 +3,13 @@
   <div v-if="variant === 'cart'" class="space-y-6">
     <div
       v-for="item in items"
-      :key="item.id"
-      class="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg"
+      :key="itemKey(item)"
+      class="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+      role="link"
+      tabindex="0"
+      @click="goToProduct(item)"
+      @keydown.enter.prevent="goToProduct(item)"
+      @keydown.space.prevent="goToProduct(item)"
     >
       <!-- Product Image -->
       <div class="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
@@ -19,15 +24,24 @@
       <div class="flex-1">
         <h3 class="font-semibold text-gray-900 mb-1">{{ item.producto && item.producto.nombre }}</h3>
         <p class="text-sm text-gray-600 mb-2">{{ item.producto && item.producto.descripcion }}</p>
+        <p
+          v-if="item && item.producto && item.producto.bulto_minimo_mayorista !== undefined && item.producto.bulto_minimo_mayorista !== null && String(item.producto.bulto_minimo_mayorista) !== ''"
+          class="text-xs text-slate-600 mb-2"
+        >
+          Bulto del producto: {{ item.producto.bulto_minimo_mayorista }} unidades
+          <span v-if="bulkMultiple(item) !== null" class="ml-2 text-slate-500">
+            · Múltiplo actual: {{ bulkMultiple(item) }} bultos
+          </span>
+        </p>
 
         <!-- Conditional Discount Display -->
         <template v-if="hasDiscount(item)">
           <div class="flex items-center space-x-2">
-            <p class="text-sm text-gray-500 line-through opacity-75">
-              ${{ formatMoney(item.producto && item.producto.pvp) }}
+            <p class="text-sm text-gray-600 line-through">
+              ${{ formatMoney(item.producto && item.producto.precio_base_activo) }}
             </p>
             <span class="text-sm font-semibold text-green-700">
-              -{{ formatPercent(item.producto && item.producto.descuento_publico) }}%
+              -{{ formatPercent(item.producto && item.producto.descuento_activo) }}%
             </span>
           </div>
           <p class="text-lg font-bold text-green-600">
@@ -45,7 +59,7 @@
       <div v-if="editable" class="flex items-center space-x-3">
         <button
           type="button"
-          @click.prevent="decreaseQuantity(item)"
+          @click.stop.prevent="decreaseQuantity(item)"
           class="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center cursor-pointer !rounded-button whitespace-nowrap"
         >
           <i class="fas fa-minus text-xs text-gray-600"></i>
@@ -53,7 +67,7 @@
         <span class="w-8 text-center font-medium">{{ item.cantidad }}</span>
         <button
           type="button"
-          @click.prevent="increaseQuantity(item)"
+          @click.stop.prevent="increaseQuantity(item)"
           class="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center cursor-pointer !rounded-button whitespace-nowrap"
         >
           <i class="fas fa-plus text-xs text-gray-600"></i>
@@ -71,7 +85,7 @@
       <button
         v-if="editable"
         type="button"
-        @click.prevent="removeItem(item)"
+        @click.stop.prevent="removeItem(item)"
         class="text-red-500 hover:text-red-700 cursor-pointer !rounded-button whitespace-nowrap"
       >
         <i class="fas fa-trash text-lg"></i>
@@ -83,7 +97,7 @@
   <div v-else class="space-y-4 mb-6">
     <div
       v-for="item in items"
-      :key="item.id"
+      :key="itemKey(item)"
       class="flex items-center space-x-4 pb-4 border-b border-gray-100"
     >
       <img
@@ -98,20 +112,20 @@
 
         <template v-if="hasDiscount(item)">
           <div class="flex items-center space-x-2 mt-1">
-            <span class="text-sm text-gray-500 line-through opacity-75">
-              ${{ formatMoney(item.producto && item.producto.pvp) }}
+            <span class="text-sm text-gray-600 line-through">
+              ${{ formatMoney(item.producto && item.producto.precio_base_activo) }}
             </span>
             <span class="text-sm font-semibold text-green-700">
-              -{{ formatPercent(item.producto && item.producto.descuento_publico) }}%
+              -{{ formatPercent(item.producto && item.producto.descuento_activo) }}%
             </span>
           </div>
           <div class="text-sm font-semibold text-green-700">
-            ${{ formatMoney(item.producto && item.producto.precio_con_descuento_publico) }}
+            ${{ formatMoney(item.producto && (item.producto.precio_con_iva_activo != null ? item.producto.precio_con_iva_activo : item.producto.precio_con_descuento_activo)) }}
           </div>
         </template>
         <template v-else>
           <div class="text-sm font-semibold text-gray-900 mt-1">
-            ${{ formatMoney(item.producto && item.producto.pvp) }}
+            ${{ formatMoney(item.producto && (item.producto.precio_con_iva_activo != null ? item.producto.precio_con_iva_activo : item.producto.precio_base_activo)) }}
           </div>
         </template>
       </div>
@@ -145,8 +159,33 @@ export default {
     }
   },
   methods: {
+    itemKey(item) {
+      const sku = item && item.producto && item.producto.SKU;
+      if (sku !== undefined && sku !== null && String(sku) !== '') return `sku:${sku}`;
+      const id = item && item.id;
+      if (id !== undefined && id !== null && String(id) !== '') return `id:${id}`;
+      // Último recurso: no ideal, pero evita keys undefined
+      return JSON.stringify(item || {});
+    },
+    goToProduct(item) {
+      const sku = item && item.producto && item.producto.SKU;
+      if (!sku) return;
+      this.$router.push(`/producto/${sku}`);
+    },
+    bulkMultiple(item) {
+      const stepRaw = item && item.producto && item.producto.bulto_minimo_mayorista;
+      if (stepRaw === undefined || stepRaw === null || String(stepRaw) === '') return null;
+      const step = parseInt(stepRaw, 10);
+      if (!Number.isFinite(step) || step < 1) return null;
+      const qty = Number(item && item.cantidad);
+      if (!Number.isFinite(qty) || qty <= 0) return null;
+      const ratio = qty / step;
+      // Mostrar entero cuando aplica; si no, mostrar con 2 decimales (por si existe data vieja inconsistente)
+      if (Number.isFinite(ratio) && Math.abs(ratio - Math.round(ratio)) < 1e-9) return String(Math.round(ratio));
+      return ratio.toFixed(2);
+    },
     hasDiscount(item) {
-      const raw = item && item.producto && item.producto.descuento_publico;
+      const raw = item && item.producto && item.producto.descuento_activo;
       return parseFloat(raw || '0') > 0;
     },
     itemTotal(item) {

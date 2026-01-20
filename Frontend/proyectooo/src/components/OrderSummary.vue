@@ -25,18 +25,7 @@
               class="mr-3"
               @change="updateShipping('standard')"
             >
-            <span class="text-sm">Envío Estándar (5-7 días) - Gratis</span>
-          </label>
-          <label class="flex items-center">
-            <input 
-              type="radio" 
-              name="shipping" 
-              value="express" 
-              :checked="localShipping === 'express'"
-              class="mr-3"
-              @change="updateShipping('express')"
-            >
-            <span class="text-sm">Envío Express (2-3 días) - $15.00</span>
+            <span class="text-sm">Envío Estándar (3-6 días) $ 3.00</span>
           </label>
         </div>
       </div>

@@ -25,6 +25,12 @@
         </div>
 
         <div class="p-6 space-y-4">
+          <div
+            v-if="!isAuthenticated"
+            class="p-4 bg-yellow-50 border border-yellow-200 text-yellow-900 rounded-lg"
+          >
+            Necesitas estar registrado e iniciar sesión para ver los comprobantes de tus compras.
+          </div>
           <div v-if="isLoading" class="p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg">
             Cargando comprobante...
           </div>
@@ -33,25 +39,37 @@
           </div>
 
           <div class="flex flex-col sm:flex-row gap-3">
+            <button
+              v-if="pedidoId"
+              type="button"
+              @click="goToTracking"
+              class="inline-flex items-center justify-center px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors cursor-pointer"
+              :disabled="isLoading || !isAuthenticated"
+              :class="{ 'opacity-60 cursor-not-allowed': isLoading || !isAuthenticated }"
+            >
+              <i class="fas fa-truck mr-2" aria-hidden="true"></i>Ver seguimiento del pedido
+            </button>
             <a
               v-if="pdfUrlDownload"
               :href="pdfUrlDownload"
               class="inline-flex items-center justify-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
+              :class="{ 'opacity-60 pointer-events-none': !isAuthenticated }"
             >
               <i class="fas fa-download mr-2"></i>Descargar PDF
             </a>
             <button
               v-if="pedidoId"
+              type="button"
               @click="regeneratePdfLink"
               class="inline-flex items-center justify-center px-5 py-3 border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-lg transition-colors cursor-pointer"
-              :disabled="isLoading"
-              :class="{ 'opacity-60 cursor-not-allowed': isLoading }"
+              :disabled="isLoading || !isAuthenticated"
+              :class="{ 'opacity-60 cursor-not-allowed': isLoading || !isAuthenticated }"
             >
               <i class="fas fa-sync-alt mr-2"></i>Regenerar enlace
             </button>
           </div>
 
-          <div v-if="pdfUrl" class="w-full bg-gray-50 border rounded-lg overflow-hidden">
+          <div v-if="pdfUrl && isAuthenticated" class="w-full bg-gray-50 border rounded-lg overflow-hidden">
             <iframe
               :src="pdfUrl"
               title="Comprobante en PDF"
@@ -60,7 +78,7 @@
             ></iframe>
           </div>
 
-          <div v-else-if="!isLoading" class="text-gray-700">
+          <div v-else-if="!isLoading && isAuthenticated" class="text-gray-700">
             No se encontró un enlace de comprobante para mostrar.
           </div>
         </div>
@@ -71,9 +89,13 @@
 
 <script>
 import api from '@/utils/api';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'ReceiptPage',
+  computed: {
+    ...mapGetters(['isAuthenticated']),
+  },
   data() {
     return {
       pedidoId: '',
@@ -89,13 +111,17 @@ export default {
     this.hydrateFromSession();
 
     // Si no tenemos pdfUrl pero sí pedidoId, intentamos regenerar el link
-    if (!this.pdfUrl && this.pedidoId) {
+    if (!this.pdfUrl && this.pedidoId && this.isAuthenticated) {
       this.regeneratePdfLink();
     }
   },
   methods: {
     goToHome() {
       this.$router.push('/');
+    },
+    goToTracking() {
+      // Ir directo a "Mis entregas" (tracking) dentro de /mi-cuenta
+      this.$router.push({ path: '/mi-cuenta', query: { section: 'deliveries' } });
     },
     hydrateFromSession() {
       try {
@@ -122,6 +148,10 @@ export default {
     },
     async regeneratePdfLink() {
       if (!this.pedidoId) return;
+      if (!this.isAuthenticated) {
+        this.errorMessage = 'Necesitas iniciar sesión para ver el comprobante.';
+        return;
+      }
       if (this.isLoading) return;
 
       this.isLoading = true;

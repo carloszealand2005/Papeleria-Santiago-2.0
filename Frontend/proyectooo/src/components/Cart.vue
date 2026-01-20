@@ -10,6 +10,7 @@
       <!-- Cart Header -->
           <CartPageHeader 
         :itemCount="currentCartItems.length"
+        :isWholesale="isWholesaleCart"
       />
       
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -35,7 +36,7 @@
           :shipping="shipping"
           :totalDiscount="totalDiscount"
           :totalIva="totalIva"
-          :total="total"
+          :total="displayTotal"
           :selectedShipping="selectedShipping"
           @shipping-changed="handleShippingChanged"
           @update-cart="updateCartItems"
@@ -87,7 +88,20 @@ export default {
   computed: {
     ...mapGetters(['isAuthenticated', 'cartItemCount']),
     currentCartItems() {
-      return this.cart ? this.cart.detalles_carrito : [];
+      const items = (this.cart && Array.isArray(this.cart.detalles_carrito)) ? this.cart.detalles_carrito : [];
+      // UI-only: mantener orden estable (evita "saltos" si el backend devuelve en distinto orden tras updates)
+      return items.slice().sort((a, b) => {
+        const skuA = a && a.producto && a.producto.SKU ? String(a.producto.SKU) : '';
+        const skuB = b && b.producto && b.producto.SKU ? String(b.producto.SKU) : '';
+        return skuA.localeCompare(skuB, 'es', { numeric: true, sensitivity: 'base' });
+      });
+    },
+    isWholesaleCart() {
+      return (this.currentCartItems || []).some(item => {
+        const raw = item && item.producto && item.producto.bulto_minimo_mayorista;
+        const n = parseInt(raw, 10);
+        return Number.isFinite(n) && n > 0;
+      });
     },
     totalItems() {
       return this.currentCartItems.reduce((total, item) => total + item.cantidad, 0);
@@ -99,7 +113,9 @@ export default {
         : 0;
     },
     shipping() {
-      return this.selectedShipping === 'express' ? 15.00 : 0;
+      // Por ahora es visual (luego se integra con backend).
+      // Envío Estándar fijo: $3.00
+      return 3.00;
     },
     totalDiscount() {
       return this.cart && this.cart.descuento_carrito !== null ? parseFloat(this.cart.descuento_carrito) : 0;
@@ -107,14 +123,34 @@ export default {
     totalIva() {
       return this.cart && this.cart.iva_carrito !== null ? parseFloat(this.cart.iva_carrito) : 0;
     },
-    total() {
+    totalBackend() {
       return this.cart && this.cart.total_carrito !== null ? parseFloat(this.cart.total_carrito) : 0;
+    },
+    displayTotal() {
+      // Total visual: total backend + envío
+      return (this.totalBackend || 0) + (this.shipping || 0);
     }
   },
   created() {
     this.fetchCartItems();
   },
   methods: {
+    extractApiErrorMessage(error) {
+      const data = error && error.response && error.response.data;
+      if (!data) return '';
+      if (typeof data === 'string') return data;
+      if (typeof data.message === 'string') return data.message;
+      if (typeof data.detail === 'string') return data.detail;
+      const firstKey = Object.keys(data || {})[0];
+      const val = firstKey ? data[firstKey] : null;
+      if (Array.isArray(val) && typeof val[0] === 'string') return val[0];
+      return '';
+    },
+    getBulkStepFromCartItem(item) {
+      const raw = item && item.producto && item.producto.bulto_minimo_mayorista;
+      const n = parseInt(raw, 10);
+      return Number.isFinite(n) && n > 0 ? n : 1;
+    },
     async fetchCartItems() {
       if (!this.isAuthenticated) {
         console.log('Usuario no autenticado, no se puede cargar el carrito.');
@@ -137,30 +173,33 @@ export default {
     async increaseQuantity(productSku) {
       const item = this.currentCartItems.find(i => i.producto.SKU === productSku);
       if (!item) return;
-      const newQuantity = item.cantidad + 1;
+      const step = this.getBulkStepFromCartItem(item);
+      const newQuantity = (Number(item.cantidad) || 0) + step;
       try {
         await api.post('/mi-carrito-detalles/', { producto_sku: productSku, cantidad: newQuantity });
         this.showNotification('Cantidad actualizada correctamente.', 'success');
         await this.fetchCartItems();
       } catch (error) {
         console.error('Error al aumentar la cantidad:', error);
-        this.showNotification('Error al aumentar la cantidad.', 'error');
+        const msg = this.extractApiErrorMessage(error);
+        this.showNotification(msg || 'Error al aumentar la cantidad.', 'error');
       }
     },
     async decreaseQuantity(productSku) {
       const item = this.currentCartItems.find(i => i.producto.SKU === productSku);
-      if (!item || item.cantidad <= 1) {
-        this.showNotification('La cantidad no puede ser menor a 1.', 'error');
-        return;
-      }
-      const newQuantity = item.cantidad - 1;
+      if (!item) return;
+      const step = this.getBulkStepFromCartItem(item);
+      const current = Number(item.cantidad) || step;
+      // Mantener mínimo (1 para persona, bulto para mayorista)
+      const newQuantity = Math.max(step, current - step);
       try {
         await api.post('/mi-carrito-detalles/', { producto_sku: productSku, cantidad: newQuantity });
         this.showNotification('Cantidad actualizada correctamente.', 'success');
         await this.fetchCartItems();
       } catch (error) {
         console.error('Error al disminuir la cantidad:', error);
-        this.showNotification('Error al disminuir la cantidad.', 'error');
+        const msg = this.extractApiErrorMessage(error);
+        this.showNotification(msg || 'Error al disminuir la cantidad.', 'error');
       }
     },
     async removeItem(productSku) {
@@ -213,7 +252,8 @@ export default {
           shipping: this.shipping,
           totalDiscount: this.totalDiscount,
           totalIva: this.totalIva,
-          total: this.total
+          // Mantener el total backend por ahora (el envío es visual en carrito, no integrado aún)
+          total: this.totalBackend
         }
       };
       

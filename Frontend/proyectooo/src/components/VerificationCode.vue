@@ -17,6 +17,19 @@
           {{ generalError }}
         </div>
 
+        <div v-if="generalNotice" class="mb-4 p-3 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg text-sm">
+          {{ generalNotice }}
+        </div>
+        <div v-if="showLoginAction" class="mb-4">
+          <button
+            type="button"
+            class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200"
+            @click="goToLogin"
+          >
+            Ir a iniciar sesión
+          </button>
+        </div>
+
         <form @submit.prevent="handleVerify" novalidate class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Código</label>
@@ -75,6 +88,9 @@ export default {
       otp: '',
       otpError: '',
       generalError: '',
+      generalNotice: '',
+      persistedEmail: '',
+      showLoginAction: false,
       isVerifying: false,
       isResending: false,
       resendCooldown: 0,
@@ -84,7 +100,8 @@ export default {
   computed: {
     ...mapGetters(['pendingVerificationEmail']),
     email() {
-      return this.pendingVerificationEmail || localStorage.getItem('pending-verification-email') || '';
+      // Persistimos el email para que el usuario pueda leer el mensaje aunque el store limpie pendingVerificationEmail.
+      return this.persistedEmail || this.pendingVerificationEmail || localStorage.getItem('pending-verification-email') || '';
     },
   },
   beforeDestroy() {
@@ -96,6 +113,7 @@ export default {
       this.otp = String(this.otp || '').replace(/[^0-9]/g, '').slice(0, 6);
       this.otpError = this.otp.length === 0 ? 'El código es requerido.' : (this.otp.length < 6 ? 'El código debe tener 6 dígitos.' : '');
       this.generalError = '';
+      this.generalNotice = '';
     },
     startCooldown(seconds = 30) {
       this.resendCooldown = seconds;
@@ -111,14 +129,24 @@ export default {
     },
     async handleVerify() {
       this.generalError = '';
+      this.generalNotice = '';
+      this.showLoginAction = false;
       this.sanitizeOtp();
       if (this.otpError || !this.email) return;
 
       this.isVerifying = true;
       try {
-        await this.verifyOtp({ email: this.email, otp: this.otp });
-        // Login automático (token ya guardado en Vuex + localStorage por la acción)
-        this.$router.push('/');
+        const result = await this.verifyOtp({ email: this.email, otp: this.otp });
+        // Persona: login automático (token ya guardado en Vuex + localStorage por la acción)
+        // Empresa: el backend NO devuelve token (cuenta en revisión)
+        if (result?.token) {
+          this.$router.push('/');
+          return;
+        }
+
+        this.generalNotice = result?.message || 'Cuenta en revisión. Te informaremos por correo cuando tu empresa sea validada.';
+        // No redirigimos automáticamente: dejamos que el usuario lea el mensaje.
+        this.showLoginAction = true;
       } catch (error) {
         const message = error?.response?.data?.error || error?.response?.data?.detail || 'No se pudo verificar el código.';
         this.generalError = message;
@@ -143,13 +171,19 @@ export default {
     },
     goToRegister() {
       localStorage.removeItem('pending-verification-email');
+      this.persistedEmail = '';
       this.$router.push('/registro');
+    },
+    goToLogin() {
+      this.$router.push('/login');
     },
   },
   created() {
     // UX: si ya hay email, iniciamos cooldown corto si venimos de un envío reciente
     // (si quieres persistir el tiempo exacto, podemos guardarlo en localStorage).
-    if (this.email) {
+    const initialEmail = this.pendingVerificationEmail || localStorage.getItem('pending-verification-email') || '';
+    if (initialEmail) {
+      this.persistedEmail = initialEmail;
       this.sanitizeOtp();
     }
   },

@@ -41,6 +41,7 @@
 
             <nav class="p-2">
               <button
+                type="button"
                 class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors"
                 :class="activeSection === 'profile'
                   ? 'bg-blue-50 text-blue-700'
@@ -51,6 +52,18 @@
                 <span class="font-medium">Perfil</span>
               </button>
               <button
+                type="button"
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors"
+                :class="activeSection === 'deliveries'
+                  ? 'bg-blue-50 text-blue-700'
+                  : 'text-gray-700 hover:bg-gray-50'"
+                @click="activeSection = 'deliveries'"
+              >
+                <i class="fas fa-truck w-5 text-center"></i>
+                <span class="font-medium">Mis entregas</span>
+              </button>
+              <button
+                type="button"
                 class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors"
                 :class="activeSection === 'orders'
                   ? 'bg-blue-50 text-blue-700'
@@ -61,6 +74,7 @@
                 <span class="font-medium">Pedidos</span>
               </button>
               <button
+                type="button"
                 class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-50"
                 @click="handleLogoutClick"
               >
@@ -155,6 +169,159 @@
               <div class="text-xs text-gray-500">
                 Nota: los cambios se guardan campo por campo.
               </div>
+            </div>
+          </div>
+
+          <!-- Deliveries -->
+          <div v-else-if="activeSection === 'deliveries'" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-6 border-b border-gray-100">
+              <h2 class="text-xl font-semibold text-gray-900">Mis entregas</h2>
+              <p class="text-sm text-gray-600 mt-1">
+                Consulta el estado de entrega, empresa transportista y número de guía.
+              </p>
+            </div>
+
+            <div class="p-6 space-y-8">
+              <div v-if="isDeliveriesLoading" class="p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg">
+                Cargando entregas...
+              </div>
+              <div v-else-if="deliveriesError" class="p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
+                {{ deliveriesError }}
+              </div>
+
+              <template v-else>
+                <!-- En proceso -->
+                <div>
+                  <div class="flex items-center justify-between gap-3 mb-3">
+                    <h3 class="text-lg font-semibold text-gray-900">Entregas pendientes</h3>
+                    <span class="text-xs font-semibold px-2 py-1 rounded-full bg-gray-100 text-gray-700">
+                      {{ pendingDeliveries.length }}
+                    </span>
+                  </div>
+
+                  <div v-if="pendingDeliveries.length === 0" class="text-gray-700 text-sm">
+                    No tienes entregas en curso.
+                  </div>
+
+                  <div v-else class="space-y-3">
+                    <button
+                      v-for="d in pendingDeliveries"
+                      :key="`pending-${d.id}`"
+                      type="button"
+                      class="w-full text-left p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                      @click="goToOrderFromDelivery(d)"
+                      :title="`Ver pedido #${d.id}`"
+                    >
+                      <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                          <div class="text-sm font-semibold text-gray-900">
+                            Pedido #{{ d.id }}
+                          </div>
+                          <div class="text-xs text-gray-600 mt-1">
+                            {{ d.date }}
+                          </div>
+                        </div>
+                        <span
+                          class="text-xs font-semibold px-2 py-1 rounded-full"
+                          :class="deliveryStatusChipClass(d.deliveryStatus)"
+                        >
+                          {{ d.deliveryStatus || 'En proceso' }}
+                        </span>
+                      </div>
+
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 mt-3 text-xs text-gray-700">
+                        <div class="flex justify-between gap-3">
+                          <span class="text-gray-500">Total</span>
+                          <span class="font-semibold text-gray-900">{{ formatMoney(d.total) }}</span>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                          <span class="text-gray-500">Empresa</span>
+                          <span class="font-medium">{{ d.carrierCompany || 'Sin asignar' }}</span>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                          <span class="text-gray-500">Guía</span>
+                          <span class="font-medium">{{ d.trackingNumber || 'Sin asignar' }}</span>
+                        </div>
+                        <div class="text-gray-600 sm:col-span-2">
+                          <span class="text-gray-500">Envío:</span>
+                          <span class="ml-1">{{ d.shippingSummary || '—' }}</span>
+                        </div>
+                      </div>
+
+                      <div class="mt-3 text-xs text-blue-700 font-medium inline-flex items-center gap-2">
+                        Ver pedido
+                        <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Entregados -->
+                <div>
+                  <div class="flex items-center justify-between gap-3 mb-3">
+                    <h3 class="text-lg font-semibold text-gray-900">Entregas completadas</h3>
+                    <span class="text-xs font-semibold px-2 py-1 rounded-full bg-gray-100 text-gray-700">
+                      {{ completedDeliveries.length }}
+                    </span>
+                  </div>
+
+                  <div v-if="completedDeliveries.length === 0" class="text-gray-700 text-sm">
+                    Aún no tienes entregas completadas.
+                  </div>
+
+                  <div v-else class="space-y-3">
+                    <button
+                      v-for="d in completedDeliveries"
+                      :key="`completed-${d.id}`"
+                      type="button"
+                      class="w-full text-left p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                      @click="goToOrderFromDelivery(d)"
+                      :title="`Ver pedido #${d.id}`"
+                    >
+                      <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                          <div class="text-sm font-semibold text-gray-900">
+                            Pedido #{{ d.id }}
+                          </div>
+                          <div class="text-xs text-gray-600 mt-1">
+                            {{ d.date }}
+                          </div>
+                        </div>
+                        <span
+                          class="text-xs font-semibold px-2 py-1 rounded-full"
+                          :class="deliveryStatusChipClass(d.deliveryStatus)"
+                        >
+                          {{ d.deliveryStatus || 'Entregado' }}
+                        </span>
+                      </div>
+
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 mt-3 text-xs text-gray-700">
+                        <div class="flex justify-between gap-3">
+                          <span class="text-gray-500">Total</span>
+                          <span class="font-semibold text-gray-900">{{ formatMoney(d.total) }}</span>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                          <span class="text-gray-500">Empresa</span>
+                          <span class="font-medium">{{ d.carrierCompany || 'Sin asignar' }}</span>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                          <span class="text-gray-500">Guía</span>
+                          <span class="font-medium">{{ d.trackingNumber || 'Sin asignar' }}</span>
+                        </div>
+                        <div class="text-gray-600 sm:col-span-2">
+                          <span class="text-gray-500">Envío:</span>
+                          <span class="ml-1">{{ d.shippingSummary || '—' }}</span>
+                        </div>
+                      </div>
+
+                      <div class="mt-3 text-xs text-blue-700 font-medium inline-flex items-center gap-2">
+                        Ver pedido
+                        <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
 
@@ -319,10 +486,11 @@ export default {
       return this.profile.nombre || this.getUser?.username || 'Mi cuenta';
     },
     customerTypeLabel() {
-      // Backend: tipo_cliente puede venir como "Persona" (natural) u otros valores.
-      // Mantenemos la regla simple: si incluye "Mayorista" => Mayorista, si no => Natural.
+      // Backend: tipo_cliente puede venir como "Persona" o "Empresa".
+      // En UI: Persona => Natural, Empresa (o Mayorista) => Mayorista.
       const raw = String(this.profile.tipo_cliente || '').toLowerCase();
-      return raw.includes('mayorista') ? 'Mayorista' : 'Natural';
+      if (raw.includes('empresa') || raw.includes('mayorista')) return 'Mayorista';
+      return 'Natural';
     },
   },
   data() {
@@ -374,6 +542,13 @@ export default {
       selectedOrderPdfUrlDownload: '',
       isInvoiceLoading: false,
       invoiceError: '',
+
+      // Entregas (tracking)
+      pendingDeliveries: [],
+      completedDeliveries: [],
+      isDeliveriesLoading: false,
+      deliveriesError: '',
+      deliveriesLoaded: false,
     };
   },
   created() {
@@ -381,6 +556,7 @@ export default {
       this.fetchProfile();
       // No cargamos pedidos de entrada para evitar llamadas innecesarias;
       // se cargan al abrir la pestaña Pedidos.
+      this.applySectionFromRoute();
     } else {
       // Asegura que no quede data anterior si alguien abre /mi-cuenta sin auth.
       this.resetPrivateState();
@@ -390,11 +566,21 @@ export default {
     isAuthenticated(newVal) {
       if (!newVal) {
         this.resetPrivateState();
+      } else {
+        // Si vuelve a autenticarse y hay query de sección, la aplicamos
+        this.applySectionFromRoute();
       }
+    },
+    '$route.query.section'() {
+      // Permite deep-link directo a una sección (ej: /mi-cuenta?section=deliveries)
+      this.applySectionFromRoute();
     },
     activeSection(newVal) {
       if (newVal === 'orders' && this.isAuthenticated && !this.ordersLoaded) {
         this.fetchOrders();
+      }
+      if (newVal === 'deliveries' && this.isAuthenticated && !this.deliveriesLoaded) {
+        this.fetchDeliveries();
       }
     }
   },
@@ -440,6 +626,88 @@ export default {
       this.selectedOrderPdfUrlDownload = '';
       this.isInvoiceLoading = false;
       this.invoiceError = '';
+
+      this.pendingDeliveries = [];
+      this.completedDeliveries = [];
+      this.isDeliveriesLoading = false;
+      this.deliveriesError = '';
+      this.deliveriesLoaded = false;
+    },
+    applySectionFromRoute() {
+      if (!this.isAuthenticated) return;
+      const section = String(this.$route?.query?.section || '').toLowerCase();
+      if (section === 'deliveries') this.activeSection = 'deliveries';
+      if (section === 'orders') this.activeSection = 'orders';
+      if (section === 'profile') this.activeSection = 'profile';
+    },
+    deliveryStatusChipClass(status) {
+      const raw = String(status || '').toLowerCase();
+      if (raw.includes('entregado')) return 'bg-green-100 text-green-700';
+      if (raw.includes('proceso') || raw.includes('pendiente')) return 'bg-amber-100 text-amber-800';
+      return 'bg-blue-100 text-blue-700';
+    },
+    normalizeShippingSummary(o) {
+      const city = String(o?.ciudad_envio || '').trim();
+      const address = String(o?.direccion_envio || '').trim();
+      const house = String(o?.numero_casa_envio || '').trim();
+
+      const parts = [];
+      if (city) parts.push(city);
+      if (address && house) parts.push(`${address} · ${house}`);
+      else if (address) parts.push(address);
+      else if (house) parts.push(house);
+
+      return parts.join(' — ');
+    },
+    mapDeliveryOrder(o) {
+      return {
+        id: o?.id,
+        date: o?.fecha_pedido || '',
+        total: Number.parseFloat(o?.total ?? 0) || 0,
+        deliveryStatus: o?.estado_entrega || '',
+        carrierCompany: o?.transportista_empresa || '',
+        trackingNumber: o?.transportista_numero_guia || '',
+        shippingSummary: this.normalizeShippingSummary(o),
+      };
+    },
+    async fetchDeliveries() {
+      if (this.isDeliveriesLoading) return;
+      this.isDeliveriesLoading = true;
+      this.deliveriesError = '';
+      try {
+        const [pendingRes, completedRes] = await Promise.all([
+          api.get('/mis-pedidos/?entrega=en_proceso'),
+          api.get('/mis-pedidos/?entrega=entregados'),
+        ]);
+
+        const pendingList = Array.isArray(pendingRes?.data) ? pendingRes.data : [];
+        const completedList = Array.isArray(completedRes?.data) ? completedRes.data : [];
+
+        this.pendingDeliveries = pendingList.map(this.mapDeliveryOrder);
+        this.completedDeliveries = completedList.map(this.mapDeliveryOrder);
+        this.deliveriesLoaded = true;
+      } catch (e) {
+        console.error('Error cargando entregas:', e);
+        this.deliveriesError = 'No se pudieron cargar tus entregas. Por favor intenta nuevamente.';
+      } finally {
+        this.isDeliveriesLoading = false;
+      }
+    },
+    async goToOrderFromDelivery(delivery) {
+      const orderId = delivery?.id;
+      if (!orderId) return;
+
+      // Cambia a la sección de Pedidos y selecciona el pedido
+      this.activeSection = 'orders';
+
+      // Asegura que exista listado (para resaltar en UI si aparece)
+      if (this.isAuthenticated && !this.ordersLoaded) {
+        await this.fetchOrders();
+      }
+
+      const found = Array.isArray(this.orders) ? this.orders.find(o => o.id === orderId) : null;
+      const orderForSelection = found || { id: orderId, date: delivery?.date || '', status: '', subtotal: 0, discount: 0, iva: 0, total: delivery?.total || 0 };
+      await this.selectOrder(orderForSelection);
     },
     async fetchProfile() {
       if (this.isProfileLoading) return;

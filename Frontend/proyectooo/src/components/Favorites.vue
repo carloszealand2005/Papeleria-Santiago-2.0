@@ -28,7 +28,7 @@
         :filterCategories="filterCategories"
         @category-changed="handleCategoryChange"
         @sort-changed="handleSortChange"
-        buttonColor="#EF4444"
+        buttonColor="#DC2626"
       />
       <template v-if="isLoading">
         <p class="text-center text-gray-500 text-lg mt-10">Cargando productos favoritos...</p>
@@ -40,7 +40,7 @@
           @add-to-cart="handleAddToCart"
           @select-product="handleSelectProduct"
           badgeText="Favorito"
-          badgeColor="#E57373"
+          badgeColor="#DC2626"
         />
       </template>
       <template v-else>
@@ -124,20 +124,46 @@ export default {
           url += `?subcategoria=${this.selectedCategory}`;
         }
         const response = await api.get(url);
-        this.favoriteProducts = response.data.map(item => ({
-          id: item.producto_detail.SKU, // Se mantiene 'id' por compatibilidad con FeaturedProduct
-          sku: item.producto_detail.SKU, // Añadimos 'sku' para el handleAddToCart global
-          name: item.producto_detail.nombre,
-          brand: item.producto_detail.marca,
-          description: item.producto_detail.descripcion,
-          image: item.producto_detail.imagen_url,
-          originalPrice: parseFloat(item.producto_detail.pvp),
-          salePrice: parseFloat(item.producto_detail.precio_con_descuento_publico),
-          discount: parseFloat(item.producto_detail.descuento_publico),
-          category: item.producto_detail.categoria ? item.producto_detail.categoria.toLowerCase() : 'otros',
-          iva: parseFloat(item.producto_detail.iva),
-          precio_con_iva_publico: parseFloat(item.producto_detail.precio_con_iva_publico),
-        }));
+        this.favoriteProducts = response.data.map(item => {
+          const p = item && item.producto_detail ? item.producto_detail : {};
+          // Backend: usar campos *_activo (ya vienen ajustados según token público vs mayorista)
+          const precioBaseActivo = parseFloat(p.precio_base_activo || '0');
+          const descuentoActivo = parseFloat(p.descuento_activo || '0');
+          const precioConDescuentoActivo = parseFloat(p.precio_con_descuento_activo || precioBaseActivo || '0');
+          const precioConIvaActivo = parseFloat(p.precio_con_iva_activo || precioConDescuentoActivo || precioBaseActivo || '0');
+          const hasDiscount =
+            descuentoActivo >= 1.0 &&
+            precioBaseActivo > 0 &&
+            precioConDescuentoActivo > 0 &&
+            precioConDescuentoActivo < precioBaseActivo;
+
+          return ({
+            id: p.SKU, // Se mantiene 'id' por compatibilidad con FeaturedProduct
+            sku: p.SKU, // Añadimos 'sku' para el handleAddToCart global
+            name: p.nombre,
+            brand: p.marca,
+            description: p.descripcion,
+            image: p.imagen_url,
+
+            // Mantener compatibilidad con componentes existentes, pero SIN mezclar bases:
+            // - "originalPrice" y "salePrice" deben estar en la misma base (aquí: sin IVA)
+            // - si quieres mostrar el precio final con IVA, usa `precio_con_iva_activo` en otra parte del UI
+            originalPrice: precioBaseActivo,
+            salePrice: hasDiscount ? precioConDescuentoActivo : null,
+            discount: hasDiscount ? descuentoActivo : 0,
+
+            // Campos activos (para futuras mejoras de UI mayorista)
+            tipo_precio_activo: p.tipo_precio_activo,
+            precio_base_activo: precioBaseActivo,
+            descuento_activo: descuentoActivo,
+            precio_con_descuento_activo: precioConDescuentoActivo,
+            precio_con_iva_activo: precioConIvaActivo,
+            bulto_minimo_mayorista: p.bulto_minimo_mayorista,
+
+            category: p.categoria ? String(p.categoria).toLowerCase() : 'otros',
+            iva: parseFloat(p.iva),
+          });
+        });
       } catch (error) {
         console.error('Error fetching favorite products:', error);
         this.showNotification('Error al cargar productos favoritos.', 'error');

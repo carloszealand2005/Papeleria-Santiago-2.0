@@ -15,7 +15,17 @@ new Vue({
     if (token) {
       // Aquí, idealmente, deberías validar el token con tu backend para obtener los datos del usuario
       // Por ahora, asumimos que si hay un token, el usuario está logeado (simplificado)
-      this.$store.commit('SET_AUTH_DATA', { isLoggedIn: true, user: null, token: token });
+      let user = null;
+      try {
+        const rawUser = localStorage.getItem('user-data');
+        user = rawUser ? JSON.parse(rawUser) : null;
+      } catch (e) {
+        // Si el JSON está corrupto, limpiamos para evitar errores futuros
+        localStorage.removeItem('user-data');
+        user = null;
+      }
+
+      this.$store.commit('SET_AUTH_DATA', { isLoggedIn: true, user, token: token });
       // Si tu token contiene información codificada del usuario, podrías decodificarla aquí
       // y pasarla a 'user'
     }

@@ -193,6 +193,24 @@ export default {
     }
   },
   methods: {
+    extractApiErrorMessage(error) {
+      // Intentar rescatar mensajes claros del backend (ej: "Bulto mínimo no alcanzado...")
+      const data = error && error.response && error.response.data;
+      if (!data) return '';
+      if (typeof data === 'string') return data;
+      if (typeof data.message === 'string') return data.message;
+      if (typeof data.detail === 'string') return data.detail;
+      // DRF suele mandar { field: ["msg"] }
+      const firstKey = Object.keys(data || {})[0];
+      const val = firstKey ? data[firstKey] : null;
+      if (Array.isArray(val) && typeof val[0] === 'string') return val[0];
+      return '';
+    },
+    getBulkStepFromProduct(product) {
+      const raw = product && product.bulto_minimo_mayorista;
+      const n = parseInt(raw, 10);
+      return Number.isFinite(n) && n > 0 ? n : 1;
+    },
     handleShowAuthModal() {
       this.$router.push('/login');
     },
@@ -217,7 +235,11 @@ export default {
       }
 
       const producto_sku = product.sku; // Usar product.sku que es el identificador del backend
-      const cantidad = product.quantity || 1; // Asume 1 si no se especifica
+      const step = this.getBulkStepFromProduct(product);
+      let cantidad = product && product.quantity != null ? Number(product.quantity) : step;
+      if (!Number.isFinite(cantidad) || cantidad <= 0) cantidad = step;
+      // Si es mayorista (hay bulto mínimo), evitamos enviar menos del bulto para no disparar 400
+      if (step > 1 && cantidad < step) cantidad = step;
 
       try {
         await api.post(`/mi-carrito-detalles/`, {
@@ -228,7 +250,8 @@ export default {
         this.fetchCartItemCount(); // Actualizar el conteo después de añadir al carrito
       } catch (error) {
         console.error('Error al añadir producto al carrito:', error);
-        this.showNotification('Error al añadir producto al carrito.', 'error');
+        const msg = this.extractApiErrorMessage(error);
+        this.showNotification(msg || 'Error al añadir producto al carrito.', 'error');
       }
     },
     handleCheckout(data) {

@@ -23,29 +23,37 @@
         <!-- Search and Cart -->
         <div class="flex items-center space-x-4">
           <div class="relative">
+            <label for="header-search" class="sr-only">Buscar productos</label>
             <input
+              id="header-search"
               type="text"
               placeholder="Buscar..."
               v-model="searchQuery"
               class="w-64 pl-10 pr-4 py-2 border border-gray-300 !rounded-button focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
               @keyup.enter="handleSearch"
             >
-            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true"></i>
           </div>
           <button 
+            type="button"
             class="text-slate-700 hover:text-blue-600 font-medium transition-colors px-4 py-2"
             @click="goToLogin"
           >
-            <i class="fas fa-user mr-2"></i>Iniciar Sesión
+            <i class="fas fa-user mr-2" aria-hidden="true"></i>Iniciar Sesión
           </button>
           <button 
+            type="button"
             class="relative bg-blue-600 hover:bg-blue-700 text-white p-2 !rounded-button transition-colors"
             @click="goToCart"
+            :aria-label="cartButtonAriaLabel"
+            :title="cartButtonAriaLabel"
           >
-            <i class="fas fa-shopping-cart text-lg"></i>
+            <i class="fas fa-shopping-cart text-lg" aria-hidden="true"></i>
+            <span class="sr-only">{{ cartButtonAriaLabel }}</span>
             <span 
               v-if="cartItemCount > 0"
               class="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold"
+              aria-hidden="true"
             >
               {{ cartItemCount }}
             </span>
@@ -75,6 +83,10 @@ export default {
   },
   computed: {
     ...mapGetters(['cartItemCount']), // Mapeamos cartItemCount directamente desde Vuex
+    cartButtonAriaLabel() {
+      if (this.cartItemCount > 0) return `Ir al carrito (${this.cartItemCount} producto${this.cartItemCount === 1 ? '' : 's'})`;
+      return 'Ir al carrito';
+    },
   },
   methods: {
     handleSearch() {

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import HomePage from '../components/Home.vue'
 import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
+import RegisterWholesale from '../components/RegisterWholesale.vue'
 import PasswordRecovery from '../components/PasswordRecovery.vue'
 import Products from '../components/Products.vue'
 import ProductsSearch from '../components/ProductsSearch.vue'
@@ -62,6 +63,11 @@ const routes = [
     path: '/registro',
     name: 'Register',
     component: Register
+  },
+  {
+    path: '/registro/mayorista',
+    name: 'RegisterWholesale',
+    component: RegisterWholesale
   },
   {
     path: '/recuperar-contraseña',
