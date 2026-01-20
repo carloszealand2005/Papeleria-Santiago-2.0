@@ -165,6 +165,7 @@ class PedidoSerializer(serializers.ModelSerializer):
     referencia_envio = serializers.CharField(read_only=True)
     metodo_pago = serializers.CharField(read_only=True)
     costo_envio = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    comprobante_transferencia_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Pedido
@@ -175,6 +176,7 @@ class PedidoSerializer(serializers.ModelSerializer):
             'ciudad_envio', 'direccion_envio', 'numero_casa_envio', 'codigo_postal_envio',
             'cedula_envio', 'telefono_envio', 'referencia_envio', 'metodo_pago',
             'costo_envio',
+            'comprobante_transferencia_url',
         ]
 
     def get_estado_entrega(self, obj):
@@ -198,6 +200,21 @@ class PedidoSerializer(serializers.ModelSerializer):
     def get_transportista_fecha_actualizacion(self, obj):
         try:
             return obj.transportista.fecha_actualizacion
+        except Exception:
+            return None
+
+    def get_comprobante_transferencia_url(self, obj):
+        """
+        Para pagos por transferencia: exponer el URL del archivo para que el frontend
+        pueda abrirlo (nueva pestaña / modal).
+        """
+        try:
+            field = getattr(obj, 'comprobante_transferencia', None)
+            if not field:
+                return None
+            request = self.context.get('request')
+            url = field.url
+            return request.build_absolute_uri(url) if request else url
         except Exception:
             return None
 

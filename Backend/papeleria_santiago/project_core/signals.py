@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
-from .models import DetallePedido, Pedido, Comprobante, Cliente, Carrito, DetalleCarrito, Producto # Importamos Producto para la nueva señal
+from .models import DetallePedido, Pedido, Comprobante, Cliente, Carrito, DetalleCarrito, Producto, Transportista # Importamos Producto para la nueva señal
 import datetime
 from django.core.mail import send_mail
 from django.conf import settings
@@ -72,6 +72,72 @@ def enviar_correo_aprobacion_empresa(sender, instance, created, **kwargs):
         # No interrumpir el guardado del Cliente por fallos de email
         return
 
+
+# ------------------
+# Automatización post-aprobación de transferencias:
+# cuando Pedido pasa de "En revisión" -> "Pagado", crear Comprobante + Transportista.
+# ------------------
+
+@receiver(pre_save, sender=Pedido)
+def _pedido_capture_estado_previo(sender, instance, **kwargs):
+    """
+    Guardamos el estado previo para detectar transiciones (ej: En revisión -> Pagado).
+    """
+    if not instance.pk:
+        instance._estado_pedido_anterior = None
+        return
+    try:
+        instance._estado_pedido_anterior = Pedido.objects.filter(pk=instance.pk).values_list('estado_pedido', flat=True).first()
+    except Exception:
+        instance._estado_pedido_anterior = None
+
+
+@receiver(post_save, sender=Pedido)
+def crear_factura_y_envio_al_aprobar_transferencia(sender, instance, created, **kwargs):
+    """
+    Si un admin aprueba el pago manualmente cambiando el estado del pedido:
+    - SOLO cuando pasa de 'En revisión' a 'Pagado'
+    - y SOLO si aún no existe Comprobante/Transportista
+
+    Esto evita romper el flujo de tarjeta (que ya crea comprobante/envío en checkout).
+    """
+    try:
+        if created:
+            return
+
+        estado_anterior = getattr(instance, '_estado_pedido_anterior', None)
+        if estado_anterior != 'En revisión':
+            return
+        if instance.estado_pedido != 'Pagado':
+            return
+
+        # Idempotencia: crear solo lo faltante.
+        if not Transportista.objects.filter(pedido=instance).exists():
+            Transportista.objects.create(
+                pedido=instance,
+                estado_entrega='Pendiente',
+            )
+
+        if Comprobante.objects.filter(pedido=instance).exists():
+            return  # ya hay comprobante
+
+        Comprobante.objects.create(
+            pedido=instance,
+            numero_factura=f"FAC-{instance.id}-{instance.fecha_pedido.strftime('%Y%m%d')}",
+            cedula_cliente=(instance.cedula_envio or instance.cliente.cedula or None),
+            direccion_cliente=(instance.direccion_envio or instance.cliente.direccion),
+            email_cliente=instance.cliente.email,
+            subtotal=instance.subtotal_general_comprobante,
+            descuento=instance.descuento_general_comprobante,
+            iva=instance.iva_general_comprobante,
+            total=instance.total_general_comprobante,
+            costo_envio=instance.costo_envio,
+            metodo_pago=instance.metodo_pago,
+            estado_fiscal='Emitido',
+        )
+    except Exception:
+        # No bloquear el guardado del Pedido por fallos en automatización
+        return
 
 # Receiver: Cuándo Pedido se guarda (post_save) reaccionará este método
 # @receiver(post_save, sender=Pedido)

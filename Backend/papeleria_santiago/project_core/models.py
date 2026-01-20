@@ -428,6 +428,8 @@ class Pedido(models.Model):
 
     ESTADO_PEDIDO_CHOICES = [
         ('Pendiente', 'Pendiente'),
+        # Pago por transferencia: pedido creado pero esperando validación manual.
+        ('En revisión', 'En revisión'),
         ('Pagado', 'Pagado'),
         ('Cancelado', 'Cancelado'),
     ]
@@ -463,6 +465,13 @@ class Pedido(models.Model):
     ]
     metodo_pago = models.CharField(max_length=50, choices=METODO_PAGO_CHOICES, blank=True, null=True, default='Tarjeta')
     costo_envio = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=Decimal('0.00'))
+
+    # Evidencia de pago por transferencia (imagen). Para pagos con tarjeta será NULL.
+    comprobante_transferencia = models.ImageField(
+        upload_to='comprobantes_transferencia/',
+        blank=True,
+        null=True,
+    )
 
     @property
     def subtotal_general_comprobante(self):
@@ -603,7 +612,13 @@ class Comprobante(models.Model):
     costo_envio = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=Decimal('0.00'))
     metodo_pago = models.CharField(max_length=50, choices=METODO_PAGO_CHOICES, blank=True, null=True)
     fecha_emision = models.DateField(auto_now_add=True)
-    url_factura = models.URLField(blank=True, null=True)
+    # Evidencia de pago por transferencia (archivo/imagen). Para MVP usamos FileField (no requiere Pillow).
+    comprobante_transferencia_archivo = models.FileField(
+        upload_to='comprobantes_transferencia/',
+        blank=True,
+        null=True,
+        max_length=500,
+    )
     estado_fiscal = models.CharField(max_length=20, choices=ESTADO_FISCAL_CHOICES, blank=True, null=True)
 
     def __str__(self):

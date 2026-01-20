@@ -334,6 +334,18 @@
                 <p class="text-sm text-gray-600 mt-1">
                   Aquí verás tus compras anteriores y sus comprobantes.
                 </p>
+
+                <div class="mt-4">
+                  <button
+                    type="button"
+                    class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-lg transition-colors cursor-pointer"
+                    @click="refreshOrders"
+                    :disabled="isOrdersLoading"
+                    :class="{ 'opacity-60 cursor-not-allowed': isOrdersLoading }"
+                  >
+                    🔄 Actualizar Facturas/Estado
+                  </button>
+                </div>
               </div>
 
               <div class="divide-y divide-gray-100">
@@ -370,10 +382,29 @@
                       class="text-xs font-semibold px-2 py-1 rounded-full"
                       :class="order.status === 'Pagado'
                         ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-700'"
+                        : (order.status === 'En revisión' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700')"
                     >
-                      {{ order.status }}
+                      {{ order.status === 'En revisión' ? 'Validando Pago' : order.status }}
                     </span>
+                  </div>
+
+                  <div class="mt-3 text-xs text-gray-700 flex items-center justify-between gap-3">
+                    <div>
+                      <span class="text-gray-500">Método:</span>
+                      <span class="ml-1 font-medium">
+                        {{ order.metodo_pago === 'Transferencia bancaria' ? 'Transferencia Bancaria' : 'Tarjeta Débito/Crédito' }}
+                      </span>
+                    </div>
+                    <a
+                      v-if="order.metodo_pago === 'Transferencia bancaria' && order.comprobante_transferencia_url"
+                      :href="order.comprobante_transferencia_url"
+                      target="_blank"
+                      rel="noopener"
+                      class="text-blue-700 hover:text-blue-800 font-medium"
+                      @click.stop
+                    >
+                      Ver Comprobante
+                    </a>
                   </div>
 
                   <div class="grid grid-cols-2 gap-x-4 gap-y-1 mt-3 text-xs text-gray-700">
@@ -409,14 +440,14 @@
                 </div>
                 <div class="flex items-center gap-2">
                   <a
-                    v-if="selectedOrderPdfUrlDownload"
+                    v-if="selectedOrderPdfUrlDownload && selectedOrder && selectedOrder.status === 'Pagado'"
                     :href="selectedOrderPdfUrlDownload"
                     class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
                   >
                     <i class="fas fa-download mr-2"></i>Descargar
                   </a>
                   <button
-                    v-if="selectedOrder"
+                    v-if="selectedOrder && selectedOrder.status === 'Pagado'"
                     class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-lg transition-colors cursor-pointer"
                     @click="regenerateSelectedOrderPdf"
                     :disabled="isInvoiceLoading"
@@ -440,7 +471,14 @@
                     {{ invoiceError }}
                   </div>
 
-                  <div v-if="selectedOrderPdfUrl" class="w-full bg-gray-50 border rounded-lg overflow-hidden mt-4">
+                  <div
+                    v-if="selectedOrder && selectedOrder.status === 'En revisión'"
+                    class="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-lg mt-4"
+                  >
+                    Factura no disponible (En revisión). Estamos validando tu pago por transferencia.
+                  </div>
+
+                  <div v-else-if="selectedOrderPdfUrl" class="w-full bg-gray-50 border rounded-lg overflow-hidden mt-4">
                     <iframe
                       :src="selectedOrderPdfUrl"
                       title="Comprobante del pedido"
@@ -450,7 +488,7 @@
                   </div>
 
                   <div v-else-if="!isInvoiceLoading" class="text-gray-700 mt-4">
-                    Aún no hay un enlace de PDF cargado para este pedido.
+                    Aún no hay un enlace de PDF disponible para este pedido.
                     <div class="text-sm text-gray-500 mt-1">
                       Cuando conectemos el listado real, aquí se pedirá el link usando
                       <code class="bg-gray-100 px-1 rounded">/api/mis-pedidos/&lt;id&gt;/comprobante/link/</code>.
@@ -745,6 +783,8 @@ export default {
           id: o.id,
           date: o.fecha_pedido || '',
           status: o.estado_pedido || '',
+          metodo_pago: o.metodo_pago || 'Tarjeta',
+          comprobante_transferencia_url: o.comprobante_transferencia_url || '',
           subtotal: Number.parseFloat(o.subtotal ?? 0) || 0,
           discount: Number.parseFloat(o.descuento ?? 0) || 0,
           iva: Number.parseFloat(o.iva ?? 0) || 0,
@@ -756,6 +796,26 @@ export default {
         this.ordersError = 'No se pudieron cargar tus pedidos. Por favor intenta nuevamente.';
       } finally {
         this.isOrdersLoading = false;
+      }
+    },
+    async refreshOrders() {
+      // Botón de refresco manual para ver cambios (ej: admin aprobó transferencia)
+      this.ordersLoaded = false;
+      await this.fetchOrders();
+
+      // Si hay un pedido seleccionado, refrescamos su versión (y el panel de factura)
+      if (this.selectedOrder?.id) {
+        const updated = Array.isArray(this.orders) ? this.orders.find(o => o.id === this.selectedOrder.id) : null;
+        if (updated) {
+          this.selectedOrder = updated;
+        }
+        // Si está pagado, intentamos refrescar link; si está en revisión, limpiamos links
+        if (this.selectedOrder?.status === 'Pagado') {
+          await this.regenerateSelectedOrderPdf();
+        } else {
+          this.selectedOrderPdfUrl = '';
+          this.selectedOrderPdfUrlDownload = '';
+        }
       }
     },
     formatMoney(value) {
@@ -894,6 +954,10 @@ export default {
       if (!this.selectedOrder?.id) return;
       if (!this.isAuthenticated) {
         this.invoiceError = 'Debes iniciar sesión para ver el comprobante.';
+        return;
+      }
+      if (this.selectedOrder?.status !== 'Pagado') {
+        this.invoiceError = 'Factura no disponible (En revisión).';
         return;
       }
       if (this.isInvoiceLoading) return;

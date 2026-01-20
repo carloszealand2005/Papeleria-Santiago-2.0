@@ -54,6 +54,72 @@
             @update:card-info="handleCardUpdate"
             @card-validation-changed="handleCardValidationChanged"
           />
+
+          <!-- Transferencia bancaria: instrucciones + comprobante -->
+          <div
+            v-if="selectedPayment === 'transfer'"
+            class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+          >
+            <h2 class="text-xl font-semibold text-gray-900 mb-2">Realiza una transferencia bancaria</h2>
+            <p class="text-sm text-gray-600 mb-4">
+              Sube el comprobante para que podamos verificar tu pago.
+            </p>
+
+            <div class="p-4 rounded-lg border border-blue-200 bg-blue-50 text-blue-900">
+              <div class="font-semibold">Banco de Loja</div>
+              <div class="text-sm mt-2 space-y-1">
+                <div><span class="font-medium">N. Cuenta:</span> 2902563522</div>
+                <div><span class="font-medium">Tipo de cuenta:</span> Cuenta de ahorros</div>
+                <div><span class="font-medium">Nombre:</span> Aarón Robles</div>
+              </div>
+            </div>
+
+            <div class="mt-5">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Comprobante de transferencia (solo fotos)
+              </label>
+              <input
+                ref="transferProofInput"
+                type="file"
+                accept="image/*"
+                class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-800 hover:file:bg-gray-200"
+                @change="handleTransferProofChange"
+              />
+
+              <div v-if="transferProofError" class="text-xs text-red-600 mt-2">
+                {{ transferProofError }}
+              </div>
+
+              <div v-if="transferProofFile" class="mt-4 flex flex-col sm:flex-row gap-4 sm:items-center">
+                <div class="text-sm text-gray-700">
+                  <div class="font-medium text-gray-900">Archivo cargado</div>
+                  <div class="text-xs text-gray-600 mt-1 break-all">{{ transferProofFile.name }}</div>
+                </div>
+                <div class="sm:ml-auto flex items-center gap-2">
+                  <button
+                    type="button"
+                    class="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-lg transition-colors cursor-pointer"
+                    @click="removeTransferProof"
+                  >
+                    Quitar
+                  </button>
+                </div>
+              </div>
+
+              <div v-if="transferProofPreviewUrl" class="mt-4">
+                <div class="text-xs font-medium text-gray-600 mb-2">Vista previa</div>
+                <img
+                  :src="transferProofPreviewUrl"
+                  alt="Vista previa del comprobante de transferencia"
+                  class="max-h-64 w-auto rounded-lg border border-gray-200"
+                />
+              </div>
+
+              <div v-else class="text-xs text-gray-500 mt-3">
+                El botón “Finalizar Compra” se habilitará cuando subas tu comprobante.
+              </div>
+            </div>
+          </div>
           
           <!-- Action Buttons -->
           <div class="flex flex-col sm:flex-row gap-4">
@@ -69,8 +135,8 @@
               @click="completeOrder"
               class="flex-1 px-6 py-3 text-white rounded-lg hover:bg-blue-700 transition-colors !rounded-button whitespace-nowrap cursor-pointer"
               style="background-color: #2563EB;"
-              :disabled="isProcessingPayment || (selectedPayment === 'card' && !cardValidation.isValid)"
-              :class="{ 'opacity-60 cursor-not-allowed': isProcessingPayment || (selectedPayment === 'card' && !cardValidation.isValid) }"
+              :disabled="isFinalizeDisabled"
+              :class="{ 'opacity-60 cursor-not-allowed': isFinalizeDisabled }"
             >
               <i class="fas fa-check mr-2"></i>
               Finalizar Compra
@@ -134,10 +200,19 @@ export default {
         brand: null,
         errors: {}
       },
+      transferProofFile: null,
+      transferProofPreviewUrl: '',
+      transferProofError: '',
     }
   },
   computed: {
     ...mapGetters(['isAuthenticated']),
+    isFinalizeDisabled() {
+      if (this.isProcessingPayment) return true;
+      if (this.selectedPayment === 'card') return !this.cardValidation.isValid;
+      if (this.selectedPayment === 'transfer') return !this.transferProofFile;
+      return false;
+    },
     orderItems() {
       try {
         return this.cart && Array.isArray(this.cart.detalles_carrito) ? this.cart.detalles_carrito : [];
@@ -264,6 +339,38 @@ export default {
     handleCardValidationChanged(payload) {
       this.cardValidation = payload || { isValid: false, brand: null, errors: {} };
     },
+    handleTransferProofChange(event) {
+      this.transferProofError = '';
+      const file = event && event.target && event.target.files && event.target.files[0] ? event.target.files[0] : null;
+      if (!file) {
+        this.removeTransferProof();
+        return;
+      }
+      if (!String(file.type || '').startsWith('image/')) {
+        this.transferProofError = 'El archivo debe ser una imagen.';
+        this.removeTransferProof();
+        return;
+      }
+      this.transferProofFile = file;
+      try {
+        if (this.transferProofPreviewUrl) URL.revokeObjectURL(this.transferProofPreviewUrl);
+      } catch (e) {
+        // No bloqueamos por esto
+      }
+      this.transferProofPreviewUrl = URL.createObjectURL(file);
+    },
+    removeTransferProof() {
+      this.transferProofFile = null;
+      this.transferProofError = '';
+      try {
+        if (this.transferProofPreviewUrl) URL.revokeObjectURL(this.transferProofPreviewUrl);
+      } catch (e) {
+        // No bloqueamos por esto
+      }
+      this.transferProofPreviewUrl = '';
+      const input = this.$refs && this.$refs.transferProofInput;
+      if (input) input.value = '';
+    },
     goBack() {
       this.$router.push('/carrito');
     },
@@ -285,6 +392,31 @@ export default {
       this.isProcessingPayment = true;
 
       try {
+        // Transferencia: se paga como "EN REVISIÓN" (subiendo comprobante) y NO se genera factura/envío aún.
+        if (this.selectedPayment === 'transfer') {
+          const payload = this.buildCheckoutPayload();
+          const form = new FormData();
+          Object.keys(payload || {}).forEach((k) => {
+            const v = payload[k];
+            // FormData solo acepta string/blob; normalizamos a string
+            form.append(k, v === null || v === undefined ? '' : String(v));
+          });
+          // Backend espera este nombre para guardar en Pedido.comprobante_transferencia
+          form.append('comprobante_transferencia', this.transferProofFile);
+
+          const payRes = await api.post('/mi-carrito/pagar/', form, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          const pedidoId = payRes?.data?.pedido_id;
+          if (!pedidoId) {
+            throw new Error('No se recibió pedido_id al pagar el carrito (transferencia).');
+          }
+
+          // UX: llevar al usuario a Mis pedidos para ver estado "En revisión"
+          this.$router.push({ path: '/mi-cuenta', query: { section: 'orders' } });
+          return;
+        }
+
         // 1) Pagar el carrito (crea pedido + comprobante en backend)
         const payload = this.buildCheckoutPayload();
         const payRes = await api.post('/mi-carrito/pagar/', payload);
@@ -344,6 +476,12 @@ export default {
       if (this.selectedPayment === 'card') {
         if (!this.cardValidation.isValid) {
           this.paymentError = 'Revisa los datos de la tarjeta.';
+          return false;
+        }
+      }
+      if (this.selectedPayment === 'transfer') {
+        if (!this.transferProofFile) {
+          this.paymentError = 'Por favor sube el comprobante de transferencia.';
           return false;
         }
       }

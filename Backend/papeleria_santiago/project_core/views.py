@@ -42,6 +42,7 @@ from rest_framework.response import Response # Importar Response
 from .models import FavoritosCliente # Importar el modelo FavoritosCliente
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 # Create your views here.
 
@@ -773,11 +774,23 @@ class CarritoViewSet(viewsets.ModelViewSet):
                         return Response({'error': 'costo_envio no puede ser negativo.'}, status=status.HTTP_400_BAD_REQUEST)
                     costo_envio = costo_envio.quantize(Decimal('0.01'))
 
-                # --- 3. Crear Pedido (estado inicial 'Pagado') ---
+                is_transfer = metodo_pago == 'Transferencia bancaria'
+
+                # Transferencia: requiere archivo (multipart/form-data)
+                comprobante_file = None
+                if is_transfer:
+                    # Soporta ambos nombres por si el frontend varía
+                    comprobante_file = request.FILES.get('comprobante_transferencia') or request.FILES.get('comprobante')
+                    if not comprobante_file:
+                        return Response(
+                            {'error': 'Debes subir el comprobante de transferencia.'},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+
+                # --- 3. Crear Pedido ---
                 pedido = Pedido.objects.create(
                     cliente=carrito.cliente,
-                    estado_pedido='Pagado',
-                    # Otros campos del pedido se llenarán automáticamente o por señales si es necesario
+                    estado_pedido=('En revisión' if is_transfer else 'Pagado'),
                     ciudad_envio=ciudad_envio,
                     direccion_envio=direccion_envio,
                     numero_casa_envio=numero_casa_envio,
@@ -787,12 +800,7 @@ class CarritoViewSet(viewsets.ModelViewSet):
                     referencia_envio=referencia_envio,
                     metodo_pago=metodo_pago,
                     costo_envio=costo_envio,
-                )
-
-                # --- 3.1 Crear Transportista (entrega) asociado al pedido ---
-                Transportista.objects.create(
-                    pedido=pedido,
-                    estado_entrega='Pendiente',
+                    comprobante_transferencia=(comprobante_file if is_transfer else None),
                 )
 
                 # --- 4. Crear DetallePedido a partir de DetalleCarrito ---
@@ -809,24 +817,32 @@ class CarritoViewSet(viewsets.ModelViewSet):
                         total_detalle_pedido=detalle_carrito.total_detalle_carrito,
                     )
 
-                # --- 5. Crear Comprobante después de que todos los DetallePedido estén creados ---
-                # Ahora las propiedades del Pedido (subtotal, descuento, iva, total) deberían ser correctas
-                Comprobante.objects.create(
-                    pedido=pedido,
-                    numero_factura=f"FAC-{pedido.id}-{pedido.fecha_pedido.strftime('%Y%m%d')}",
-                    # Si no hay cédula, guardar NULL (evita strings largos y respeta blank/null)
-                    cedula_cliente=(pedido.cedula_envio or pedido.cliente.cedula or None),
-                    direccion_cliente=(pedido.direccion_envio or pedido.cliente.direccion),
-                    email_cliente=pedido.cliente.email,
-                    subtotal=pedido.subtotal_general_comprobante,
-                    descuento=pedido.descuento_general_comprobante,
-                    iva=pedido.iva_general_comprobante,
-                    total=pedido.total_general_comprobante,
-                    costo_envio=pedido.costo_envio,
-                    metodo_pago=pedido.metodo_pago,
-                    estado_fiscal='Emitido',
-                    # url_factura en blanco. TODO(PENDIENTE: GUARDAR URL DE LA FACTURA EN PRODUCCIÓN)
-                )
+                # --- 5. Comprobante + Envío ---
+                # Tarjeta: se generan inmediatamente (flujo actual).
+                # Transferencia: NO generar comprobante fiscal ni transportista hasta aprobación admin.
+                if not is_transfer:
+                    # --- 5.1 Crear Transportista (entrega) asociado al pedido ---
+                    Transportista.objects.create(
+                        pedido=pedido,
+                        estado_entrega='Pendiente',
+                    )
+
+                    # --- 5.2 Crear Comprobante después de que todos los DetallePedido estén creados ---
+                    Comprobante.objects.create(
+                        pedido=pedido,
+                        numero_factura=f"FAC-{pedido.id}-{pedido.fecha_pedido.strftime('%Y%m%d')}",
+                        # Si no hay cédula, guardar NULL (evita strings largos y respeta blank/null)
+                        cedula_cliente=(pedido.cedula_envio or pedido.cliente.cedula or None),
+                        direccion_cliente=(pedido.direccion_envio or pedido.cliente.direccion),
+                        email_cliente=pedido.cliente.email,
+                        subtotal=pedido.subtotal_general_comprobante,
+                        descuento=pedido.descuento_general_comprobante,
+                        iva=pedido.iva_general_comprobante,
+                        total=pedido.total_general_comprobante,
+                        costo_envio=pedido.costo_envio,
+                        metodo_pago=pedido.metodo_pago,
+                        estado_fiscal='Emitido',
+                    )
                 
                 # --- 6. Borrar DetalleCarrito del carrito original ---
                 # Esto también hará que el carrito.estado_dinamico pase a 'Inactivo'
@@ -834,6 +850,11 @@ class CarritoViewSet(viewsets.ModelViewSet):
                 carrito.save() # Guarda el carrito para actualizar la fecha_actualizacion
 
             # TODO: DEVOLVER UNA RESPUESTA DETALLADA DEL PEDIDO CREADO EXITOSAMENTE
+            if is_transfer:
+                return Response(
+                    {'message': 'Pedido creado. Pago en revisión (transferencia).', 'pedido_id': pedido.id},
+                    status=status.HTTP_201_CREATED
+                )
             return Response({'message': 'Carrito pagado y pedido creado exitosamente.', 'pedido_id': pedido.id}, status=status.HTTP_201_CREATED)
 
         except Exception as e:
@@ -954,6 +975,7 @@ class DetalleCarritoViewSet(viewsets.ModelViewSet):
 class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Quitar mixins.ListModelMixin
     serializer_class = CarritoSerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [JSONParser, FormParser, MultiPartParser]
 
     def get_object(self):
         user = self.request.user
@@ -1023,10 +1045,22 @@ class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Qu
                         return Response({'error': 'costo_envio no puede ser negativo.'}, status=status.HTTP_400_BAD_REQUEST)
                     costo_envio = costo_envio.quantize(Decimal('0.01'))
 
-                # --- 3. Crear Pedido (estado inicial 'Pagado') ---
+                is_transfer = metodo_pago == 'Transferencia bancaria'
+
+                # Transferencia: requiere archivo (multipart/form-data)
+                comprobante_file = None
+                if is_transfer:
+                    comprobante_file = request.FILES.get('comprobante_transferencia') or request.FILES.get('comprobante')
+                    if not comprobante_file:
+                        return Response(
+                            {'error': 'Debes subir el comprobante de transferencia.'},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+
+                # --- 3. Crear Pedido ---
                 pedido = Pedido.objects.create(
                     cliente=carrito.cliente,
-                    estado_pedido='Pagado',
+                    estado_pedido=('En revisión' if is_transfer else 'Pagado'),
                     ciudad_envio=ciudad_envio,
                     direccion_envio=direccion_envio,
                     numero_casa_envio=numero_casa_envio,
@@ -1036,13 +1070,7 @@ class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Qu
                     referencia_envio=referencia_envio,
                     metodo_pago=metodo_pago,
                     costo_envio=costo_envio,
-                )
-
-                # --- 3.1 Crear Transportista (entrega) asociado al pedido ---
-                # Estado inicial: Pendiente (empresa y guía se asignan luego)
-                Transportista.objects.create(
-                    pedido=pedido,
-                    estado_entrega='Pendiente',
+                    comprobante_transferencia=(comprobante_file if is_transfer else None),
                 )
 
                 # --- 4. Crear DetallePedido a partir de DetalleCarrito ---
@@ -1059,28 +1087,41 @@ class MiCarritoViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet): # Qu
                         total_detalle_pedido=detalle_carrito.total_detalle_carrito,
                     )
 
-                # --- 5. Crear Comprobante después de que todos los DetallePedido estén creados ---
-                Comprobante.objects.create(
-                    pedido=pedido,
-                    numero_factura=f"FAC-{pedido.id}-{pedido.fecha_pedido.strftime('%Y%m%d')}",
-                    # Si no hay cédula, guardar NULL (evita strings largos y respeta blank/null)
-                    cedula_cliente=(pedido.cedula_envio or pedido.cliente.cedula or None),
-                    # Usar snapshot de envío del pedido (histórico)
-                    direccion_cliente=(pedido.direccion_envio or pedido.cliente.direccion),
-                    email_cliente=pedido.cliente.email,
-                    subtotal=pedido.subtotal_general_comprobante,
-                    descuento=pedido.descuento_general_comprobante,
-                    iva=pedido.iva_general_comprobante,
-                    total=pedido.total_general_comprobante,
-                    costo_envio=pedido.costo_envio,
-                    metodo_pago=pedido.metodo_pago,
-                    estado_fiscal='Emitido',
-                )
+                # --- 5. Comprobante + Envío ---
+                # Tarjeta: se generan inmediatamente (flujo actual).
+                # Transferencia: NO generar comprobante fiscal ni transportista hasta aprobación admin.
+                if not is_transfer:
+                    Transportista.objects.create(
+                        pedido=pedido,
+                        estado_entrega='Pendiente',
+                    )
+
+                    Comprobante.objects.create(
+                        pedido=pedido,
+                        numero_factura=f"FAC-{pedido.id}-{pedido.fecha_pedido.strftime('%Y%m%d')}",
+                        # Si no hay cédula, guardar NULL (evita strings largos y respeta blank/null)
+                        cedula_cliente=(pedido.cedula_envio or pedido.cliente.cedula or None),
+                        # Usar snapshot de envío del pedido (histórico)
+                        direccion_cliente=(pedido.direccion_envio or pedido.cliente.direccion),
+                        email_cliente=pedido.cliente.email,
+                        subtotal=pedido.subtotal_general_comprobante,
+                        descuento=pedido.descuento_general_comprobante,
+                        iva=pedido.iva_general_comprobante,
+                        total=pedido.total_general_comprobante,
+                        costo_envio=pedido.costo_envio,
+                        metodo_pago=pedido.metodo_pago,
+                        estado_fiscal='Emitido',
+                    )
 
                 # --- 6. Borrar DetalleCarrito del carrito original ---
                 carrito.detalles_carrito.all().delete()
                 carrito.save() # Guarda el carrito para actualizar la fecha_actualizacion
 
+            if is_transfer:
+                return Response(
+                    {'message': 'Pedido creado. Pago en revisión (transferencia).', 'pedido_id': pedido.id},
+                    status=status.HTTP_201_CREATED
+                )
             return Response({'message': 'Carrito pagado y pedido creado exitosamente.', 'pedido_id': pedido.id}, status=status.HTTP_201_CREATED)
 
         except Exception as e:
@@ -1290,11 +1331,17 @@ class MisPedidosViewSet(
         # - entrega=entregados  -> solo Entregado
         entrega = (self.request.query_params.get('entrega') or '').strip().lower()
         if entrega == 'en_proceso':
-            qs = qs.exclude(transportista__estado_entrega='Entregado')
+            # Solo pedidos que YA tienen envío creado (excluye transferencias en revisión)
+            qs = qs.filter(transportista__isnull=False).exclude(transportista__estado_entrega='Entregado')
         elif entrega == 'entregados':
             qs = qs.filter(transportista__estado_entrega='Entregado')
 
         return qs.order_by('-fecha_pedido', '-id')
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
     @action(detail=True, methods=['get'], url_path='comprobante/link')
     def comprobante_link(self, request, pk=None):
