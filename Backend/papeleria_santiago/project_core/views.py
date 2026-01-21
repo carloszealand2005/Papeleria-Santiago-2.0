@@ -1416,9 +1416,9 @@ class MisPedidosViewSet(
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if pedido.estado_pedido != 'Cancelado':
+        if pedido.estado_pedido not in ['Cancelado', 'Pendiente', 'Rechazado']:
             return Response(
-                {'error': 'Solo se puede re-subir el comprobante si el pedido está Cancelado.'},
+                {'error': 'Solo se puede re-subir el comprobante si el pedido está Cancelado, Pendiente o Rechazado.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 

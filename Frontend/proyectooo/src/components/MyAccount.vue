@@ -507,6 +507,8 @@
                         </label>
                         <input
                           id="resubmit-transfer-proof"
+                          ref="resubmitTransferProofInput"
+                          name="comprobante_transferencia"
                           type="file"
                           accept="image/*"
                           class="block w-full text-sm text-gray-500
@@ -537,8 +539,8 @@
                           <button
                             type="button"
                             class="inline-flex items-center justify-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
-                            :disabled="isResubmittingTransferProof || !resubmitTransferProofFile || resubmitTransferProofError"
-                            :class="{ 'opacity-60 cursor-not-allowed': isResubmittingTransferProof || !resubmitTransferProofFile || resubmitTransferProofError }"
+                            :disabled="isResubmittingTransferProof"
+                            :class="{ 'opacity-60 cursor-not-allowed': isResubmittingTransferProof }"
                             @click="submitResubmittedTransferProof"
                           >
                             <i v-if="isResubmittingTransferProof" class="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
@@ -593,6 +595,8 @@
                         </label>
                         <input
                           id="resubmit-transfer-proof"
+                          ref="resubmitTransferProofInput"
+                          name="comprobante_transferencia"
                           type="file"
                           accept="image/*"
                           class="block w-full text-sm text-gray-500
@@ -625,8 +629,8 @@
                           <button
                             type="button"
                             class="inline-flex items-center justify-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
-                            :disabled="isResubmittingTransferProof || !resubmitTransferProofFile || resubmitTransferProofError"
-                            :class="{ 'opacity-60 cursor-not-allowed': isResubmittingTransferProof || !resubmitTransferProofFile || resubmitTransferProofError }"
+                            :disabled="isResubmittingTransferProof"
+                            :class="{ 'opacity-60 cursor-not-allowed': isResubmittingTransferProof }"
                             @click="submitResubmittedTransferProof"
                           >
                             <i v-if="isResubmittingTransferProof" class="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
@@ -1185,9 +1189,22 @@ export default {
       this.resubmitTransferProofPreviewUrl = URL.createObjectURL(file);
     },
     async submitResubmittedTransferProof() {
-      if (!this.selectedOrder?.id) return;
-      if (this.isResubmittingTransferProof) return;
-      if (!this.resubmitTransferProofFile || this.resubmitTransferProofError) return;
+      if (!this.selectedOrder?.id) {
+        this.showToast('Selecciona un pedido antes de reenviar el comprobante.', 'error');
+        return;
+      }
+      if (this.isResubmittingTransferProof) {
+        this.showToast('Ya se esta reenviando el comprobante. Espera un momento.', 'error');
+        return;
+      }
+      if (!this.resubmitTransferProofFile) {
+        this.showToast('Selecciona una imagen antes de reenviar el comprobante.', 'error');
+        return;
+      }
+      if (this.resubmitTransferProofError) {
+        this.showToast(this.resubmitTransferProofError, 'error');
+        return;
+      }
       if (!this.isAuthenticated) {
         this.showToast('Debes iniciar sesión para reenviar el comprobante.', 'error');
         return;
@@ -1201,8 +1218,16 @@ export default {
         form.append('comprobante', this.resubmitTransferProofFile);
         form.append('archivo', this.resubmitTransferProofFile);
 
-        // Nota: NO seteamos manualmente Content-Type para que Axios agregue boundary correctamente.
-        await api.post(`/mis-pedidos/${this.selectedOrder.id}/comprobante-transferencia/`, form);
+        console.info('[MyAccount] Reenviando comprobante', {
+          pedidoId: this.selectedOrder.id,
+          fileName: this.resubmitTransferProofFile?.name,
+          fileType: this.resubmitTransferProofFile?.type,
+          fileSize: this.resubmitTransferProofFile?.size,
+        });
+
+        await api.post(`/mis-pedidos/${this.selectedOrder.id}/comprobante-transferencia/`, form, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
 
         this.resubmitTransferProofFile = null;
         this.resubmitTransferProofError = '';
@@ -1216,7 +1241,14 @@ export default {
         await this.refreshOrders();
       } catch (e) {
         console.error('Error re-subiendo comprobante de transferencia:', e);
-        this.showToast('No se pudo reenviar el comprobante. Por favor intenta nuevamente.', 'error');
+        const statusCode = e?.response?.status;
+        const backendError = e?.response?.data?.error;
+        const message = backendError
+          ? String(backendError)
+          : statusCode
+            ? `No se pudo reenviar el comprobante (HTTP ${statusCode}).`
+            : 'No se pudo reenviar el comprobante. Por favor intenta nuevamente.';
+        this.showToast(message, 'error');
       } finally {
         this.isResubmittingTransferProof = false;
       }
@@ -1264,5 +1296,3 @@ export default {
 
 <style scoped>
 </style>
-
-
