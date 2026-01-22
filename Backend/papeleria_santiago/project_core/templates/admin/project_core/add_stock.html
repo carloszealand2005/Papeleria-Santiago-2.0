@@ -1,0 +1,32 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+
+  <p>
+    Vas a sumar stock a <strong>{{ queryset|length }}</strong> registro(s) de inventario seleccionados.
+  </p>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% for obj in queryset %}
+      <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk }}" />
+    {% endfor %}
+
+    <input type="hidden" name="action" value="{{ action_name }}" />
+    <input type="hidden" name="apply" value="1" />
+
+    <fieldset class="module aligned">
+      {{ form.as_p }}
+    </fieldset>
+
+    <div class="submit-row">
+      <input type="submit" value="Confirmar y aplicar" class="default" />
+      <a href=".." class="button cancel-link">Cancelar</a>
+    </div>
+  </form>
+{% endblock %}
+
+

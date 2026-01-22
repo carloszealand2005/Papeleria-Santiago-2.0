@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block content %}
+  <div id="content-main">
+    <div class="module">
+      <h2>Inicio</h2>
+      <div style="padding: 12px 16px;">
+        <p style="margin:0 0 10px 0;">
+          Accesos directos para tareas frecuentes del negocio.
+        </p>
+        <p style="margin:0;">
+          <a class="button default" href="{% url 'admin:ps_herramientas' %}">Abrir Herramientas</a>
+        </p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+

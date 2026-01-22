@@ -1,0 +1,40 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+
+  <div class="module" style="padding: 12px 16px;">
+    <h2 style="margin-top:0;">Acciones rápidas</h2>
+    <ul>
+      <li><a href="{{ links.bulk_discounts }}">Descuentos masivos (wizard)</a></li>
+    </ul>
+  </div>
+
+  <div class="module" style="padding: 12px 16px;">
+    <h2 style="margin-top:0;">Monitoreo</h2>
+    <ul>
+      <li>
+        Clientes mayoristas pendientes de validación: <strong>{{ counts.clientes_mayoristas_pendientes_validacion }}</strong>
+        — <a href="{{ links.clientes_mayoristas_pendientes_validacion }}">Ver</a>
+      </li>
+      <li>
+        Pedidos Transferencia Pendiente con comprobante: <strong>{{ counts.pedidos_transferencia_pendientes_con_comprobante }}</strong>
+        — <a href="{{ links.pedidos_transferencia_pendientes_con_comprobante }}">Ver</a>
+      </li>
+      <li>
+        Pedidos pendientes: <strong>{{ counts.pedidos_pendientes }}</strong>
+        — <a href="{{ links.pedidos_pendientes }}">Ver</a>
+      </li>
+      <li>
+        Pedidos cancelados: <strong>{{ counts.pedidos_cancelados }}</strong>
+        — <a href="{{ links.pedidos_cancelados }}">Ver</a>
+      </li>
+      <li>
+        Transportistas en estado Pendiente: <strong>{{ counts.transportistas_pendientes }}</strong>
+        — <a href="{{ links.transportistas_pendientes }}">Ver</a>
+      </li>
+    </ul>
+  </div>
+{% endblock %}
+
+

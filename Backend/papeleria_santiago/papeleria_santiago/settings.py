@@ -121,7 +121,9 @@ ROOT_URLCONF = 'papeleria_santiago.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # Templates globales (prioridad sobre templates de apps).
+        # Útil para overrides de Django Admin (ej: admin/index.html).
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -1,0 +1,48 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+
+  <div class="module" style="padding: 12px 16px;">
+    <p style="margin-top:0;">
+      Elige un criterio (solo uno) y define el descuento. Primero haz <strong>Vista previa</strong>, luego <strong>Aplicar</strong>.
+    </p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <fieldset class="module aligned">
+        {{ form.as_p }}
+      </fieldset>
+
+      {% if preview %}
+        <div class="messagelist">
+          <div class="success">
+            Vista previa: afectará a <strong>{{ preview.n_products }}</strong> producto(s) y <strong>{{ preview.n_prices }}</strong> precio(s).
+          </div>
+        </div>
+
+        {% if preview.sample %}
+          <div class="module" style="padding: 10px 12px; margin-top: 12px;">
+            <strong>Muestra (primeros 10):</strong>
+            <ul style="margin: 8px 0 0 18px;">
+              {% for sku, nombre in preview.sample %}
+                <li><code>{{ sku }}</code> — {{ nombre }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      {% endif %}
+
+      <div class="submit-row">
+        <button type="submit" name="preview" value="1">Vista previa</button>
+        <button type="submit" name="apply" value="1" class="default" {% if not preview %}disabled{% endif %}>
+          Aplicar
+        </button>
+        <a href="{% url 'admin:ps_herramientas' %}" class="button cancel-link">Volver</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+
+

@@ -1,8 +1,8 @@
 <template>
   <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div class="flex items-center space-x-4">
-        <span class="font-semibold text-gray-900">Filtrar por:</span>
+      <div class="flex flex-wrap items-center gap-2 md:gap-3">
+        <span class="font-semibold text-gray-900 shrink-0">Filtrar por:</span>
         <button
           v-for="category in filterCategories"
           :key="category.id"
