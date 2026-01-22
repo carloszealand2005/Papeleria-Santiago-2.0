@@ -20,7 +20,26 @@
       />
 
       <!-- Results Grid -->
+      <div
+        v-if="showEmptyState"
+        class="mt-8 p-6 bg-white rounded-xl shadow-sm border border-gray-200"
+      >
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center">
+            <i class="fas fa-search" aria-hidden="true"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-lg font-semibold text-gray-900">
+              No existen productos relacionados a “{{ normalizedSearchQuery }}” actualmente
+            </div>
+            <div class="text-sm text-gray-600 mt-1">
+              Prueba con otra palabra o ajusta el rango de precio para ampliar los resultados.
+            </div>
+          </div>
+        </div>
+      </div>
       <FeaturedProducts
+        v-else
         title="Resultados"
         :featuredProducts="filteredProducts"
         badgeText=""
@@ -57,14 +76,21 @@ export default {
       priceRange: { min: 0.30, max: 30 },
       isPriceFilterApplied: false,
       searchQuery: '',
+      isSearching: false,
     }
   },
   computed: {
     subtitleText() {
       return `Resultados para: ${this.searchQuery || ''}`.trim();
     },
+    normalizedSearchQuery() {
+      return String(this.searchQuery || '').trim();
+    },
     filteredProducts() {
       return Array.isArray(this.products) ? this.products : [];
+    },
+    showEmptyState() {
+      return this.normalizedSearchQuery.length > 0 && !this.isSearching && this.filteredProducts.length === 0;
     }
   },
   watch: {
@@ -89,9 +115,11 @@ export default {
       const query = (this.searchQuery || '').trim();
       if (!query) {
         this.products = [];
+        this.isSearching = false;
         return;
       }
 
+      this.isSearching = true;
       try {
         const params = {
           search: query,
@@ -148,6 +176,8 @@ export default {
       } catch (error) {
         console.error('Error fetching searched products:', error);
         this.products = [];
+      } finally {
+        this.isSearching = false;
       }
     },
     handleSortChange(sortValue) {

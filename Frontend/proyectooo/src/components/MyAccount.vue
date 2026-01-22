@@ -174,11 +174,23 @@
 
           <!-- Deliveries -->
           <div v-else-if="activeSection === 'deliveries'" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="p-6 border-b border-gray-100">
-              <h2 class="text-xl font-semibold text-gray-900">Mis entregas</h2>
-              <p class="text-sm text-gray-600 mt-1">
-                Consulta el estado de entrega, empresa transportista y número de guía.
-              </p>
+            <div class="p-6 border-b border-gray-100 flex items-start justify-between gap-4">
+              <div>
+                <h2 class="text-xl font-semibold text-gray-900">Mis entregas</h2>
+                <p class="text-sm text-gray-600 mt-1">
+                  Consulta el estado de entrega, empresa transportista y número de guía.
+                </p>
+              </div>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-lg transition-colors cursor-pointer"
+                @click="refreshDeliveries"
+                :disabled="isDeliveriesLoading"
+                :class="{ 'opacity-60 cursor-not-allowed': isDeliveriesLoading }"
+              >
+                <i class="fas fa-sync-alt mr-2" aria-hidden="true"></i>
+                Actualizar entregas
+              </button>
             </div>
 
             <div class="p-6 space-y-8">
@@ -362,12 +374,16 @@
                 <div v-else-if="!orders || orders.length === 0" class="p-6 text-gray-700">
                   Aún no tienes pedidos.
                 </div>
-                <button
+                <div
                   v-for="order in orders"
                   :key="order.id"
-                  class="w-full text-left p-4 hover:bg-gray-50 transition-colors"
+                  role="button"
+                  tabindex="0"
+                  class="w-full text-left p-4 hover:bg-gray-50 transition-colors cursor-pointer"
                   :class="selectedOrder && selectedOrder.id === order.id ? 'bg-blue-50' : ''"
                   @click="selectOrder(order)"
+                  @keydown.enter.prevent="selectOrder(order)"
+                  @keydown.space.prevent="selectOrder(order)"
                 >
                   <div class="flex items-start justify-between gap-3">
                     <div class="min-w-0">
@@ -429,7 +445,7 @@
                       <span class="font-semibold text-gray-900">{{ formatMoney(order.total) }}</span>
                     </div>
                   </div>
-                </button>
+                </div>
               </div>
             </div>
 
@@ -491,7 +507,7 @@
 
                     <div
                       v-if="selectedOrder.metodo_pago === 'Transferencia bancaria'"
-                      class="mt-4 bg-white rounded-lg border border-red-200 p-4"
+                      class="mt-4 bg-white rounded-lg border border-red-200 p-4 relative z-10"
                     >
                       <div class="text-sm font-semibold text-gray-900">Reenviar comprobante (Transferencia bancaria)</div>
                       <div class="mt-2 space-y-1 text-sm text-gray-700">
@@ -507,8 +523,6 @@
                         </label>
                         <input
                           id="resubmit-transfer-proof"
-                          ref="resubmitTransferProofInput"
-                          name="comprobante_transferencia"
                           type="file"
                           accept="image/*"
                           class="block w-full text-sm text-gray-500
@@ -538,10 +552,10 @@
                         <div class="mt-4 flex flex-col sm:flex-row gap-3">
                           <button
                             type="button"
-                            class="inline-flex items-center justify-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
+                            class="inline-flex items-center justify-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer relative z-20"
                             :disabled="isResubmittingTransferProof"
                             :class="{ 'opacity-60 cursor-not-allowed': isResubmittingTransferProof }"
-                            @click="submitResubmittedTransferProof"
+                            @click.capture.stop.prevent="submitResubmittedTransferProof()"
                           >
                             <i v-if="isResubmittingTransferProof" class="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
                             <i v-else class="fas fa-upload mr-2" aria-hidden="true"></i>
@@ -575,7 +589,7 @@
 
                     <div
                       v-if="selectedOrder.metodo_pago === 'Transferencia bancaria'"
-                      class="mt-4 bg-white rounded-lg border border-amber-200 p-4"
+                      class="mt-4 bg-white rounded-lg border border-amber-200 p-4 relative z-10"
                     >
                       <div class="text-sm font-semibold text-gray-900">Reenviar comprobante (Transferencia bancaria)</div>
                       <div class="text-xs text-gray-600 mt-1">
@@ -595,8 +609,6 @@
                         </label>
                         <input
                           id="resubmit-transfer-proof"
-                          ref="resubmitTransferProofInput"
-                          name="comprobante_transferencia"
                           type="file"
                           accept="image/*"
                           class="block w-full text-sm text-gray-500
@@ -628,10 +640,10 @@
                         <div class="mt-4 flex flex-col sm:flex-row gap-3">
                           <button
                             type="button"
-                            class="inline-flex items-center justify-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
+                            class="inline-flex items-center justify-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer relative z-20"
                             :disabled="isResubmittingTransferProof"
                             :class="{ 'opacity-60 cursor-not-allowed': isResubmittingTransferProof }"
-                            @click="submitResubmittedTransferProof"
+                            @click.capture.stop.prevent="submitResubmittedTransferProof()"
                           >
                             <i v-if="isResubmittingTransferProof" class="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>
                             <i v-else class="fas fa-upload mr-2" aria-hidden="true"></i>
@@ -1020,6 +1032,11 @@ export default {
         }
       }
     },
+    async refreshDeliveries() {
+      // Botón de refresco manual para ver cambios (ej: asignación de transportista / guía)
+      this.deliveriesLoaded = false;
+      await this.fetchDeliveries();
+    },
     formatMoney(value) {
       const number = Number(value || 0);
       try {
@@ -1172,7 +1189,14 @@ export default {
         return;
       }
 
-      if (!file.type || !String(file.type).startsWith('image/')) {
+      const type = String(file.type || '').toLowerCase().trim();
+      const fileName = String(file.name || '').toLowerCase().trim();
+      const allowedExt = ['.jpg', '.jpeg', '.png', '.webp'];
+      const hasAllowedExt = allowedExt.some(ext => fileName.endsWith(ext));
+
+      // En algunos navegadores/archivos (especialmente en Windows) `file.type` puede venir vacío.
+      // Aceptamos por extensión como fallback.
+      if (!(type.startsWith('image/') || hasAllowedExt)) {
         this.resubmitTransferProofFile = null;
         this.resubmitTransferProofError = 'Solo se permiten archivos de imagen.';
         if (this.resubmitTransferProofPreviewUrl) {
@@ -1182,52 +1206,64 @@ export default {
         return;
       }
 
-      this.resubmitTransferProofFile = file;
+      // Si viene sin type pero la extensión es válida, normalizamos el File con un MIME razonable
+      // para que el backend lo reciba como image/* en multipart (evita 400 por content-type genérico).
+      let normalizedFile = file;
+      if (!type && hasAllowedExt) {
+        const mimeByExt = {
+          '.jpg': 'image/jpeg',
+          '.jpeg': 'image/jpeg',
+          '.png': 'image/png',
+          '.webp': 'image/webp',
+        };
+        const matchedExt = allowedExt.find(ext => fileName.endsWith(ext));
+        const guessedMime = matchedExt ? mimeByExt[matchedExt] : '';
+        if (guessedMime) {
+          try {
+            normalizedFile = new File([file], file.name, { type: guessedMime });
+          } catch (e) {
+            // Fallback: si el navegador no permite construir File, enviamos el original.
+            normalizedFile = file;
+          }
+        }
+      }
+
+      this.resubmitTransferProofFile = normalizedFile;
       if (this.resubmitTransferProofPreviewUrl) {
         try { URL.revokeObjectURL(this.resubmitTransferProofPreviewUrl); } catch (e) { /* noop */ }
       }
-      this.resubmitTransferProofPreviewUrl = URL.createObjectURL(file);
+      this.resubmitTransferProofPreviewUrl = URL.createObjectURL(normalizedFile);
     },
     async submitResubmittedTransferProof() {
-      if (!this.selectedOrder?.id) {
-        this.showToast('Selecciona un pedido antes de reenviar el comprobante.', 'error');
+      // Feedback inmediato para evitar sensación de "no hizo nada"
+      if (this.isResubmittingTransferProof) return;
+      this.isResubmittingTransferProof = true;
+      this.showToast('Enviando comprobante...', 'success');
+
+      const orderId = this.selectedOrder?.id || this.selectedOrder?.pedido_id || null;
+      if (!orderId) {
+        this.showToast('No se detectó el ID del pedido. Por favor vuelve a seleccionarlo.', 'error');
+        this.isResubmittingTransferProof = false;
         return;
       }
-      if (this.isResubmittingTransferProof) {
-        this.showToast('Ya se esta reenviando el comprobante. Espera un momento.', 'error');
-        return;
-      }
-      if (!this.resubmitTransferProofFile) {
-        this.showToast('Selecciona una imagen antes de reenviar el comprobante.', 'error');
-        return;
-      }
-      if (this.resubmitTransferProofError) {
-        this.showToast(this.resubmitTransferProofError, 'error');
+      if (!this.resubmitTransferProofFile || this.resubmitTransferProofError) {
+        this.showToast('Por favor selecciona una imagen válida antes de reenviar.', 'error');
+        this.isResubmittingTransferProof = false;
         return;
       }
       if (!this.isAuthenticated) {
         this.showToast('Debes iniciar sesión para reenviar el comprobante.', 'error');
+        this.isResubmittingTransferProof = false;
         return;
       }
 
-      this.isResubmittingTransferProof = true;
       try {
         const form = new FormData();
         // Campo oficial: comprobante_transferencia (backend también acepta comprobante/archivo por compatibilidad)
         form.append('comprobante_transferencia', this.resubmitTransferProofFile);
-        form.append('comprobante', this.resubmitTransferProofFile);
-        form.append('archivo', this.resubmitTransferProofFile);
 
-        console.info('[MyAccount] Reenviando comprobante', {
-          pedidoId: this.selectedOrder.id,
-          fileName: this.resubmitTransferProofFile?.name,
-          fileType: this.resubmitTransferProofFile?.type,
-          fileSize: this.resubmitTransferProofFile?.size,
-        });
-
-        await api.post(`/mis-pedidos/${this.selectedOrder.id}/comprobante-transferencia/`, form, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        // Nota: NO seteamos manualmente Content-Type para que Axios agregue boundary correctamente.
+        await api.post(`/mis-pedidos/${orderId}/comprobante-transferencia/`, form);
 
         this.resubmitTransferProofFile = null;
         this.resubmitTransferProofError = '';
@@ -1241,14 +1277,16 @@ export default {
         await this.refreshOrders();
       } catch (e) {
         console.error('Error re-subiendo comprobante de transferencia:', e);
-        const statusCode = e?.response?.status;
-        const backendError = e?.response?.data?.error;
-        const message = backendError
-          ? String(backendError)
-          : statusCode
-            ? `No se pudo reenviar el comprobante (HTTP ${statusCode}).`
-            : 'No se pudo reenviar el comprobante. Por favor intenta nuevamente.';
-        this.showToast(message, 'error');
+        const data = e?.response?.data;
+        const backendMessage =
+          (data && typeof data === 'string' && data) ||
+          data?.detail ||
+          data?.error ||
+          data?.mensaje ||
+          data?.message ||
+          null;
+        const text = backendMessage || (data && typeof data === 'object' ? JSON.stringify(data) : '') || '';
+        this.showToast(text ? `No se pudo reenviar: ${text}` : 'No se pudo reenviar el comprobante. Por favor intenta nuevamente.', 'error');
       } finally {
         this.isResubmittingTransferProof = false;
       }
@@ -1296,3 +1334,5 @@ export default {
 
 <style scoped>
 </style>
+
+

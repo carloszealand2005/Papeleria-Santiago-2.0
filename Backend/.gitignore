@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Envs / secrets
+.env
+.env.*
+
+# Django / local artifacts
+papeleria_santiago/media/
+papeleria_santiago/db.sqlite3
+
+

@@ -46,4 +46,47 @@ Notas:
 - Si quieres probar con pocos registros: `--limit 10`
 - Si quieres re-descargar: `--overwrite`
 
+---
+
+### Rellenar imágenes REALES (relacionadas) vía Pixabay (recomendado para MVP)
+Este comando busca imágenes relacionadas por **nombre + marca + subcategoría** y llena:
+`imagen_url`, `imagen_url2`, `imagen_url3`, `imagen_url4`.
+
+Por defecto:
+- Descarga archivos a `MEDIA_ROOT/productos_api/`
+- Guarda URLs locales tipo `http://127.0.0.1:8000/media/productos_api/<SKU>_<n>.jpg`
+
+#### 1) Crear API key de Pixabay
+- Crea una cuenta y genera un API key en Pixabay.
+- Guarda el key como `PIXABAY_API_KEY`.
+
+#### 2) Guardar el API key (recomendado: .env)
+En la carpeta donde está `manage.py` (BASE_DIR), crea un archivo `.env` con:
+
+```bash
+PIXABAY_API_KEY=TU_KEY_AQUI
+```
+
+> Nota: `.env` NO debe subirse a Git.
+
+#### 3) Ejecutar el comando
+Ejemplos:
+
+```bash
+# Solo ver qué haría (no descarga ni guarda):
+python manage.py fill_product_images_pixabay --dry-run --limit 5
+
+# Procesar TODO (descarga a MEDIA_ROOT/productos_api/ y guarda URLs locales):
+python manage.py fill_product_images_pixabay --base-url http://127.0.0.1:8000
+
+# Solo completar campos faltantes (no pisa los que ya existan):
+python manage.py fill_product_images_pixabay --only-missing
+
+# Reemplazar SIEMPRE las 4 URLs aunque ya tengan valor:
+python manage.py fill_product_images_pixabay --overwrite
+
+# Guardar URLs externas (no descarga a tu media):
+python manage.py fill_product_images_pixabay --external-only
+```
+
 

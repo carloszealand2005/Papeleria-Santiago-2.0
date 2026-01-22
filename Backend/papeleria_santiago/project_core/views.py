@@ -4,12 +4,13 @@ from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
 from django.core import signing
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.urls import reverse
 from urllib.parse import quote
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.db.models import Q, F
 from django.conf import settings
+from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.utils.text import slugify
@@ -343,6 +344,21 @@ class ProductoViewSet(viewsets.ModelViewSet):
 def _generate_otp_code():
     return str(secrets.randbelow(10**6)).zfill(6)
 
+OTP_ACTION_CREATE_ACCOUNT = "CREATE_ACCOUNT"
+OTP_ACTION_PASSWORD_RESET = "PASSWORD_RESET"
+
+# Mensajes EXACTOS requeridos (se renderizan inmediatamente debajo del código en el template).
+OTP_ACTION_MESSAGE_MAP = {
+    OTP_ACTION_CREATE_ACCOUNT: (
+        "Bienvenido a Papelería Santiago.\n\n"
+        "Tu cuenta ha sido creada exitosamente. Nos alegra tenerte con nosotros y acompañarte en cada pedido."
+    ),
+    OTP_ACTION_PASSWORD_RESET: (
+        "Recuperación de contraseña – Papelería Santiago.\n\n"
+        "Hemos recibido una solicitud para restablecer tu contraseña. Usa el código enviado para crear una nueva de forma segura."
+    ),
+}
+
 
 def _generate_unique_username(email, first_name=None):
     # Username debe ser único en Django User.
@@ -362,23 +378,49 @@ def _generate_unique_username(email, first_name=None):
     return candidate
 
 
-def _send_otp_email(to_email, otp_code):
-    subject = "Tu código de verificación - Papelería Santiago"
-    message = f"Tu código de verificación es: {otp_code}\n\nSi no solicitaste este registro, ignora este correo."
+def _send_otp_transactional_email(to_email, otp_code, action_type):
+    """
+    Envío de OTP usando UN SOLO template reutilizable.
+    - Código destacado
+    - Mensaje dinámico debajo del código (según action_type)
+    Compatible con Gmail/Outlook: HTML con estilos inline + fallback texto plano.
+    """
+    action_message = OTP_ACTION_MESSAGE_MAP.get(action_type) or OTP_ACTION_MESSAGE_MAP[OTP_ACTION_CREATE_ACCOUNT]
+
+    # Subject puede variar sin afectar el requisito del mensaje (que va dentro del cuerpo).
+    if action_type == OTP_ACTION_PASSWORD_RESET:
+        subject = "Tu código para recuperar contraseña - Papelería Santiago"
+    else:
+        subject = "Tu código de verificación - Papelería Santiago"
+
     from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or settings.EMAIL_HOST_USER
-    sent = send_mail(subject, message, from_email, [to_email], fail_silently=False)
-    return sent
+
+    # Fallback texto (para clientes que no renderizan HTML).
+    text_message = (
+        f"Tu código de verificación es: {otp_code}\n\n"
+        f"{action_message}\n\n"
+        "Si no solicitaste esta acción, puedes ignorar este correo."
+    )
+
+    html_message = render_to_string(
+        "project_core/otp_email.html",
+        {
+            "otp_code": otp_code,
+            "action_message": action_message,
+        },
+    )
+
+    email = EmailMultiAlternatives(subject, text_message, from_email, [to_email])
+    email.attach_alternative(html_message, "text/html")
+    return email.send(fail_silently=False)
+
+
+def _send_otp_email(to_email, otp_code):
+    return _send_otp_transactional_email(to_email, otp_code, OTP_ACTION_CREATE_ACCOUNT)
 
 
 def _send_password_reset_otp_email(to_email, otp_code):
-    subject = "Tu código para recuperar contraseña - Papelería Santiago"
-    message = (
-        f"Tu código de verificación para recuperar tu contraseña es: {otp_code}\n\n"
-        f"Si no solicitaste este cambio, ignora este correo."
-    )
-    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or settings.EMAIL_HOST_USER
-    sent = send_mail(subject, message, from_email, [to_email], fail_silently=False)
-    return sent
+    return _send_otp_transactional_email(to_email, otp_code, OTP_ACTION_PASSWORD_RESET)
 
 
 def _send_empresa_pending_email(to_email):

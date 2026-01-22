@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>Papelería Santiago</title>
+  </head>
+  <body style="margin:0; padding:0; background-color:#f6f7fb; font-family: Arial, Helvetica, sans-serif;">
+    <!-- Wrapper -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#f6f7fb;">
+      <tr>
+        <td align="center" style="padding:24px 12px;">
+          <!-- Container -->
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px; max-width:600px; background-color:#ffffff; border-radius:12px; overflow:hidden;">
+            <!-- Header -->
+            <tr>
+              <td style="padding:20px 24px; background-color:#0f172a;">
+                <div style="color:#ffffff; font-size:16px; font-weight:700; letter-spacing:0.2px;">
+                  Papelería Santiago
+                </div>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style="padding:24px;">
+                <div style="color:#111827; font-size:14px; line-height:20px; margin:0 0 10px 0;">
+                  Tu código de verificación es:
+                </div>
+
+                <!-- OTP (destacado) -->
+                <div style="text-align:center; margin:16px 0 12px 0;">
+                  <div style="display:inline-block; padding:14px 18px; border:1px solid #e5e7eb; border-radius:10px; background:#f9fafb;">
+                    <span style="font-size:32px; line-height:36px; font-weight:800; letter-spacing:6px; color:#111827;">
+                      {{ otp_code }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Mensaje dinámico (INMEDIATAMENTE debajo del código) -->
+                <div style="color:#111827; font-size:14px; line-height:22px; margin:12px 0 0 0;">
+                  {{ action_message|linebreaksbr }}
+                </div>
+
+                <div style="color:#6b7280; font-size:12px; line-height:18px; margin:18px 0 0 0;">
+                  Si no solicitaste esta acción, puedes ignorar este correo.
+                </div>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td style="padding:16px 24px; background-color:#f3f4f6;">
+                <div style="color:#6b7280; font-size:12px; line-height:18px;">
+                  Este es un correo automático, por favor no respondas a este mensaje.
+                </div>
+              </td>
+            </tr>
+          </table>
+          <!-- /Container -->
+        </td>
+      </tr>
+    </table>
+    <!-- /Wrapper -->
+  </body>
+</html>
+
+
