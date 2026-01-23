@@ -9,16 +9,16 @@
             class="h-16 w-auto mb-6"
           >
           <p class="text-slate-300 mb-6 text-lg">
-            Desde 1985, Santiago Papelería ha sido el aliado confiable para estudiantes, profesionales y empresas. Ofrecemos productos de la más alta calidad para todas tus necesidades.
+            Desde 1980, Santiago Papelería ha sido el aliado confiable para estudiantes, profesionales y empresas. Ofrecemos productos de la más alta calidad para todas tus necesidades.
           </p>
           <div class="flex space-x-4">
             <div class="flex items-center space-x-2 text-slate-400">
               <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-              <span>Bogotá, Colombia</span>
+              <span>Loja, Ecuador</span>
             </div>
             <div class="flex items-center space-x-2 text-slate-400">
               <i class="fas fa-phone" aria-hidden="true"></i>
-              <span>(601) 234-5678</span>
+              <span>(07) 257-3358</span>
             </div>
           </div>
         </div>
@@ -69,21 +69,38 @@
       </div>
 
       <div class="border-t border-slate-800 mt-12 pt-8 flex justify-between items-center">
-        <p class="text-slate-400">&copy; 2024 Santiago Papelería. Todos los derechos reservados.</p>
+        <p class="text-slate-400">&copy; 2026 Santiago Papelería. Todos los derechos reservados.</p>
         <div class="flex space-x-6">
-          <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="Facebook" title="Facebook">
+          <a
+            href="https://www.facebook.com/share/184ng5tPK6/?mibextid=wwXIfr"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-slate-400 hover:text-white transition-colors"
+            aria-label="Facebook"
+            title="Facebook"
+          >
             <i class="fab fa-facebook-f text-xl" aria-hidden="true"></i>
             <span class="sr-only">Facebook</span>
           </a>
-          <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="Instagram" title="Instagram">
+          <a
+            href="https://www.instagram.com/mega.santiago?igsh=enpqNHJxc3BmeTlo"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-slate-400 hover:text-white transition-colors"
+            aria-label="Instagram"
+            title="Instagram"
+          >
             <i class="fab fa-instagram text-xl" aria-hidden="true"></i>
             <span class="sr-only">Instagram</span>
           </a>
-          <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="Twitter" title="Twitter">
-            <i class="fab fa-twitter text-xl" aria-hidden="true"></i>
-            <span class="sr-only">Twitter</span>
-          </a>
-          <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="LinkedIn" title="LinkedIn">
+          <a
+            href="https://ec.linkedin.com/in/santiago-papeler%C3%ADa-05303129b"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-slate-400 hover:text-white transition-colors"
+            aria-label="LinkedIn"
+            title="LinkedIn"
+          >
             <i class="fab fa-linkedin text-xl" aria-hidden="true"></i>
             <span class="sr-only">LinkedIn</span>
           </a>

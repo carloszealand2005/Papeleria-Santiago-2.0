@@ -6,7 +6,7 @@
         <p class="text-xl mb-8">Descubre increíbles descuentos en todos nuestros productos de papelería</p>
         <div class="flex justify-center items-center space-x-2">
           <i class="fas fa-fire text-orange-400 text-2xl"></i>
-          <span class="text-lg font-semibold">Hasta 50% de descuento</span>
+          <span class="text-lg font-semibold">Hasta 90% de descuento!</span>
           <i class="fas fa-fire text-orange-400 text-2xl"></i>
         </div>
       </div>

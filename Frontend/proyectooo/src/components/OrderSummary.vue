@@ -56,7 +56,6 @@
           <div class="flex justify-center space-x-4 text-2xl text-gray-400">
             <i class="fab fa-cc-visa cursor-pointer"></i>
             <i class="fab fa-cc-mastercard cursor-pointer"></i>
-            <i class="fab fa-paypal cursor-pointer"></i>
             <i class="fas fa-shield-alt cursor-pointer"></i>
           </div>
         </div>

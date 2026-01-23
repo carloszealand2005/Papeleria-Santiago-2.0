@@ -76,13 +76,7 @@
           </div>
 
           <!-- Rating and Reviews -->
-          <div class="flex items-center space-x-4">
-            <div class="flex items-center">
-              <div class="flex text-yellow-400">
-                <i v-for="star in 5" :key="star" :class="star <= currentProduct.rating ? 'fas fa-star' : 'far fa-star'"></i>
-              </div>
-              <span class="ml-2 text-sm text-gray-600">({{ currentProduct.reviewCount }} reseñas)</span>
-            </div>
+          <div class="flex items-center">
             <span class="text-sm text-green-800 font-medium">En stock</span>
           </div>
 
@@ -168,11 +162,11 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-gray-200">
             <div class="flex items-center text-sm text-gray-600">
               <i class="fas fa-truck text-indigo-500 mr-2"></i>
-              Envío gratis en compras +$50
+              Envíos seguro
             </div>
             <div class="flex items-center text-sm text-gray-600">
-              <i class="fas fa-undo text-indigo-500 mr-2"></i>
-              Devoluciones en 30 días
+              <i class="fas fa-bolt text-indigo-500 mr-2"></i>
+              Pagos ágiles
             </div>
             <div class="flex items-center text-sm text-gray-600">
               <i class="fas fa-shield-alt text-indigo-500 mr-2"></i>

@@ -6,7 +6,7 @@
         <p class="text-xl text-slate-300">Más de 35 años siendo tu papelería de confianza</p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         <div 
           v-for="benefit in benefits" 
           :key="benefit.id"
@@ -34,8 +34,8 @@ export default {
       benefits: [
         {
           id: 1,
-          title: 'Envío Gratuito',
-          description: 'En compras superiores a $50.000 en toda Colombia',
+          title: 'Envíos a toda la ciudad de Loja',
+          description: 'En cualquier tipo de compras dentro de la papelería.',
           icon: 'fas fa-truck',
           bgClass: 'bg-gradient-to-br from-blue-500 to-blue-600'
         },
@@ -49,16 +49,9 @@ export default {
         {
           id: 3,
           title: 'Entrega Rápida',
-          description: 'Recibe tus pedidos en máximo 3 días hábiles',
-          icon: 'fas fa-clock',
+          description: 'Recibe tus pedidos con la mayor seguridad',
+          icon: 'fas fa-shipping-fast',
           bgClass: 'bg-gradient-to-br from-green-500 to-green-600'
-        },
-        {
-          id: 4,
-          title: 'Soporte Experto',
-          description: 'Asesoría personalizada de lunes a sábado',
-          icon: 'fas fa-headset',
-          bgClass: 'bg-gradient-to-br from-purple-500 to-purple-600'
         }
       ]
     }
